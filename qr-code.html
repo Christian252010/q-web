@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="template.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QR Scanner & Generator</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+<style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Poppins,sans-serif;
+    }
+
+    html,body{
+      width:100%;
+      height:100%;
+      color:white;
+      overflow-x:hidden;
+      overscroll-behavior:none;
+    }
+
+    body{
+      touch-action:pan-y;
+    }
+    
+    .sidebarr-search input{
+      width: 103.5% !important;
+    }
+
+    .slider{
+      display:flex;
+      width:200vw;
+      min-height:100vh;
+      transition:transform .35s ease;
+      will-change:transform;
+    }
+
+    .page {
+      width:100vw;
+      min-height:100vh;
+      padding:20px;
+      flex-shrink:0;
+    }
+
+    .page::-webkit-scrollbar{
+      display:none;
+    }
+
+    h1{
+      text-align:center;
+      margin:10px 0 20px;
+      font-size:28px;
+      color: var(--text);
+    }
+
+    .card{
+      background: var(--card);
+      border-radius:8px;
+      padding:20px;
+      max-width:500px;
+      margin:auto;
+      box-shadow:0 0 20px rgba(0,0,0,.4);
+    }
+
+    .title-mini{
+      text-align:center;
+      opacity:.8;
+      margin-bottom:14px;
+      color:var(--text);
+    }
+
+    #reader{
+      margin-top: 8px;
+      padding-top: 10px;
+      overflow:hidden;
+      border-radius:20px;
+    }
+
+    .card input{
+      width:100%;
+      padding:14px;
+      border:none;
+      outline:none;
+      border-radius:6px;
+      background:var(--sp);
+      color:var(--text);
+      font-size:15px;
+      margin-top:10px;
+    }
+
+    .btn2 {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .btn{
+      display: flex;
+      gap: 6px;
+      width:100%;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      border:none;
+      border-radius:6px;
+      background:var(--accent);
+      color:white;
+      padding:14px;
+      cursor:pointer;
+      font-size:15px;
+      transition:.2s;
+      margin-top:14px;
+    }
+
+    .btn:active{
+      transform:scale(.97);
+    }
+
+    .icon-group{
+      display:flex;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .icon-group .btn{
+      flex:1;
+      margin-top:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .result{
+      margin-top:20px;
+      background:var(--sp);
+      padding:14px;
+      border-radius:6px;
+      word-break:break-word;
+      color:var(--text);
+    }
+
+    .action-buttons{
+      display:none;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .action-btn{
+      flex:1;
+      margin-top:0;
+      padding:12px;
+      font-size:14px;
+    }
+
+    .qr-box{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin-top:20px;
+    }
+
+    .qr-hidden{
+      display:none !important;
+    }
+
+    canvas{
+      background:white;
+      padding:10px;
+      border-radius:8px;
+    }
+
+    .hint{
+      text-align:center;
+      opacity:.7;
+      margin-top:12px;
+      font-size:14px;
+      color: var(--text);
+    }
+
+    a{
+      color:cyan;
+    }
+    
+    .b-icon {
+      width: 32px;
+      height: 32px;
+    }
+    
+    .download-group{
+      display:flex;
+      gap:12px;
+      margin-top:14px;
+    }
+    
+    .download-group .btn{
+      flex:1;
+      margin-top:0;
+    }
+    
+    .btn3 {
+      font-weight: bold;
+    }
+    
+    .c-icon {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+<body data-title="QR Code">
+<div id="fetch-container"></div>
+  
+<br>
+<br>
+
+<div class="slider" id="slider">
+
+  <!-- SCANNER -->
+  <section class="page">
+
+    <h1>QR Scanner</h1>
+
+    <div class="card">
+
+      <div class="title-mini">
+        Scan lewat kamera atau upload foto
+      </div>
+
+
+      <div class="icon-group">
+
+        <button class="btn" id="cameraBtn">
+          <i data-lucide="camera"></i>
+        </button>
+
+        <button class="btn"
+        onclick="document.getElementById('qrImage').click()">
+          <i data-lucide="image"></i>
+        </button>
+
+      </div>
+      <div id="reader"></div>
+
+      <input
+      type="file"
+      id="qrImage"
+      accept="image/*"
+      hidden>
+
+      <div class="result" id="scanResult">
+        Hasil scan akan muncul di sini...
+      </div>
+
+      <div class="action-buttons" id="actionButtons">
+
+        <button
+        
+        class="btn2 btn action-btn"
+        onclick="openURL()">
+        <i class="b-icon" data-lucide="external-link"></i>
+        <span>Buka</span>
+        </button>
+
+        <button
+        class="btn2 btn action-btn"
+        onclick="copyURL()">
+        <i class="b-icon" data-lucide="copy"></i>
+        <span>Salin</span>
+        </button>
+
+        <button
+        class="btn2 btn action-btn"
+        onclick="shareURL()">
+        <i class="b-icon" data-lucide="share-2"></i>
+        <span>Bagikan</span>
+        </button>
+
+      </div>
+
+    </div>
+
+    <div class="hint">
+      Geser ke kiri untuk QR Generator
+    </div>
+
+  </section>
+
+
+  <!-- GENERATOR -->
+  <section class="page">
+
+    <h1>QR Generator</h1>
+
+    <div class="card">
+
+      <div class="title-mini">
+        Buat URL menjadi QR
+      </div>
+
+      <input
+      type="text"
+      id="urlInput"
+      placeholder="https://example.com">
+
+      <button
+      class="btn3 btn"
+      onclick="generateQR()">
+      <i class="c-icon" data-lucide="qr-code"></i>
+      Generate QR
+      </button>
+
+      <div class="qr-box qr-hidden" id="qrBox">
+        <canvas id="qrCanvas"></canvas>
+      </div>
+
+      <div class="download-group qr-hidden" id="downloadGroup">
+
+        <button
+        class="btn3 btn"
+        onclick="downloadQR()">
+        <i class="c-icon" data-lucide="download"></i>
+        Unduh
+        </button>
+      
+        <button
+        class="btn3 btn"
+        onclick="shareQR()">
+        <i class="c-icon" data-lucide="share-2"></i>
+        Bagikan
+        </button>
+      
+      </div>
+
+    </div>
+
+    <div class="hint">
+      Geser ke kanan untuk Scanner
+    </div>
+
+  </section>
+
+</div>
+
+<script src="fetch.js"></script>
+<script src="template.js"></script>
+<script>
+
+  // =====================
+  // SWIPE PAGE
+  // =====================
+
+const slider =
+  document.getElementById("slider");
+
+let currentPage = 0;
+
+let startX = 0;
+let startY = 0;
+
+let isDragging = false;
+
+let gestureLocked = false;
+let isHorizontal = false;
+
+function updateSlider(){
+
+  slider.style.transition =
+    "transform .35s ease";
+
+  slider.style.transform =
+    `translate3d(-${currentPage * 100}vw,0,0)`;
+
+}
+
+document.addEventListener("touchstart",(e)=>{
+
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+
+  isDragging = true;
+
+  gestureLocked = false;
+  isHorizontal = false;
+
+});
+
+document.addEventListener("touchmove",(e)=>{
+
+  if(!isDragging) return;
+
+  let currentX =
+    e.touches[0].clientX;
+
+  let currentY =
+    e.touches[0].clientY;
+
+  let diffX =
+    currentX - startX;
+
+  let diffY =
+    currentY - startY;
+
+  // lock arah gesture sekali saja
+  if(!gestureLocked){
+
+    if(
+      Math.abs(diffX) > 15 ||
+      Math.abs(diffY) > 15
+    ){
+
+      gestureLocked = true;
+
+      // true jika horizontal
+      isHorizontal =
+        Math.abs(diffX) > Math.abs(diffY);
+
+    }
+
+  }
+
+  // jika vertical scroll → hentikan swipe
+  if(!isHorizontal) return;
+
+  e.preventDefault();
+
+  // batas ujung
+  if(
+    (currentPage === 0 && diffX > 0) ||
+    (currentPage === 1 && diffX < 0)
+  ){
+    diffX *= 0.2;
+  }
+
+  let moveX =
+    (-currentPage * window.innerWidth)
+    + diffX;
+
+  slider.style.transition = "none";
+
+  slider.style.transform =
+    `translate3d(${moveX}px,0,0)`;
+
+},{passive:false});
+
+document.addEventListener("touchend",(e)=>{
+
+  if(!isDragging) return;
+
+  // jika gesture vertical
+  if(!isHorizontal){
+
+    isDragging = false;
+    return;
+
+  }
+
+  let endX =
+    e.changedTouches[0].clientX;
+
+  let diff =
+    startX - endX;
+
+  if(Math.abs(diff) > 20){
+
+    if(diff > 0){
+      currentPage = 1;
+    }else{
+      currentPage = 0;
+    }
+
+  }
+
+  updateSlider();
+
+  isDragging = false;
+
+});
+
+
+  // =====================
+  // QR SCANNER
+  // =====================
+
+  let scannedURL = "";
+
+  function onScanSuccess(decodedText){
+
+    scannedURL = decodedText;
+
+    const result =
+      document.getElementById("scanResult");
+
+    const actionButtons =
+      document.getElementById("actionButtons");
+
+    result.innerHTML = `
+      <div style="opacity:.7;margin-bottom:8px;">
+        Hasil QR
+      </div>
+
+      <div style="font-size:15px;">
+        ${decodedText}
+      </div>
+    `;
+
+    actionButtons.style.display = "flex";
+
+  }
+
+  const html5QrCode =
+    new Html5Qrcode("reader");
+
+  document.getElementById("cameraBtn")
+  .addEventListener("click",()=>{
+
+    html5QrCode.start(
+      {facingMode:"environment"},
+      {
+        fps:10,
+        qrbox:220
+      },
+      onScanSuccess
+    );
+
+  });
+
+  document.getElementById("qrImage")
+  .addEventListener("change",async(e)=>{
+
+    const file = e.target.files[0];
+
+    if(!file) return;
+
+    try{
+
+      const result =
+        await html5QrCode.scanFile(file,true);
+
+      onScanSuccess(result);
+
+    }catch{
+
+      document.getElementById("scanResult")
+      .innerHTML =
+      "QR tidak ditemukan";
+
+    }
+
+  });
+
+
+  // =====================
+  // QR GENERATOR
+  // =====================
+
+  function generateQR(){
+
+      const text =
+        document.getElementById("urlInput").value;
+    
+      const canvas =
+        document.getElementById("qrCanvas");
+    
+      const qrBox =
+        document.getElementById("qrBox");
+    
+      const downloadGroup =
+        document.getElementById("downloadGroup");
+    
+      if(!text.trim()){
+    
+        qrBox.classList.add("qr-hidden");
+        downloadGroup.classList.add("qr-hidden");
+    
+        alert("Masukkan URL");
+        return;
+    
+      }
+    
+      qrBox.classList.remove("qr-hidden");
+      downloadGroup.classList.remove("qr-hidden");
+    
+      QRCode.toCanvas(canvas,text,{
+        width:260,
+        margin:2
+      });
+    
+    }
+
+
+  // =====================
+  // ACTION BUTTON
+  // =====================
+
+  function openURL(){
+
+    if(scannedURL.startsWith("http")){
+      window.open(scannedURL,"_blank");
+    }
+
+  }
+
+  async function copyURL(){
+
+    await navigator.clipboard
+    .writeText(scannedURL);
+
+    alert("URL berhasil disalin");
+
+  }
+
+  async function shareURL(){
+
+    if(navigator.share){
+
+      navigator.share({
+        title:"QR Result",
+        text:scannedURL,
+        url:scannedURL
+      });
+
+    }
+
+  }
+
+
+  // =====================
+  // DOWNLOAD QR
+  // =====================
+
+  function downloadQR(){
+
+    const canvas =
+      document.getElementById("qrCanvas");
+
+    const link =
+      document.createElement("a");
+
+    link.download = "qrcode.png";
+
+    link.href =
+      canvas.toDataURL();
+
+    link.click();
+
+  }
+  
+  async function shareQR(){
+
+    const canvas =
+      document.getElementById("qrCanvas");
+  
+    canvas.toBlob(async(blob)=>{
+  
+      const file = new File(
+        [blob],
+        "qrcode.png",
+        {type:"image/png"}
+      );
+  
+      if(navigator.share){
+  
+        await navigator.share({
+          title:"QR Code",
+          files:[file]
+        });
+  
+      }
+  
+    });
+  
+  }
+
+</script>
+</body>
+</html>

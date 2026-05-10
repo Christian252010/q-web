@@ -1,0 +1,282 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="template.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <title>Kalkulator Rumus Dinamis</title>
+  <style>
+body {
+  font-family: Arial, sans-serif;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: none;
+  background: var(--sp);
+  color: var(--text);
+  font-size: 16px;
+  box-sizing: border-box;
+  height: 90px;
+  resize: vertical;
+}
+
+textarea:focus {
+  outline: none;
+}
+
+.card {
+  background: var(--card);
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+.inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.var-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--sp);
+  padding: 2px;
+  border-radius: 6px;
+  width: 47%;
+}
+
+.var-label {
+  font-size:24px;
+  width: 20px;
+  text-align: center;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 5px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+.var-row input {
+  flex: 1;
+  width: 47%;
+  font-size: 18px;
+  padding: 2px;
+  color: var(--text);
+  background: var(--sp);
+  border: none;
+  font-size: 16px;
+  padding-left: 10px;
+  border-left: 2px solid var(--ph);
+}
+
+.var-row input:focus {
+  outline: none;
+}
+
+.result {
+  margin-top: 2px;
+  font-size: 20px;
+  color: var(--text);
+  background: var(--sp);
+  padding: 8px;
+  border-radius: 6px;
+  word-break: break-all;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  margin-top: -30px;
+  margin-bottom: -30px;
+  margin-left: 4px;
+}
+
+.info-btn {
+  padding: 10px;
+  border-radius: 8px;
+  background: none;
+  color: var(--text);
+  border: none;
+  cursor: pointer;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: var(--card);
+  padding: 20px;
+  border-radius: 12px;
+  width: 40%;
+  max-width: 320px;
+}
+
+.modal-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.modal-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  padding: 2px 0;
+}
+
+.hint {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 5px;
+}
+
+h3:nth-child(1) {
+  margin-top: -4px;
+  margin-bottom: 2px;
+}
+
+h3 {
+  margin-top: 10px;
+  margin-bottom: -6px;
+}
+
+.lbl {
+  padding-left: 2px;
+}
+  </style>
+</head>
+<body data-title="Kalkulator Rumus">
+  <div id="fetch-container"></div>
+  <br>
+  <br>
+  
+  <div class="topbar">
+    <h2>Kalkulator Rumus</h2>
+    <button class="info-btn" onclick="openModal()"><i data-lucide="circle-alert"></i></button>
+  </div>
+  
+  <div class="card">
+    <h3>Rumus</h3>
+    <textarea id="formula" placeholder="Tulis rumus..."></textarea>
+    <h3>Input Variabel</h3>
+    <div id="inputs" class="inputs">
+    </div>
+    <br>
+    <span class="lbl">Hasil</span>
+    <div class="result" id="result"></div>
+  </div>
+  
+  <div class="modal" id="modal" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-title">Info Operator</div>
+      <div class="modal-row"><span>Tambah</span><span>+</span></div>
+      <div class="modal-row"><span>Kurang</span><span>-</span></div>
+      <div class="modal-row"><span>Kali</span><span>*</span></div>
+      <div class="modal-row"><span>Bagi</span><span>/</span></div>
+      <div class="modal-row"><span>Pangkat</span><span>^</span></div>
+      <div class="modal-row"><span>Akar</span><span>√</span></div>
+    </div>
+  </div>
+<script src="fetch.js"></script>
+<script>
+let variables = [];
+const formulaInput = document.getElementById("formula");
+
+formulaInput.addEventListener("input", () => {
+  generateInputs();
+  calculate();
+});
+
+function normalize(expr) {
+  // FIX sqrt (√)
+  expr = expr.replace(/√\s*\(?\s*([a-zA-Z0-9(]+)\s*\)?/g, "($1 ** 0.5)");
+  // pangkat
+  expr = expr.replace(/\^/g, "**");
+
+  return expr;
+}
+
+function parseVariables(expr) {
+  expr = expr.replace(/Math\.sqrt/g, "");
+  const matches = expr.match(/[a-zA-Z]/g);
+  if (!matches) return [];
+  return [...new Set(matches)];
+}
+
+function generateInputs() {
+  const expr = formulaInput.value;
+  variables = parseVariables(expr);
+
+  const container = document.getElementById("inputs");
+  container.innerHTML = "";
+
+  variables.forEach(v => {
+    const row = document.createElement("div");
+    row.className = "var-row";
+
+    const label = document.createElement("div");
+    label.className = "var-label";
+    label.innerText = v;
+
+    const input = document.createElement("input");
+    input.type = "number";
+    input.id = "var_" + v;
+    input.placeholder = "-";
+    input.addEventListener("input", calculate);
+
+    row.appendChild(label);
+    row.appendChild(input);
+    container.appendChild(row);
+  });
+}
+
+function calculate() {
+  let expr = formulaInput.value;
+  expr = normalize(expr);
+
+  variables.forEach(v => {
+    const el = document.getElementById("var_" + v);
+    const val = el && el.value !== "" ? el.value : 0;
+    expr = expr.replace(new RegExp(v, "g"), val);
+  });
+
+  try {
+    const result = Function("return " + expr)();
+    const formatted = Number(result).toLocaleString("id-ID");
+
+    document.getElementById("result").innerText = formatted;
+  } catch (e) {
+    document.getElementById("result").innerText = "Error pada rumus";
+  }
+}
+
+function openModal(){
+  document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
+}
+
+generateInputs();
+calculate();
+</script></body>
+</html>

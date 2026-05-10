@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="template.css">
+  <title>Konverter Morse</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+<body data-title="Konverter Morse">
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+    
+    .sidebarr-search input{
+      width: 103.5% !important;
+    }
+
+    body{
+      background: var(--bg);
+      color: var(--text);
+      display:flex;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .container{
+      margin-top: 50px;
+      width:100%;
+      max-width:700px;
+      background: var(--card);
+      border-radius:10px;
+      padding:20px;
+      box-shadow:0 4px 18px rgba(0,0,0,0.4);
+    }
+
+    h1{
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    textarea{
+      width:100%;
+      min-height:80px;
+      resize:none;
+      border:none;
+      outline:none;
+      border-radius:8px;
+      padding:15px;
+      font-size:18px;
+      background: var(--sp);
+      color: var(--text);
+    }
+    
+    #input {
+      text-transform: uppercase;
+    }
+    
+    #input::placeholder {
+      text-transform: none;
+    }
+
+    .middle{
+      display:flex;
+      justify-content:center;
+      margin:15px 0;
+    }
+
+    .swap{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border:none;
+      background:none;
+      color: var(--text);
+      font-size:28px;
+      cursor:pointer;
+      transition: transform 0.3s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .swap:hover {
+      transform: scale(1.1);
+    }
+
+    .label{
+      margin-bottom:4px;
+      font-size:16px;
+      margin-left: 4px;
+      opacity:0.7;
+      font-weight: bold;
+    }
+    
+    #copyBtn{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width:100%;
+      margin-top:12px;
+      padding:14px;
+      border:none;
+      border-radius:8px;
+      background: var(--accent);
+      color:white;
+      font-weight: 600;
+      font-size:16px;
+      cursor:pointer;
+      transition:0.3s;
+    }
+    
+    #copyBtn:active{
+      transform:scale(1.02);
+    }
+    
+      .topbar{
+      display:flex;
+      justify-content:flex-end;
+      margin-right: 2px;
+      margin-bottom: -4px;
+    }
+    
+    #resetBtn{
+      position: absolute;
+      width:18px;
+      height:18px;
+      border:none;
+      border-radius:8px;
+      background:transparent;
+      color:var(--text);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity:.7;
+      transition:.2s;
+      z-index: 6;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+#resetBtn:active{
+  transform:scale(.96);
+}
+  </style>
+
+  <div id="fetch-container"></div>
+
+  <div class="container">
+
+    <!--<h1>Konverter Morse</h1>-->
+    <div class="topbar">
+      <button id="resetBtn">
+        <i data-lucide="rotate-ccw"></i>
+      </button>
+    </div>
+    
+    <div class="label" id="inputLabel">Teks</div>
+    <textarea id="input" placeholder="Masukkan teks..."></textarea>
+
+    <div class="middle">
+      <button class="swap" id="swap">
+        <i data-lucide="arrow-up-down"></i>
+      </button>
+    </div>
+
+    <div class="label" id="outputLabel">Morse</div>
+    <textarea id="output" placeholder="Hasil..." readonly></textarea>
+    <button id="copyBtn">
+    <i data-lucide="copy"></i>
+    <span>Copy Hasil</span>
+    </button>
+
+  </div>
+  <script src="fetch.js"></script>
+  <script>
+    lucide.createIcons();
+    
+    const morseCode = {
+      A: ".-",    B: "-...",  C: "-.-.",
+      D: "-..",   E: ".",     F: "..-.",
+      G: "--.",   H: "....",  I: "..",
+      J: ".---",  K: "-.-",   L: ".-..",
+      M: "--",    N: "-.",    O: "---",
+      P: ".--.",  Q: "--.-",  R: ".-.",
+      S: "...",   T: "-",     U: "..-",
+      V: "...-",  W: ".--",   X: "-..-",
+      Y: "-.--",  Z: "--..",
+
+      0: "-----", 1: ".----", 2: "..---",
+      3: "...--", 4: "....-", 5: ".....",
+      6: "-....", 7: "--...", 8: "---..",
+      9: "----.",
+
+      ".": ".-.-.-",
+      ",": "--..--",
+      "?": "..--..",
+      "!": "-.-.--",
+      "/": "-..-.",
+      "(": "-.--.",
+      ")": "-.--.-",
+      "&": ".-...",
+      ":": "---...",
+      ";": "-.-.-.",
+      "=": "-...-",
+      "+": ".-.-.",
+      "-": "-....-",
+      "_": "..--.-",
+      "\"": ".-..-.",
+      "$": "...-..-",
+      "@": ".--.-.",
+      " ": "/"
+    };
+
+    const reverseMorse = {};
+    for (let key in morseCode) {
+      reverseMorse[morseCode[key]] = key;
+    }
+
+    const input = document.getElementById("input");
+    const output = document.getElementById("output");
+    const swapBtn = document.getElementById("swap");
+    const resetBtn = document.getElementById("resetBtn");
+
+    const inputLabel = document.getElementById("inputLabel");
+    const outputLabel = document.getElementById("outputLabel");
+
+    let mode = "textToMorse";
+
+    function textToMorse(text){
+      return text
+        .toUpperCase()
+        .split("")
+        .map(char => morseCode[char] || "")
+        .join(" ");
+    }
+
+    function morseToText(morse){
+      return morse
+        .split(" ")
+        .map(code => reverseMorse[code] || "")
+        .join("");
+    }
+
+    function convert(){
+      if(mode === "textToMorse"){
+        output.value = textToMorse(input.value);
+      } else {
+        output.value = morseToText(input.value);
+      }
+    }
+
+    input.addEventListener("input", () => {
+
+      if(mode === "textToMorse"){
+    
+        // Hanya izinkan karakter yang ada di morseCode
+        input.value = input.value
+          .split("")
+          .filter(char => {
+            return morseCode[char.toUpperCase()] !== undefined;
+          })
+          .join("");
+    
+      } else {
+    
+        // Hanya izinkan . - / dan spasi
+        input.value = input.value.replace(/[^.\-\/ ]/g, "");
+    
+      }
+    
+      convert();
+    
+    });
+
+    swapBtn.addEventListener("click", () => {
+
+      const temp = input.value;
+    
+      input.value = output.value;
+      output.value = temp;
+    
+      if(mode === "textToMorse"){
+    
+        mode = "morseToText";
+    
+        inputLabel.textContent = "Morse";
+        outputLabel.textContent = "Teks";
+    
+        input.placeholder = "Masukkan kode morse...";
+    
+      } else {
+    
+        mode = "textToMorse";
+    
+        inputLabel.textContent = "Teks";
+        outputLabel.textContent = "Morse";
+    
+        input.placeholder = "Masukkan teks...";
+      }
+    
+      convert();
+    
+    });
+    
+    const copyBtn = document.getElementById("copyBtn");
+
+    copyBtn.addEventListener("click", () => {
+    
+      navigator.clipboard.writeText(output.value);
+    
+    });
+    
+    resetBtn.addEventListener("click", () => {
+
+      input.value = "";
+      output.value = "";
+  
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="template.css">
+  <title>Roman Number Translator</title>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body data-title="Roman Number Translator">
+
+<style>
+  *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+  }
+
+  .sidebarr-search input{
+    width:103.5% !important;
+  }
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+    justify-content:center;
+    padding:20px;
+  }
+
+  .container{
+    margin-top:50px;
+    width:100%;
+    max-width:700px;
+    background:var(--card);
+    border-radius:10px;
+    padding:20px;
+    box-shadow:0 4px 18px rgba(0,0,0,0.4);
+  }
+
+  .label{
+    margin-bottom:4px;
+    margin-left:4px;
+    font-size:16px;
+    font-weight:bold;
+    opacity:.7;
+  }
+
+  .inp {
+    width:100%;
+    height:60px;
+    border:none;
+    outline:none;
+    border-radius:8px;
+    padding:0 15px;
+    font-size:22px;
+    background:var(--sp);
+    color:var(--text);
+  }
+
+  .middle{
+    display:flex;
+    justify-content:center;
+    margin:15px 0;
+  }
+
+  .swap{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border:none;
+    background:none;
+    color:var(--text);
+    font-size:28px;
+    opacity:.7;
+    cursor:pointer;
+    transition:transform .3s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  .swap:active{
+    transform:scale(1.1);
+  }
+
+  #copyBtn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    width:100%;
+    margin-top:12px;
+    padding:14px;
+    border:none;
+    border-radius:8px;
+    background:var(--accent);
+    color:white;
+    font-weight:600;
+    font-size:16px;
+    cursor:pointer;
+    transition:.3s;
+  }
+
+  #copyBtn:active{
+    transform:scale(1.02);
+  }
+  
+  .topbar{
+    display:flex;
+    justify-content:flex-end;
+    margin-right: 2px;
+    margin-bottom: -4px;
+  }
+  
+  #resetBtn{
+    position: absolute;
+    width:18px;
+    height:18px;
+    border:none;
+    border-radius:8px;
+    background:transparent;
+    color:var(--text);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:.7;
+    transition:.2s;
+    z-index: 6;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+#resetBtn:active{
+  transform:scale(.96);
+}
+
+  #error{
+    min-height:20px;
+    margin-top:8px;
+    margin-left:4px;
+    font-size:14px;
+    color:#ff5b5b;
+  }
+</style>
+
+<div id="fetch-container"></div>
+
+<div class="container">
+  
+  <div class="topbar">
+    <button id="resetBtn">
+      <i data-lucide="rotate-ccw"></i>
+    </button>
+  </div>
+  
+  <div class="label" id="inputLabel">Angka</div>
+
+  <input
+    type="number"
+    class="inp"
+    id="input"
+    placeholder="Masukkan angka..."
+  >
+
+  <div class="middle">
+    <button class="swap" id="swap">
+      <i data-lucide="arrow-up-down"></i>
+    </button>
+  </div>
+
+  <div class="label" id="outputLabel">Romawi</div>
+
+  <input
+    type="text"
+    class="inp"
+    id="output"
+    placeholder="Hasil..."
+    readonly
+  >
+
+  <div id="error" hidden></div>
+
+  <button id="copyBtn">
+    <i data-lucide="copy"></i>
+    <span>Copy Hasil</span>
+  </button>
+
+</div>
+
+<script src="fetch.js"></script>
+
+<script>
+  lucide.createIcons();
+
+  const input = document.getElementById("input");
+  const output = document.getElementById("output");
+
+  const swapBtn = document.getElementById("swap");
+
+  const inputLabel = document.getElementById("inputLabel");
+  const outputLabel = document.getElementById("outputLabel");
+
+  const copyBtn = document.getElementById("copyBtn");
+  
+  const resetBtn = document.getElementById("resetBtn");
+
+  const error = document.getElementById("error");
+
+  let mode = "numberToRoman";
+
+  const romanMap = [
+    [1000,"M"],
+    [900,"CM"],
+    [500,"D"],
+    [400,"CD"],
+    [100,"C"],
+    [90,"XC"],
+    [50,"L"],
+    [40,"XL"],
+    [10,"X"],
+    [9,"IX"],
+    [5,"V"],
+    [4,"IV"],
+    [1,"I"]
+  ];
+
+  function toRoman(num){
+
+    num = Number(num);
+
+    if(isNaN(num) || num <= 0){
+      return "";
+    }
+
+    if(num > 3999){
+      return "Terlalu besar";
+    }
+
+    let result = "";
+
+    for(let i = 0; i < romanMap.length; i++){
+
+      const value = romanMap[i][0];
+      const symbol = romanMap[i][1];
+
+      while(num >= value){
+
+        result += symbol;
+        num -= value;
+
+      }
+
+    }
+
+    return result;
+  }
+
+  function isValidRoman(str){
+
+    const pattern =
+    /^C{0,3}(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/;
+
+    return pattern.test(str);
+
+  }
+
+  function fromRoman(str){
+
+    str = str.toUpperCase();
+
+    if(!isValidRoman(str)){
+      return null;
+    }
+
+    const values = {
+      I:1,
+      V:5,
+      X:10,
+      L:50,
+      C:100,
+      D:500,
+      M:1000
+    };
+
+    let total = 0;
+
+    for(let i = 0; i < str.length; i++){
+
+      const current = values[str[i]];
+      const next = values[str[i + 1]];
+
+      if(current < next){
+
+        total -= current;
+
+      } else {
+
+        total += current;
+
+      }
+
+    }
+
+    return total;
+  }
+
+  function convert(){
+
+    error.textContent = "";
+
+    if(mode === "numberToRoman"){
+
+      output.value = toRoman(input.value);
+
+    } else {
+
+      const result = fromRoman(input.value);
+
+      if(result === null){
+
+        output.value = "Romawi tidak valid";
+
+      } else {
+
+        output.value = result;
+
+      }
+
+    }
+
+  }
+
+  input.addEventListener("input", () => {
+
+    if(mode === "romanToNumber"){
+
+      input.value = input.value
+        .toUpperCase()
+        .replace(/[^IVXLCDM]/g,"");
+
+    }
+
+    convert();
+
+  });
+
+  swapBtn.addEventListener("click", () => {
+
+    const temp = input.value;
+  
+    input.value =
+      temp === "" ? "" : output.value;
+  
+    output.value =
+      temp === "" ? "" : temp;
+  
+    if(mode === "numberToRoman"){
+  
+      mode = "romanToNumber";
+  
+      input.type = "text";
+  
+      inputLabel.textContent = "Romawi";
+      outputLabel.textContent = "Angka";
+  
+      input.placeholder =
+      "Masukkan angka romawi...";
+  
+    } else {
+  
+      mode = "numberToRoman";
+  
+      input.type = "number";
+  
+      inputLabel.textContent = "Angka";
+      outputLabel.textContent = "Romawi";
+  
+      input.placeholder =
+      "Masukkan angka...";
+  
+    }
+  
+    convert();
+  
+  });
+
+  copyBtn.addEventListener("click", () => {
+
+    navigator.clipboard.writeText(output.value);
+
+  });
+  
+  resetBtn.addEventListener("click", () => {
+
+    input.value = "";
+    output.value = "";
+
+  });
+</script>
+
+</body>
+</html>

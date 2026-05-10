@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="template.css">
+  <title>Currency Converter</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+<style>
+body {
+  font-family: Arial;
+  background: var(--bg);
+  color: white;
+  padding: 20px;
+}
+
+.container {
+  max-width: 420px;
+  margin: auto;
+}
+
+.input-box {
+  background: var(--card);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  font-size: 18px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  outline: none;
+}
+
+.dropdown {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.selected {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: var(--sp);
+  color: var(--text);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.options {
+  position: absolute;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  color: var(--text);
+  background: var(--sp);
+  border-radius: 8px;
+  display: none;
+  z-index: 10;
+  margin-top: 10px;
+}
+
+.option {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.option:hover {
+  background: var(--accent);
+}
+
+.swap {
+  text-align: center;
+  cursor: pointer;
+  margin: 10px 0;
+  font-size: 20px;
+  -webkit-tap-highlight-color: transparent;
+  color: var(--text);
+}
+</style>
+
+<body data-title="Nilai Tukar">
+  
+<div id="fetch-container"></div>
+<br>
+<br>
+
+<div class="container">
+
+  <div class="input-box">
+    <div class="dropdown" id="fromDropdown">
+      <div class="selected">Loading...</div>
+      <div class="options"></div>
+    </div>
+    <input type="number" id="amount" placeholder="Masukkan nilai">
+  </div>
+
+  <div class="swap" onclick="swap()"><i data-lucide="arrow-up-down"></i></div>
+
+  <div class="input-box">
+    <div class="dropdown" id="toDropdown">
+      <div class="selected">Loading...</div>
+      <div class="options"></div>
+    </div>
+    <input type="text" id="result" placeholder="0" readonly>
+  </div>
+
+</div>
+
+<script src="fetch.js"></script>
+<script src="template.js"></script>
+<script>
+let rates = {};
+let currencies = [];
+
+/* =========================
+   🔥 MANUAL MAPPING NAMA
+========================= */
+const currencyNames = {
+  USD: "Dolar Amerika Serikat",
+  IDR: "Rupiah Indonesia",
+  MYR: "Ringgit Malaysia",
+  EUR: "Euro",
+  JPY: "Yen Jepang",
+  GBP: "Pound Inggris",
+  AUD: "Dolar Australia",
+  SGD: "Dolar Singapura",
+  CNY: "Yuan Tiongkok",
+  KRW: "Won Korea Selatan",
+  THB: "Baht Thailand",
+  INR: "Rupee India",
+  SAR: "Riyal Arab Saudi",
+  AED: "Dirham Uni Emirat Arab",
+  CAD: "Dolar Kanada",
+  CHF: "Franc Swiss",
+  NZD: "Dolar Selandia Baru",
+  HKD: "Dolar Hong Kong",
+  SEK: "Krona Swedia",
+  NOK: "Krone Norwegia",
+  DKK: "Krone Denmark",
+  RUB: "Rubel Rusia",
+  TRY: "Lira Turki",
+  BRL: "Real Brasil",
+  ZAR: "Rand Afrika Selatan",
+  ALL: "Lek Albania",
+  AMD: "Dram Armenia",
+  ANG: "Guilder Antillen Belanda",
+  AFN: "Afghani Afganistan",
+  AOA: "Kwanza Angola",
+  ARS: "Peso Argentina",
+  AWG: "Florin Aruba",
+  AZN: "Manat Azerbaijan",
+  BAM: "Mark Konvertibel Bosnia-Herzegovina",
+  BBD: "Dolar Barbados",
+  BDT: "Taka Bangladesh",
+  BGN: "Lev Bulgaria",
+  BHD: "Dinar Bahrain",
+  BIF: "Franc Burundi",
+  BMD: "Dolar Bermuda",
+  BND: "Dolar Brunei",
+  BOB: "Boliviano Bolivia",
+  BSD: "Dolar Bahama",
+  BTN: "Ngultrum Bhutan",
+  BWP: "Pula Botswana",
+  BYN: "Rubel Belarus",
+  BZD: "Dolar Belize",
+  CDF: "Franc Kongo",
+  CLF: "Unidad de Fomento (Chili)",
+  CLP: "Peso Chili",
+  CNH: "Yuan Tiongkok (Offshore)",
+  COP: "Peso Kolombia",
+  CRC: "Colón Kosta Rika",
+  CUP: "Peso Kuba",
+  CVE: "Escudo Tanjung Verde",
+  CZK: "Koruna Ceko",
+  DJF: "Franc Jibuti",
+  DOP: "Peso Republik Dominika",
+  DZD: "Dinar Aljazair",
+  EGP: "Pound Mesir",
+  ERN: "Nakfa Eritrea",
+  ETB: "Birr Ethiopia",
+  FJD: "Dolar Fiji",
+  FKP: "Pound Kepulauan Falkland",
+  FOK: "Krone Kepulauan Faroe",
+  GEL: "Lari Georgia",
+  GGP: "Pound Guernsey",
+  GHS: "Cedi Ghana",
+  GIP: "Pound Gibraltar",
+  GMD: "Dalasi Gambia",
+  GNF: "Franc Guinea",
+  GTQ: "Quetzal Guatemala",
+  GYD: "Dolar Guyana",
+  HNL: "Lempira Honduras",
+  HRK: "Kuna Kroasia",
+  HTG: "Gourde Haiti",
+  HUF: "Forint Hungaria",
+  ILS: "Shekel Baru Israel",
+  IMP: "Pound Isle of Man",
+  IQD: "Dinar Irak",
+  IRR: "Rial Iran",
+  ISK: "Krona Islandia",
+  JEP: "Pound Jersey",
+  JMD: "Dolar Jamaika",
+  JOD: "Dinar Yordania",
+  KES: "Shilling Kenya",
+  KGS: "Som Kirgizstan",
+  KHR: "Riel Kamboja",
+  KID: "Dolar Kiribati",
+  KMF: "Franc Komoro",
+  LKR: "Rupee Sri Lanka",
+  LRD: "Dolar Liberia",
+  LSL: "Loti Lesotho",
+  LYD: "Dinar Libya",
+  MAD: "Dirham Maroko",
+  KWD: "Dinar Kuwait",
+  KYD: "Dolar Kepulauan Cayman",
+  KZT: "Tenge Kazakhstan",
+  LAK: "Kip Laos",
+  LBP: "Pound Lebanon",
+  MDL: "Leu Moldova",
+  MGA: "Ariary Madagaskar",
+  MKD: "Denar Makedonia Utara",
+  MMK: "Kyat Myanmar",
+  MOP: "Pataca Makau",
+  MRU: "Ouguiya Mauritania",
+  MUR: "Rupee Mauritius",
+  MVR: "Rufiyaa Maladewa",
+  MWK: "Kwacha Malawi",
+  MXN: "Peso Meksiko",
+  MZN: "Metical Mozambik",
+  NAD: "Dolar Namibia",
+  MNT: "Tugrik Mongolia",
+  NGN: "Naira Nigeria",
+  NIO: "Córdoba Nikaragua",
+  NPR: "Rupee Nepal",
+  OMR: "Rial Oman",
+  PAB: "Balboa Panama",
+  PEN: "Sol Peru",
+  PGK: "Kina Papua Nugini",
+  PHP: "Peso Filipina",
+  PKR: "Rupee Pakistan",
+  PLN: "Złoty Polandia",
+  PYG: "Guaraní Paraguay",
+  QAR: "Rial Qatar",
+
+  RON: "Leu Rumania",
+  RSD: "Dinar Serbia",
+  RWF: "Franc Rwanda",
+
+  SBD: "Dolar Kepulauan Solomon",
+  SCR: "Rupee Seychelles",
+  SDG: "Pound Sudan",
+  SHP: "Pound Saint Helena",
+  SLE: "Leone Sierra Leone",
+  SLL: "Leone Sierra Leone Lama",
+  SOS: "Shilling Somalia",
+  SRD: "Dolar Suriname",
+  SSP: "Pound Sudan Selatan",
+  STN: "Dobra São Tomé dan Príncipe",
+  SYP: "Pound Suriah",
+  SZL: "Lilangeni Eswatini",
+  TJS: "Somoni Tajikistan",
+  TMT: "Manat Turkmenistan",
+  TND: "Dinar Tunisia",
+  TOP: "Paʻanga Tonga",
+  TTD: "Dolar Trinidad dan Tobago",
+  TVD: "Dolar Tuvalu",
+  TWD: "Dolar Baru Taiwan",
+  TZS: "Shilling Tanzania",
+
+  UAH: "Hryvnia Ukraina",
+  UGX: "Shilling Uganda",
+  UYU: "Peso Uruguay",
+  UZS: "Som Uzbekistan",
+
+  VES: "Bolívar Venezuela",
+  VND: "Dong Vietnam",
+  VUV: "Vatu Vanuatu",
+
+  WST: "Tālā Samoa",
+
+  XAF: "Franc CFA Afrika Tengah",
+  XCD: "Dolar Karibia Timur",
+  XCG: "Guilder Karibia",
+  XDR: "Hak Penarikan Khusus IMF",
+  XOF: "Franc CFA Afrika Barat",
+  XPF: "Franc CFP",
+
+  YER: "Rial Yaman",
+
+  ZMW: "Kwacha Zambia",
+  ZWG: "ZiG Zimbabwe",
+  ZWL: "Dolar Zimbabwe"
+};
+
+/* =========================
+   🌍 FLAG
+========================= */
+const currencyToCountry = {
+  USD:"US",
+  IDR:"ID",
+  MYR:"MY",
+  EUR:"EU",
+  JPY:"JP",
+  GBP:"GB",
+  AUD:"AU",
+  SGD:"SG",
+  CNY:"CN",
+  KRW:"KR",
+  THB:"TH",
+  INR:"IN",
+  SAR:"SA",
+  AED:"AE",
+  CAD:"CA",
+  CHF:"CH",
+  NZD:"NZ",
+  HKD:"HK",
+  SEK:"SE",
+  NOK:"NO",
+  DKK:"DK",
+  RUB:"RU",
+  TRY:"TR",
+  BRL:"BR",
+  ZAR:"ZA",
+  ALL:"AL",
+  AMD:"AM",
+  ANG:"AN",
+  AFN:"AF",
+  AOA: "AO",
+  ARS: "AR",
+  AWG: "AW",
+  AZN: "AZ",
+  BAM: "BA", // Bosnia
+  BBD: "BB", // Barbados
+  BDT: "BD", // Bangladesh
+  BGN: "BG", // Bulgaria
+  BHD: "BH", // Bahrain
+  BIF: "BI", // Burundi
+  BMD: "BM", // Bermuda
+  BND: "BN", // Brunei
+  BOB: "BO", // Bolivia
+  BSD: "BS", // Bahama
+  BTN: "BT", // Bhutan
+  BWP: "BW", // Botswana
+  BYN: "BY", // Belarus
+  BZD: "BZ", // Belize
+  CDF: "CD", // Kongo
+  CLF: "CL", // Chili
+  CLP: "CL", // Chili
+  CNH: "CN", // China
+  COP: "CO", // Kolombia
+  CRC: "CR", // Kosta Rika
+  CUP: "CU", // Kuba
+  CVE: "CV", // Cape Verde
+  CZK: "CZ",  // Ceko
+  DJF: "DJ", // Jibuti
+  DOP: "DO", // Republik Dominika
+  DZD: "DZ", // Aljazair
+  EGP: "EG", // Mesir
+  ERN: "ER", // Eritrea
+  ETB: "ET",  // Ethiopia
+  FJD: "FJ", // Fiji
+  FKP: "FK", // Falkland
+  FOK: "FO", // Faroe Islands
+  GEL: "GE", // Georgia
+  GGP: "GG", // Guernsey
+  GHS: "GH", // Ghana
+  GIP: "GI", // Gibraltar
+  GMD: "GM", // Gambia
+  GNF: "GN", // Guinea
+  GTQ: "GT", // Guatemala
+  GYD: "GY", // Guyana
+  HNL: "HN", // Honduras
+  HRK: "HR", // Kroasia
+  HTG: "HT", // Haiti
+  HUF: "HU", // Hungaria
+  ILS: "IL", // Israel
+  IMP: "IM", // Isle of Man
+  IQD: "IQ", // Irak
+  IRR: "IR", // Iran
+  ISK: "IS", // Islandia
+  JEP: "JE", // Jersey
+  JMD: "JM", // Jamaika
+  JOD: "JO", // Yordania
+  KES: "KE", // Kenya
+  KGS: "KG", // Kirgizstan
+  KHR: "KH", // Kamboja
+  KID: "KI", // Kiribati
+  KMF: "KM",  // Komoro
+  LKR: "LK", // Sri Lanka
+  LRD: "LR", // Liberia
+  LSL: "LS", // Lesotho
+  LYD: "LY", // Libya
+  MAD: "MA",  // Maroko
+  KWD: "KW", // Kuwait
+  KYD: "KY", // Cayman Islands
+  KZT: "KZ", // Kazakhstan
+  LAK: "LA", // Laos
+  LBP: "LB",  // Lebanon
+  MDL: "MD", // Moldova
+  MGA: "MG", // Madagaskar
+  MKD: "MK", // Makedonia Utara
+  MMK: "MM", // Myanmar
+  MOP: "MO", // Makau
+  MRU: "MR", // Mauritania
+  MUR: "MU", // Mauritius
+  MVR: "MV", // Maladewa
+  MWK: "MW", // Malawi
+  MXN: "MX", // Meksiko
+  MZN: "MZ", // Mozambik
+  NAD: "NA",  // Namibia
+  MNT: "MN", // Mongolia
+  NGN: "NG", // Nigeria
+  NIO: "NI", // Nikaragua
+  NPR: "NP", // Nepal
+  OMR: "OM", // Oman
+  PAB: "PA", // Panama
+  PEN: "PE",  // Peru
+  PGK: "PG", // Papua Nugini
+  PHP: "PH", // Filipina
+  PKR: "PK", // Pakistan
+  PLN: "PL", // Polandia
+  PYG: "PY", // Paraguay
+  QAR: "QA", // Qatar
+  RON: "RO", // Rumania
+  RSD: "RS", // Serbia
+  RWF: "RW", // Rwanda
+  SBD: "SB", // Solomon
+  SCR: "SC", // Seychelles
+  SDG: "SD", // Sudan
+  SHP: "SH", // Saint Helena
+  SLE: "SL", // Sierra Leone
+  SLL: "SL", // Sierra Leone lama
+  SOS: "SO", // Somalia
+  SRD: "SR", // Suriname
+  SSP: "SS", // Sudan Selatan
+  STN: "ST", // São Tomé
+  SYP: "SY", // Suriah
+  SZL: "SZ",  // Eswatini
+  TJS: "TJ", // Tajikistan
+  TMT: "TM", // Turkmenistan
+  TND: "TN", // Tunisia
+  TOP: "TO", // Tonga
+  TTD: "TT", // Trinidad Tobago
+  TVD: "TV", // Tuvalu
+  TWD: "TW", // Taiwan
+  TZS: "TZ", // Tanzania
+
+  UAH: "UA", // Ukraina
+  UGX: "UG", // Uganda
+  UYU: "UY", // Uruguay
+  UZS: "UZ", // Uzbekistan
+
+  VES: "VE", // Venezuela
+  VND: "VN", // Vietnam
+  VUV: "VU", // Vanuatu
+
+  WST: "WS", // Samoa
+
+  XAF: "CF", // Afrika Tengah
+  XCD: "AG", // Karibia Timur
+  XCG: "CW", // Karibia Belanda
+  XDR: "UN", // IMF / internasional
+  XOF: "SN", // Afrika Barat
+  XPF: "PF", // Polinesia Prancis
+
+  YER: "YE", // Yaman
+
+  ZMW: "ZM", // Zambia
+  ZWG: "ZW", // Zimbabwe
+  ZWL: "ZW"  // Zimbabwe
+};
+
+function getFlag(code) {
+  let country = currencyToCountry[code];
+  if (!country) return "🏳️";
+  return country.replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt()));
+}
+
+/* ========================= */
+
+function getName(code) {
+  return currencyNames[code] || code;
+}
+
+function formatID(num) {
+  return new Intl.NumberFormat("id-ID", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(num);
+}
+
+function parseID(str) {
+  return parseFloat(str.replace(/\./g, "").replace(",", "."));
+}
+
+async function loadRates() {
+  let res = await fetch("https://open.er-api.com/v6/latest/USD");
+  let data = await res.json();
+
+  rates = data.rates;
+
+  currencies = Object.keys(rates).sort((a,b)=>
+    getName(a).localeCompare(getName(b), "id")
+  );
+
+  initDropdown("fromDropdown","USD");
+  initDropdown("toDropdown","IDR");
+}
+
+function initDropdown(id, defaultVal) {
+  let dropdown = document.getElementById(id);
+  let selected = dropdown.querySelector(".selected");
+  let options = dropdown.querySelector(".options");
+
+  options.innerHTML = "";
+
+  currencies.forEach(cur => {
+    let name = getName(cur);
+    let flag = getFlag(cur);
+
+    let div = document.createElement("div");
+    div.className = "option";
+    div.innerHTML = `<span>${flag} ${name}</span><span>${cur}</span>`;
+
+    div.onclick = () => {
+      selected.innerHTML = `<span>${flag} ${name}</span><span>${cur}</span>`;
+      selected.dataset.value = cur;
+      closeAll();
+      convert();
+    };
+
+    options.appendChild(div);
+  });
+
+  selected.innerHTML = `<span>${getFlag(defaultVal)} ${getName(defaultVal)}</span><span>${defaultVal}</span>`;
+  selected.dataset.value = defaultVal;
+
+  selected.onclick = (e) => {
+    e.stopPropagation();
+    let isOpen = options.style.display === "block";
+    closeAll();
+    options.style.display = isOpen ? "none" : "block";
+  };
+}
+
+function closeAll() {
+  document.querySelectorAll(".options").forEach(o=>o.style.display="none");
+}
+
+document.addEventListener("click", (e)=>{
+  if(!e.target.closest(".dropdown")) closeAll();
+});
+
+function convert() {
+  let raw = document.getElementById("amount").value;
+  let amount = parseID(raw);
+
+  let from = document.querySelector("#fromDropdown .selected").dataset.value;
+  let to = document.querySelector("#toDropdown .selected").dataset.value;
+
+  if (!amount) return;
+
+  let usd = amount / rates[from];
+  let result = usd * rates[to];
+
+  document.getElementById("result").value = formatID(result);
+}
+
+document.getElementById("amount").addEventListener("input", function(e){
+  let val = e.target.value.replace(/[^0-9,]/g,"");
+  let parts = val.split(",");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,".");
+  e.target.value = parts.join(",");
+  convert();
+});
+
+function swap() {
+  let from = document.querySelector("#fromDropdown .selected");
+  let to = document.querySelector("#toDropdown .selected");
+
+  let tempHTML = from.innerHTML;
+  let tempVal = from.dataset.value;
+
+  from.innerHTML = to.innerHTML;
+  from.dataset.value = to.dataset.value;
+
+  to.innerHTML = tempHTML;
+  to.dataset.value = tempVal;
+
+  convert();
+}
+
+loadRates();
+</script>
+
+</body>
+</html>

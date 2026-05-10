@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="teal" id="themeColor">
+  <title>Qris-Tian Web</title>
+  <link rel="stylesheet" href="template.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+<style>
+/* === DOCK DARK MODE ONLY === */
+
+.dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #1c1c1c;
+  border-top: 2.5px solid rgba(255,255,255,0.4);
+  padding: 4px 0;
+}
+
+.dock a {
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 6px 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+}
+
+.icon-box svg {
+  width: 26px;
+  height: 26px;
+  stroke: white;
+  transition: 0.2s;
+}
+
+.dock a.active .icon-box {
+  background: #008080;
+}
+
+.dock a.active .icon-box svg {
+  stroke: black;
+}
+
+/* Tambahan agar konten tidak tertutup dock */
+body {
+  padding-bottom: 70px;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="menu-btn" id="menuBtn">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <h2 id="pageTitle">Loading...</h2>
+  
+  <!--<div class="live-clock" id="liveClock"></div>-->
+  <button class="btn24" id="toggle">️
+    <i id="icon" data-lucide="sun"></i>
+  </button>
+</div>
+
+<!-- DOCK -->
+<!--<div class="dock">
+  <a href="jadwal.html">
+    <div class="icon-box"><i data-lucide="calendar"></i></div>
+  </a>
+
+  <a href="cooming-soon.html">
+    <div class="icon-box"><i data-lucide="alarm-clock"></i></div>
+  </a>
+
+  <a href="index.html">
+    <div class="icon-box"><i data-lucide="layout-dashboard"></i></div>
+  </a>
+
+  <a href="tugas.html">
+    <div class="icon-box"><i data-lucide="clipboard-list"></i></div>
+  </a>
+
+  <a href="cooming-soon.html">
+    <div class="icon-box"><i data-lucide="book-open-text"></i></div>
+  </a>
+</div>-->
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+
+  <!--<div class="sidebar-header">
+    <img src="logo.png" class="sidebar-logo">
+    <h2>Qris-Tian</h2>
+  </div>-->
+  <label>Sidebar Menu</label>
+
+  <!-- SEARCH BAR -->
+  <!--<div class="sidebar-search">
+    <input type="text" id="sidebarSearch" placeholder="Cari menu...">
+  </div>-->
+  
+  <div class="sidebarr-search">
+    <div class="search-barr">
+      <img src="text-search.png" class="search-icon">
+      <input type="text" id="sidebarrSearch" placeholder="Cari menu...">
+    </div>
+  </div>
+
+  <nav class="sidebar-menu">
+    <a href="index.html" class="active">
+      <i data-lucide="layout-dashboard" class="icons"></i>
+      <span>Dashboard</span>
+    </a>
+
+    <a href="jadwal.html">
+      <i data-lucide="calendar" class="icons"></i>
+      <span>Jadwal</span>
+    </a>
+
+    <a href="mata-uang.html">
+      <i data-lucide="circle-dollar-sign" class="icons"></i>
+      <span>Mata Uang</span>
+    </a>
+    
+    <a href="qr-code.html">
+      <i data-lucide="qr-code" class="icons"></i>
+      <span>QR Code</span>
+    </a>
+    
+    <a href="morse.html">
+      <i data-lucide="chart-no-axes-gantt" class="icons"></i>
+      <span>Morse</span>
+    </a>
+    
+    <a href="rumus.html">
+      <i data-lucide="function-square" class="icons"></i>
+      <span>Kalkulator Rumus</span>
+    </a>
+    
+    <a href="romawi.html">
+      <i data-lucide="landmark" class="icons"></i>
+      <span>Romawi</span>
+    </a>
+    
+    <a href="subnet.html">
+      <i data-lucide="server" class="icons"></i>
+      <span>Subnetting</span>
+    </a>
+
+  </nav>
+
+  <!--<div class="sidebar-footer">
+    <p>© 2026 Qris-Tian</p>
+  </div>-->
+</div>
+
+<script>
+  lucide.createIcons();
+  
+  const current = location.pathname.split("/").pop();
+  document.querySelectorAll(".dock a").forEach(btn => {
+    if (btn.getAttribute("href") === current) {
+      btn.classList.add("active");
+    }
+  });
+</script>
+<script>
+  lucide.createIcons();
+
+  const btn24 = document.getElementById("toggle");
+  let isOn = true;
+
+  btn24.addEventListener("click", () => {
+    isOn = !isOn;
+
+    // Ganti icon
+    btn.innerHTML = `<i data-lucide="${isOn ? 'sun' : 'moon'}"></i>`;
+
+    // Render ulang icon lucide
+    lucide.createIcons();
+  });
+</script>
+<script>
+const btn = document.getElementById("toggle");
+const icon = document.getElementById("icon");
+
+// Update UI (theme + icon)
+function updateUI() {
+  const isDark = document.body.classList.contains("dark");
+
+  // HAPUS ICON LAMA (WAJIB)
+  icon.innerHTML = "";
+
+  if (isDark) {
+    icon.setAttribute("data-lucide", "moon");
+    localStorage.setItem("theme", "dark");
+  } else {
+    icon.setAttribute("data-lucide", "sun");
+    localStorage.setItem("theme", "light");
+  }
+
+  // Render ulang icon (sekali)
+  lucide.createIcons();
+}
+
+// Load awal dari localStorage
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+}
+
+// Set tampilan awal
+updateUI();
+
+// Event toggle
+btn.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  updateUI();
+});
+  
+const searchInput = document.getElementById("sidebarrSearch");
+const menuBoxes = document.querySelectorAll(".sidebar-menu a");
+
+searchInput.addEventListener("keyup", function() {
+  const filter = this.value.toLowerCase();
+
+  menuBoxes.forEach(box => {
+    const label = box.querySelector("span").innerText.toLowerCase();
+    box.style.display = label.includes(filter) ? "flex" : "none";
+  });
+});
+</script>
+<script src="template.js"></script>
+</body>
+</html>

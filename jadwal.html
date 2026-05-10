@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="teal" id="themeColor">
+<title>Jadwal Pelajaran</title>
+<link rel="stylesheet" href="template.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+
+
+body{
+  font-family:Arial,sans-serif;
+  background: var(--bg);
+  padding:12px
+}
+
+h1{
+  color: mediumseagreen;
+  font-family: minecraft;
+  text-align: center;
+  font-size: 3em;
+  margin-bottom: 20px;
+  margin-top: 40px;
+  text-shadow: 0 1px 0 rgba(255,255,255,.4),0 5px 0 seagreen;
+  letter-spacing: 2px;
+}
+
+.card{
+  max-width:720px;
+  margin:0 auto 16px;
+  color: var(--text);
+  background: var(--card);
+  padding:16px;
+  border-radius:14px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.3)
+}
+
+.sub,.sub2{font-size:.8em;color:#888}
+
+.day-item.spesial {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.now{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  font-weight:bold;
+  border:3px solid var(--accent);
+  padding:14px;
+  border-radius:10px
+}
+
+.now-content{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  width:100%;
+}
+
+.now-left{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.now-time{
+  font-size:0.9em;
+  color:#999;
+  white-space:nowrap;
+}
+
+.row{padding:8px 0}
+.row+.row{border-top:1px solid #ccc}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+  padding: 8px;
+}
+
+.left{display:flex;gap:8px;align-items:center}
+.time{color:#999;font-size:.85em}
+
+/*.active{
+  background:rgba(0,0,0,0.1);
+  padding: 8px;
+  border-radius:8px
+  border-top: none;
+}*/
+
+.spesial{
+  background: var(--sp);
+  padding:8px;
+  border-radius:8px
+}
+
+.day-item.spesial + .day-item.spesial {margin-top: 4px;border-top: none;}
+.row.spesial + .row.spesial {margin-top: 5px;border-top: none;}
+
+.libur{
+  color:#d9534f;
+  font-weight:bold;
+  text-align:center;
+  font-size:1.1em
+}
+
+.tgl-b {
+  display: flex;
+  justify-content: center;
+}
+
+.toggle-btn {
+  width:100%;
+  max-width:750px;
+  padding:12px;
+  background: var(--accent);
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  font-size: 18px;
+  font-weight:bold;
+  box-shadow: 0 1px 0 rgba(255,255,255,.4),0 5px 0 var(--daccent);
+  margin-bottom:22px
+}
+
+.toggle-btn:active {
+  box-shadow: 0 1px 0 rgba(255,255,255,.4),0 2px 0 var(--daccent);
+  transform: translateY(3px);
+}
+
+.full{display:none}
+
+.day-box {
+  border:2px solid var(--border);
+  border-radius:10px;
+  padding:10px;
+  margin-bottom:12px
+}
+
+.judul-j {
+  font-weight: bold;
+  color: var(--accent);
+  font-size:1.1em;
+}
+
+.judul-h{
+  font-size:1.2em;
+  margin-bottom: 6px;
+}
+
+/* Judul hari di Jadwal Full rata tengah */
+.day-box > span{
+  display:block;
+  text-align:center;
+}
+
+.day-box:nth-child(7) {
+  margin-top: 40px;
+}
+
+.day-item{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 12px;
+  border-top:2px solid var(--border);
+}
+.day-item:first-child{border-top:none}
+</style>
+<!--<style>
+.card {
+  box-shadow:0 2px 12px rgba(0,0,0,0.3)
+}
+
+body {
+  background: #1f1f1f !important;
+  color: white;
+}
+
+h1 {
+  color: teal;
+  text-shadow: 0 1px 0 rgba(255,255,255,.4), 0 1px 0 teal,0 5px 0 #005050;
+}
+
+.now {
+  border:3px solid teal;
+}
+
+.toggle-btn {
+  background: teal;
+  box-shadow: 0 1px 0 rgba(255,255,255,.4),0 5px 0 #005050;
+}
+
+.toggle-btn:active {
+  box-shadow: 0 1px 0 rgba(255,255,255,.4),0 2px 0 #005050;
+}
+
+.judul-j {
+  color: teal;
+}
+
+.card {
+  background: #2b2b2b;
+}
+
+.spesial {
+  background: #444;
+  border-top: none !important;
+}
+
+/*.active {
+  background: rgba(255,255,255,0.1);
+}*/
+
+.row+.row {
+  border-top:2px solid #444;
+}
+
+.day-item {
+  border-top:2px solid #444;
+}
+
+.day-box {
+  border: 2px solid #444;
+}
+
+.day-item.spesial + .day-item.spesial {margin-top: 4px;border-top: none;}
+.row.spesial + .row.spesial {margin-top: 5px;border-top: none;}
+.time {
+  color:#ccc;
+}
+</style>-->
+<style>
+  /* =========================
+   LABEL TUGAS
+========================= */
+
+.label-tugas{
+  display:inline-block;
+  background:#e53935;
+  color:white;
+  padding:2px 6px;
+  margin-left:6px;
+  border-radius:6px;
+  font-size:10px;
+  font-weight:bold;
+  cursor:pointer;
+  user-select:none;
+  transition:all .2s ease;
+}
+
+.label-tugas:hover{
+  background:#c62828;
+  transform:scale(1.05);
+}
+
+.label-tugas:active{
+  transform:scale(0.95);
+}
+
+
+/* DARK MODE LABEL */
+
+.label-tugas{
+  background:#ff5252;
+  color:white;
+}
+
+.label-tugas:hover{
+  background:#ff1744;
+}
+
+
+
+/* =========================
+   POPUP BACKGROUND
+========================= */
+
+.popup-bg{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.45);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  animation:popupFadeIn .2s ease;
+}
+
+
+/* =========================
+   POPUP BOX
+========================= */
+
+.popup-box{
+  background:white;
+  padding:20px;
+  border-radius:14px;
+  width:90%;
+  max-width:320px;
+  box-shadow:0 6px 24px rgba(0,0,0,0.3);
+  animation:popupScale .2s ease;
+}
+
+
+/* DARK MODE POPUP BOX */
+
+.popup-box{
+  background:#2b2b2b;
+  color:white;
+  box-shadow:0 6px 24px rgba(0,0,0,0.6);
+}
+
+
+/* =========================
+   POPUP TITLE
+========================= */
+
+.popup-title{
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:8px;
+  color:mediumseagreen;
+}
+
+.popup-title{
+  color:teal;
+}
+
+
+/* =========================
+   POPUP KETERANGAN
+========================= */
+
+.popup-ket{
+  font-size:14px;
+  margin-bottom:10px;
+}
+
+
+/* =========================
+   POPUP TANGGAL
+========================= */
+
+.popup-date{
+  color:#e53935;
+  font-weight:bold;
+  font-size: 14px;
+  margin-bottom:12px;
+  text-align: right;
+}
+
+.popup-date{
+  color:#ff5252;
+}
+
+
+/* =========================
+   POPUP BUTTON
+========================= */
+
+.popup-close{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:mediumseagreen;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+
+.popup-close:hover{
+  background:seagreen;
+}
+
+.popup-close:active{
+  transform:scale(0.97);
+}
+
+
+/* DARK MODE BUTTON */
+
+.popup-close{
+  background:teal;
+}
+
+.popup-close:hover{
+  background:#006666;
+}
+
+
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes popupScale{
+  from{
+    transform:scale(.85);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+@keyframes popupFadeIn{
+  from{
+    opacity:0;
+  }
+  to{
+    opacity:1;
+  }
+}
+</style>
+<!--<style>
+body.dark .card {
+  box-shadow:0 2px 12px rgba(0,0,0,0.3)
+}
+
+body.dark {
+  background: #1f1f1f;
+  color: white;
+}
+
+body.dark h1 {
+  color: teal;
+  text-shadow: 0 1px 0 rgba(255,255,255,.4),0 5px 0 #005050;
+}
+
+body.dark .now {
+  border:3px solid teal;
+}
+
+body.dark .toggle-btn {
+  background: teal;
+  box-shadow: 0 1px 0 rgba(255,255,255,.4),0 5px 0 #005050;
+}
+
+body.dark .toggle-btn:active {
+  box-shadow: 0 1px 0 rgba(255,255,255,.4),0 2px 0 #005050;
+}
+
+body.dark .judul-j {
+  color: teal;
+}
+
+body.dark .card {
+  background: #2b2b2b;
+}
+
+body.dark .spesial {
+  background: #444;
+  border-top: none !important;
+}
+
+/*body.dark .active {
+  background: rgba(255,255,255,0.1);
+}*/
+
+body.dark .row+.row {
+  border-top:2px solid #444;
+}
+
+body.dark .day-item {
+  border-top:2px solid #444;
+}
+
+body.dark .day-box {
+  border: 2px solid #444;
+}
+
+body.dark .day-item.spesial + .day-item.spesial {margin-top: 4px;border-top: none;}
+body.dark .row.spesial + .row.spesial {margin-top: 5px;border-top: none;}
+body.dark .time {
+  color:#ccc;
+}
+</style>-->
+</head>
+
+<body data-title="Jadwal">
+
+<div id="fetch-container"></div>
+
+<!--<div class="card">
+<b>Mode Simulasi</b><br><br>
+Tanggal: <input type="date" id="fakeDate">
+Jam: <input type="time" id="fakeTime"><br><br>
+<button onclick="applyFake()">Aktifkan</button>
+<button onclick="clearFake()">Matikan</button>
+</div>-->
+<br>
+<br>
+<div class="now card" id="nowInfo"></div>
+
+<div class="card">
+  <div id="weekInfo"></div>
+  <div id="dayInfo"></div>
+  <div id="jadwalMapel"></div>
+</div>
+
+<div class="card">
+  <div id="jadwalSpesial"></div>
+</div>
+</div>
+<div class="tgl-b">
+  <button class="toggle-btn" onclick="toggleFull()">Jadwal Full</button>
+</div>
+<div class="card full" id="jadwalGanjil"></div>
+<div class="card full" id="jadwalGenap"></div>
+
+<div id="popupContainer" style="display:none;"></div>
+
+<script src="fetch.js"></script>
+<script>
+/* ===== UTIL ===== */
+const hariNama=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+const toMin = t => {
+  const [a,b] = t.replace(".",":").split(":").map(Number);
+  return a*60 + b;
+};
+
+/* ===== ICON ===== */
+const mapelIcon={
+  "Matematika":"calculator","B.Indo":"pen","B.Inggris":"languages",
+  "Agama":"moon-star","Informatika":"monitor","Dasar TJKT":"server",
+  "PIPAS":"flask-conical","Olahraga":"dumbbell","Sejarah":"scroll",
+  "PPKN":"landmark","B.Jawa":"feather","Koding":"code-xml",
+  "Seni Budaya":"palette","BK":"user"
+};
+const spesialIcon={
+  "Upacara":"flag","Istirahat":"coffee",
+  "Dzuhur":"moon","Sholat Jumat":"star","Ashar":"moon"
+};
+
+/* ===== SIMULASI ===== */
+function getNow(){
+  const d=localStorage.getItem("fakeDate");
+  const t=localStorage.getItem("fakeTime");
+  return (d&&t)?new Date(d+"T"+t):new Date();
+}
+function applyFake(){
+  if(!fakeDate.value||!fakeTime.value) return alert("Isi tanggal & jam");
+  localStorage.setItem("fakeDate",fakeDate.value);
+  localStorage.setItem("fakeTime",fakeTime.value);
+  location.reload();
+}
+function clearFake(){localStorage.clear();location.reload()}
+
+/* ===== JADWAL ===== */
+const jadwalA={
+1:[{jam:"07.45-10.05",mapel:"Seni Budaya"},{jam:"10.30-15.15",mapel:"PIPAS"}],
+2:[{jam:"07.00-10.50",mapel:"PIPAS"},{jam:"10.50-15.15",mapel:"Dasar TJKT"}],
+3:[{jam:"07.00-13.45",mapel:"Dasar TJKT"},{jam:"13.45-15.15",mapel:"BK"}],
+4:[{jam:"07.00-09.55",mapel:"Informatika"},{jam:"10.15-15.15",mapel:"Dasar TJKT"}],
+5:[{jam:"07.15-09.55",mapel:"Koding"},{jam:"10.10-14.05",mapel:"Informatika"}]
+};
+
+const jadwalB={
+1:[{jam:"07.45-09.30",mapel:"Agama"},{jam:"09.30-12.00",mapel:"Matematika"},{jam:"12.55-15.15",mapel:"B.Inggris"}],
+2:[{jam:"07.00-09.15",mapel:"Olahraga"},{jam:"09.16-10.50",mapel:"Sejarah"},{jam:"10.50-12.00",mapel:"PPKN"},{jam:"12.55-15.15",mapel:"B.Indo"}],
+3:[{jam:"07.00-08.35",mapel:"B.Jawa"},{jam:"08.35-11.25",mapel:"B.Indo"},{jam:"11.25-15.15",mapel:"Matematika"}],
+4:[{jam:"07.00-09.15",mapel:"Agama"},{jam:"09.15-11.25",mapel:"Olahraga"},{jam:"11.25-13.45",mapel:"Sejarah"},{jam:"13.45-15.15",mapel:"BK"}],
+5:[{jam:"07.00-08.35",mapel:"PPKN"},{jam:"08.35-11.30",mapel:"B.Inggris"},{jam:"12.45-14.05",mapel:"B.Jawa"}]
+};
+
+const spesial={
+1:[{jam:"07.00-07.45",nama:"Upacara"},{jam:"10.05-10.30",nama:"Istirahat"},{jam:"12.00-12.55",nama:"Dzuhur"},{jam:"15.15-15.30",nama:"Ashar"}],
+2:[{jam:"09.55-10.15",nama:"Istirahat"},{jam:"12.00-12.55",nama:"Dzuhur"},{jam:"15.15-15.30",nama:"Ashar"}],
+3:[{jam:"09.55-10.15",nama:"Istirahat"},{jam:"12.00-13.00",nama:"Dzuhur"},{jam:"15.15-15.30",nama:"Ashar"}],
+4:[{jam:"09.55-10.15",nama:"Istirahat"},{jam:"12.00-13.00",nama:"Dzuhur"},{jam:"15.15-15.30",nama:"Ashar"}],
+5:[{jam:"09.55-10.10",nama:"Istirahat"},{jam:"11.30-12.45",nama:"Sholat Jumat"}]
+};
+
+/* ===== LOGIKA WAKTU FIX ===== */
+const now=getNow();
+const jamNow=now.getHours()*60+now.getMinutes();
+const isBesok = jamNow >= 1020; // 17.00+
+
+const tgl=new Date(now);
+if(isBesok) tgl.setDate(tgl.getDate()+1);
+const hari=tgl.getDay();
+const hariAsli = now.getDay(); // hari sebenarnya (untuk NOW)
+
+const startA=new Date("2026-02-16");
+const isA=Math.floor((tgl-startA)/(1000*60*60*24*7))%2===0;
+const aktif=isA?jadwalA:jadwalB;
+
+weekInfo.innerHTML=`<b>${isA?"Jadwal Ganjil":"Jadwal Genap"}</b>`;
+dayInfo.innerHTML=isBesok?`<div class="sub">Besok (${hariNama[hari]})</div>`:`<b class="sub2">${hariNama[hari]}</b>`;
+
+/* ===== RENDER ===== */
+let nowText=null;
+let nowJam=null;
+let nowIcon="clock";
+jadwalMapel.innerHTML="";
+jadwalSpesial.innerHTML="";
+
+if(hari===0||hari===6){
+  jadwalMapel.innerHTML=`<div class="libur">Libur</div>`;
+}else{
+  (aktif[hari]||[]).forEach(j=>{
+    const[a,b]=j.jam.split("-");
+    const on =
+      hari === hariAsli &&
+      jamNow >= toMin(a) &&
+      jamNow < toMin(b);
+    if(on){
+      nowText = j.mapel;
+      nowJam = j.jam;
+      nowIcon = mapelIcon[j.mapel] || "book";
+    }
+    jadwalMapel.innerHTML+=`
+    <div class="row ${on?"active":""}">
+      <div class="item">
+        <div class="left"><i data-lucide="${mapelIcon[j.mapel]||"book"}"></i><span class="mapel">${j.mapel}</span></div>
+        <span class="time">${j.jam}</span>
+      </div>
+    </div>`;
+  });
+
+  (spesial[hari]||[]).forEach(j=>{
+    const[a,b]=j.jam.split("-");
+    const on =
+      hari === hariAsli &&
+      jamNow >= toMin(a) &&
+      jamNow < toMin(b);
+    if(on){
+      nowText = j.nama;
+      nowJam = j.jam;
+      nowIcon = spesialIcon[j.nama] || "clock";
+    }
+    jadwalSpesial.innerHTML+=`
+    <div class="row spesial ${on?"active":""}">
+      <div class="item">
+        <div class="left">${spesialIcon[j.nama]?`<i data-lucide="${spesialIcon[j.nama]}"></i>`:""}<span class="mapel">${j.nama}</span></div>
+        <span class="time">${j.jam}</span>
+      </div>
+    </div>`;
+  });
+}
+
+nowInfo.innerHTML = nowText
+?`
+<div class="now-content">
+  <div class="now-left">
+    <i data-lucide="${nowIcon}"></i>
+    <span>${nowText}</span>
+  </div>
+  <span class="now-time">${nowJam}</span>
+</div>
+`
+:`<i data-lucide="alarm-clock-off"></i> Tidak ada jadwal`;
+
+
+
+/* ===== FULL ===== */
+function toggleFull(){
+  const show = jadwalGanjil.style.display !== "block";
+  jadwalGanjil.style.display = show ? "block" : "none";
+  jadwalGenap.style.display  = show ? "block" : "none";
+}  
+
+function renderFull(title,data){
+  return `<div class="day-box">
+    <span class="judul-j switchable" onclick="swapJadwal()">${title}</span>
+  </div>`+
+  Object.entries(data).map(([d,v])=>`
+  <div class="day-box"><span class="judul-h">${hariNama[d]}</span>
+
+  ${v.map(m=>`
+    <div class="day-item">
+      <span>• <span class="mapel">${m.mapel}</span></span>
+      <span class="time">${m.jam}</span>
+    </div>
+  `).join("")}
+
+  ${(spesial[d]||[]).map(s=>`
+    <!--<div class="day-item spesial">
+      <span><span class="mapel">${s.nama}</span></span>
+      <span class="time">${s.jam}</span>
+    </div>-->
+  `).join("")}
+
+  </div>`).join("");
+}
+
+/* =========================
+   🔥 AUTO URUT
+========================= */
+function urutkanJadwal(){
+  const parent = jadwalGanjil.parentNode;
+
+  if(isA){
+    parent.insertBefore(jadwalGanjil, jadwalGenap);
+  }else{
+    parent.insertBefore(jadwalGenap, jadwalGanjil);
+  }
+}
+
+/* =========================
+   🔥 SWITCH MANUAL
+========================= */
+function swapJadwal(){
+  const parent = jadwalGanjil.parentNode;
+
+  if(jadwalGanjil.nextElementSibling === jadwalGenap){
+    parent.insertBefore(jadwalGenap, jadwalGanjil);
+  }else{
+    parent.insertBefore(jadwalGanjil, jadwalGenap);
+  }
+}
+
+function tandaiAktif(){
+  if(isA){
+    const el = jadwalGanjil.querySelector(".judul-j");
+    if(el && !el.innerHTML.includes("")){
+      el.innerHTML += " (Aktif)";
+    }
+  }else{
+    const el = jadwalGenap.querySelector(".judul-j");
+    if(el && !el.innerHTML.includes("")){
+      el.innerHTML += "";
+    }
+  }
+}
+
+jadwalGanjil.innerHTML = renderFull("Jadwal Ganjil", jadwalA);
+jadwalGenap.innerHTML  = renderFull("Jadwal Genap", jadwalB);
+
+urutkanJadwal();
+tandaiAktif();
+
+lucide.createIcons();
+
+
+lucide.createIcons();
+</script>
+<script>
+function autoThemeByTime(){
+  const hour = new Date().getHours();
+
+  if(hour >= 18 || hour < 6){
+    document.body.classList.add("dark");
+  }else{
+    document.body.classList.remove("dark");
+  }
+}
+
+autoThemeByTime();
+</script>
+<!--<script>
+function setThemeByTime(){
+  const hour = new Date().getHours();
+  const themeMeta = document.getElementById("themeColor");
+
+  if(hour >= 6 && hour < 18){
+    // LIGHT MODE
+    document.body.classList.remove("dark");
+    themeMeta.setAttribute("content", "mediumseagreen"); // pastel light
+  }else{
+    // DARK MODE
+    document.body.classList.add("dark");
+    themeMeta.setAttribute("content", "teal"); // teal gelap
+  }
+}
+
+// jalankan saat load
+setThemeByTime();
+
+// update tiap 1 menit (biar pas jam 18.00 langsung ganti)
+setInterval(setThemeByTime, 60000);
+</script>-->
+<script type="module">
+
+/* =========================
+   IMPORT FIREBASE
+========================= */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+
+/* =========================
+   KONFIGURASI FIREBASE
+========================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD96vxdp5ICw7sL02z9JqgQfDjH4EmMNOU",
+  authDomain: "tugas-3b74e.firebaseapp.com",
+  projectId: "tugas-3b74e",
+  storageBucket: "tugas-3b74e.firebasestorage.app",
+  messagingSenderId: "888860423672",
+  appId: "1:888860423672:web:87e3db56511a082222520d"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+/* =========================
+   FORMAT TANGGAL
+========================= */
+
+function formatTanggalLengkap(tanggalString){
+
+  const hariNama = [
+    "Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"
+  ];
+
+  const t = new Date(tanggalString);
+
+  const hari = hariNama[t.getDay()];
+
+  const tanggal = String(t.getDate()).padStart(2,"0");
+
+  const bulan = String(t.getMonth()+1).padStart(2,"0");
+
+  const tahun = t.getFullYear();
+
+  return `${hari}, ${tanggal}-${bulan}-${tahun}`;
+}
+
+/* =========================
+   POPUP
+========================= */
+
+function showPopup(mapel, ket, tanggal){
+
+  const popup = document.createElement("div");
+
+  popup.className = "popup-bg";
+
+  popup.innerHTML = `
+    <div class="popup-box">
+
+      <div class="popup-title">
+        ${mapel}
+      </div>
+
+      <div class="popup-ket">
+        ${ket}
+      </div>
+
+      <div class="popup-date">
+        ${formatTanggalLengkap(tanggal)}
+      </div>
+
+      <button class="popup-close">
+        Tutup
+      </button>
+
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+
+  popup.querySelector(".popup-close").onclick = ()=>{
+    popup.remove();
+  };
+
+}
+
+
+/* =========================
+   TAMPILKAN LABEL
+========================= */
+
+function tampilkanLabel(data){
+
+  const today = new Date();
+
+  today.setHours(0,0,0,0);
+
+  const deadline = new Date(data.tanggal);
+
+  deadline.setHours(0,0,0,0);
+
+  if(deadline < today) return;
+
+
+  const semuaMapel = document.querySelectorAll(".mapel");
+
+  semuaMapel.forEach(el=>{
+
+    const nama = el.textContent.trim().toLowerCase();
+
+    if(nama === data.mapel.toLowerCase()){
+
+      if(el.querySelector(".label-tugas")) return;
+
+      const label = document.createElement("span");
+
+      label.className = "label-tugas";
+
+      label.innerText = " Tugas";
+
+      label.style = `
+        background:red;
+        color:white;
+        padding:2px 6px;
+        margin-left:6px;
+        border-radius:6px;
+        font-size:10px;
+        cursor:pointer;
+      `;
+
+      label.onclick = ()=>{
+        showPopup(
+          data.mapel,
+          data.ket,
+          data.tanggal
+        );
+      };
+
+      el.appendChild(label);
+
+    }
+
+  });
+
+}
+
+
+/* =========================
+   LOAD DATA
+========================= */
+
+function loadTugas(){
+
+  const colRef = collection(db,"tugas");
+
+  onSnapshot(colRef,(snapshot)=>{
+
+    snapshot.forEach(doc=>{
+
+      tampilkanLabel(doc.data());
+
+    });
+
+  });
+
+}
+
+
+/* =========================
+   JALANKAN SETELAH HTML READY
+========================= */
+
+window.addEventListener("DOMContentLoaded", ()=>{
+
+  loadTugas();
+
+});
+
+</script>
+</body>
+</html>

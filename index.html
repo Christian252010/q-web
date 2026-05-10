@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="template.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body data-title="Dashboard">
+
+<!-- SIDEBAR -->
+<div id="fetch-container"></div>
+
+<!-- KONTEN -->
+<!--<h1>Dashboard</h1>-->
+
+<div class="container"></div>
+
+<!-- SEARCH BAR -->
+<div class="menu-search">
+  <div class="search-box">
+    <img src="text-search.png" class="search-icon">
+    <input type="text" id="menuSearch" placeholder="Cari menu...">
+  </div>
+</div>
+
+<!-- MENU GRID -->
+<div class="grid-container">
+  <div class="menu-box" onclick="bukaMenu('jadwal.html')">
+    <i data-lucide="calendar" class="menu-icon"></i>
+    <div class="menu-label">Jadwal</div>
+  </div>
+
+  <div class="menu-box" onclick="bukaMenu('mata-uang.html')">
+    <i data-lucide="circle-dollar-sign" class="menu-icon"></i>
+    <div class="menu-label">Mata Uang</div>
+  </div>
+  
+  <div class="menu-box" onclick="bukaMenu('qr-code.html')">
+    <i data-lucide="qr-code" class="menu-icon"></i>
+    <div class="menu-label">QR Code</div>
+  </div>
+  
+  <div class="menu-box" onclick="bukaMenu('morse.html')">
+    <i data-lucide="chart-no-axes-gantt" class="menu-icon"></i>
+    <div class="menu-label">Morse</div>
+  </div>
+  
+  <div class="menu-box" onclick="bukaMenu('rumus.html')">
+    <i data-lucide="function-square" class="menu-icon"></i>
+    <div class="menu-label">Kalkulator Rumus</div>
+  </div>
+  
+  <div class="menu-box" onclick="bukaMenu('romawi.html')">
+    <i data-lucide="landmark" class="menu-icon"></i>
+    <div class="menu-label">Romawi</div>
+  </div>
+  
+  <div class="menu-box" onclick="bukaMenu('subnet.html')">
+    <i data-lucide="server" class="menu-icon"></i>
+    <div class="menu-label">Subnetting</div>
+  </div>
+  
+</div>
+<script>
+  lucide.createIcons();
+</script>
+<script src="fetch.js"></script>
+<script>
+/* =====================================
+   MENU NAVIGASI
+===================================== */
+function bukaMenu(file) {
+  window.location.href = file;
+}
+
+/* =====================================
+   SEARCH FILTER MENU
+===================================== */
+const searchInput = document.getElementById("menuSearch");
+const menuBoxes = document.querySelectorAll(".menu-box");
+
+searchInput.addEventListener("keyup", function() {
+  const filter = this.value.toLowerCase();
+
+  menuBoxes.forEach(box => {
+    const label = box.querySelector(".menu-label").innerText.toLowerCase();
+    box.style.display = label.includes(filter) ? "flex" : "none";
+  });
+});
+</script>
+
+</body>
+</html>
