@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Floating Minecraft Tutorial</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#111827;
+  color:white;
+  min-height:200vh;
+  padding:20px;
+}
+
+h1{
+  margin-bottom:15px;
+}
+
+.main-video{
+  width:100%;
+  max-width:900px;
+  border-radius:20px;
+  overflow:hidden;
+  margin:auto;
+}
+
+.main-video video{
+  width:100%;
+  display:block;
+}
+
+.controls{
+  margin-top:20px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+button{
+  padding:12px 18px;
+  border:none;
+  border-radius:12px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+  font-size:16px;
+}
+
+button:hover{
+  background:#1d4ed8;
+}
+
+/* FLOATING PLAYER */
+
+.floating-player{
+
+  position:fixed;
+
+  width:260px;
+  height:150px;
+
+  bottom:20px;
+  right:20px;
+
+  background:#000;
+
+  border-radius:16px;
+
+  overflow:hidden;
+
+  z-index:9999;
+
+  display:none;
+
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);
+
+  touch-action:none;
+}
+
+.floating-header{
+
+  height:35px;
+
+  background:#1f2937;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  padding:0 10px;
+
+  cursor:grab;
+
+  color:white;
+
+  font-size:14px;
+}
+
+.close-btn{
+  cursor:pointer;
+  font-size:18px;
+}
+
+.floating-player video{
+  width:100%;
+  height:calc(100% - 35px);
+  object-fit:cover;
+}
+
+.info{
+  margin-top:40px;
+  max-width:900px;
+  margin-inline:auto;
+  line-height:1.8;
+  color:#cbd5e1;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1 align="center">
+Minecraft Floating Tutorial Player
+</h1>
+
+<div class="main-video">
+
+  <video id="mainVideo" controls>
+    <source src="tutorial.mp4" type="video/mp4">
+  </video>
+
+</div>
+
+<div class="controls">
+
+  <button onclick="openFloating()">
+    Open Floating Player
+  </button>
+
+  <button onclick="closeFloating()">
+    Close Floating
+  </button>
+
+</div>
+
+<div class="info">
+
+  Floating player bisa:
+  <br><br>
+
+  ✅ Drag ke mana saja<br>
+  ✅ Tetap play saat scroll<br>
+  ✅ Mobile support<br>
+  ✅ Cocok untuk tutorial Minecraft<br>
+
+</div>
+
+<!-- FLOATING PLAYER -->
+
+<div class="floating-player" id="floatingPlayer">
+
+  <div class="floating-header" id="dragHandle">
+
+    <span>Floating Tutorial</span>
+
+    <span class="close-btn" onclick="closeFloating()">
+      ✕
+    </span>
+
+  </div>
+
+  <video id="floatingVideo" controls>
+    <source src="tutorial.mp4" type="video/mp4">
+  </video>
+
+</div>
+
+<script>
+
+const floatingPlayer =
+  document.getElementById("floatingPlayer");
+
+const floatingVideo =
+  document.getElementById("floatingVideo");
+
+const mainVideo =
+  document.getElementById("mainVideo");
+
+function openFloating(){
+
+  floatingPlayer.style.display = "block";
+
+  floatingVideo.currentTime =
+    mainVideo.currentTime;
+
+  if(!mainVideo.paused){
+    floatingVideo.play();
+  }
+
+}
+
+function closeFloating(){
+
+  floatingPlayer.style.display = "none";
+
+}
+
+/* DRAG SYSTEM */
+
+const dragHandle =
+  document.getElementById("dragHandle");
+
+let isDragging = false;
+
+let offsetX, offsetY;
+
+dragHandle.addEventListener("mousedown", startDrag);
+dragHandle.addEventListener("touchstart", startDrag);
+
+document.addEventListener("mousemove", drag);
+document.addEventListener("touchmove", drag);
+
+document.addEventListener("mouseup", stopDrag);
+document.addEventListener("touchend", stopDrag);
+
+function startDrag(e){
+
+  isDragging = true;
+
+  const rect =
+    floatingPlayer.getBoundingClientRect();
+
+  const clientX =
+    e.touches ? e.touches[0].clientX : e.clientX;
+
+  const clientY =
+    e.touches ? e.touches[0].clientY : e.clientY;
+
+  offsetX = clientX - rect.left;
+  offsetY = clientY - rect.top;
+
+}
+
+function drag(e){
+
+  if(!isDragging) return;
+
+  e.preventDefault();
+
+  const clientX =
+    e.touches ? e.touches[0].clientX : e.clientX;
+
+  const clientY =
+    e.touches ? e.touches[0].clientY : e.clientY;
+
+  floatingPlayer.style.left =
+    (clientX - offsetX) + "px";
+
+  floatingPlayer.style.top =
+    (clientY - offsetY) + "px";
+
+  floatingPlayer.style.right = "auto";
+  floatingPlayer.style.bottom = "auto";
+
+}
+
+function stopDrag(){
+  isDragging = false;
+}
+
+</script>
+
+</body>
+</html>
