@@ -1,0 +1,13 @@
+{
+  "name": "Q-Web",
+  "short_name": "Q-Web",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}
