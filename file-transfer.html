@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>File Transfer</title>
 
-<link rel="stylesheet" href="template.css">
-<script src="https://unpkg.com/lucide@latest"></script>
+<link
+    rel="stylesheet"
+    href="template.css"
+>
+
+<script
+    src="https://unpkg.com/lucide@latest"
+></script>
 
 <style>
+
+/* ========================================================
+   FILE TRANSFER
+======================================================== */
 
 html,
 body {
@@ -24,572 +40,894 @@ h2 {
 }
 
 .ft-page {
+
     width: 95%;
+
     max-width: 720px;
+
     box-sizing: border-box;
+
     margin: 0 auto;
-    padding: 62px 12px 24px;
+
+    padding:
+        62px
+        12px
+        24px;
+
     color: var(--text);
+
 }
 
 .ft-page *,
 .ft-page *::before,
 .ft-page *::after {
+
     box-sizing: border-box;
+
 }
 
 .ft-page h1 {
+
     color: var(--accent);
-    font-family: minecraft, Arial, sans-serif;
+
+    font-family:
+        minecraft,
+        Arial,
+        sans-serif;
+
     text-align: center;
+
     font-size: 2.2em;
-    margin: 0 0 20px;
+
+    margin:
+        0 0 20px;
+
     text-shadow:
         0 1px 0 rgba(255,255,255,.4),
         0 4px 0 var(--daccent);
+
     letter-spacing: 1px;
+
 }
 
 .ft-page .ft-page-view {
+
     display: none;
+
 }
 
 .ft-page .ft-page-view.active {
+
     display: block;
+
 }
 
 .ft-page .ft-card {
+
     background: var(--card);
+
     color: var(--text);
+
     border-radius: 8px;
+
     padding: 18px;
+
     margin-bottom: 15px;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+
+    box-shadow:
+        0 4px 18px rgba(0,0,0,0.4);
+
 }
 
 .ft-page .ft-center {
+
     text-align: center;
+
 }
 
 .ft-page .ft-small {
+
     font-size: 14px;
+
     color: var(--text2);
+
 }
 
 .ft-page label {
+
     font-weight: bold;
+
 }
 
 .ft-page input[type="file"] {
+
     display: block;
+
     width: 100%;
-    min-height: 48px;
-    padding: 8px;
-    border: 2px solid var(--accent);
+
+    min-height: 45px;
+
+    padding: 5px;
+
+    border:
+        2px solid
+        var(--accent);
+
+    background:
+        var(--sp);
+
+    color:
+        var(--text);
+
     border-radius: 8px;
-    background: var(--sp);
-    color: var(--text);
-    outline: none;
+
 }
 
 .ft-page input[type="file"]::file-selector-button {
-    background: var(--accent);
+
+    background:
+        var(--accent);
+
     border: none;
-    border-radius: 4px;
-    padding: 7px 10px;
+
+    border-radius: 5px;
+
+    padding:
+        7px
+        10px;
+
     font-weight: bold;
+
     color: white;
-    margin-right: 10px;
-    cursor: pointer;
-}
 
-.ft-page input[type="text"] {
-    width: 100%;
-    min-height: 45px;
-    border: 2px solid var(--accent);
-    border-radius: 8px;
-    padding: 10px;
-    background: var(--sp);
-    color: var(--text);
-    outline: none;
-    font-size: 16px;
-}
+    margin-right: 8px;
 
-.ft-page input[type="text"]:focus {
-    border-color: var(--accent);
-}
-
-.ft-page input::placeholder {
-    color: var(--ph);
 }
 
 .ft-page .ft-code {
+
     font-size: 36px;
+
     font-weight: bold;
+
     letter-spacing: 6px;
-    margin: 18px 0;
-    color: var(--accent);
+
+    margin:
+        18px 0;
+
+    color:
+        var(--accent);
+
 }
 
 .ft-page .ft-file {
-    background: var(--sp);
-    color: var(--text);
+
+    background:
+        var(--sp);
+
+    color:
+        var(--text);
+
     padding: 12px;
+
     border-radius: 8px;
+
     word-break: break-word;
+
 }
 
 .ft-page .ft-status {
+
     text-align: center;
+
     color: var(--text2);
+
     margin-top: 15px;
+
 }
 
 .ft-page .ft-error {
+
     color: #e53935;
+
     margin-top: 10px;
+
 }
 
 .ft-page .ft-info {
+
     text-align: center;
+
     padding: 10px;
+
     color: var(--text2);
+
 }
 
 .ft-page .ft-request {
-    border: 1px solid var(--border);
+
+    border:
+        1px solid
+        var(--border);
+
     border-radius: 10px;
+
     padding: 15px;
+
     margin-top: 15px;
+
 }
 
 .ft-page .ft-request-name {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
 
-.ft-page .ft-request-time {
-    font-size: 13px;
-    color: var(--text2);
-    margin-top: 5px;
+    font-size: 18px;
+
+    font-weight: bold;
+
+    margin-bottom: 5px;
+
 }
 
 .ft-page .ft-actions {
+
     display: flex;
+
     gap: 10px;
+
 }
 
 .ft-page .ft-actions button {
+
     flex: 1;
+
 }
 
 .ft-page .ft-progress-container {
+
     width: 100%;
+
     height: 8px;
-    background: var(--border);
+
+    background:
+        var(--border);
+
     border-radius: 10px;
+
     overflow: hidden;
+
     margin-top: 15px;
+
 }
 
 .ft-page .ft-progress {
+
     height: 100%;
+
     width: 0%;
-    background: var(--accent);
-    transition: width .2s ease;
+
+    background:
+        var(--accent);
+
+    transition:
+        width .2s ease;
+
 }
 
 .ft-page .ft-hidden {
+
     display: none !important;
+
+}
+
+.ft-page button,
+.ft-page input[type="text"],
+.ft-page input[type="file"] {
+
+    width: 100%;
+
+    min-height: 45px;
+
+    border-radius: 8px;
+
+    font-size: 16px;
+
 }
 
 .ft-page button {
-    width: 100%;
-    min-height: 45px;
-    border-radius: 8px;
-    font-size: 16px;
+
     border: none;
-    background: var(--accent);
+
+    background:
+        var(--accent);
+
     color: white;
+
     cursor: pointer;
+
     margin-top: 10px;
-    padding: 10px 14px;
+
+    padding:
+        10px
+        14px;
+
     font-weight: bold;
-    transition: opacity .2s ease, transform .1s ease;
+
+    transition:
+        opacity .2s ease,
+        transform .1s ease;
+
 }
 
 .ft-page button:hover {
+
     opacity: .9;
+
 }
 
 .ft-page button:active {
-    transform: translateY(1px);
+
+    transform:
+        translateY(1px);
+
 }
 
 .ft-page button:disabled {
+
     opacity: .5;
+
     cursor: not-allowed;
+
 }
 
 .ft-page button.ft-success {
-    background: #2e7d32;
+
+    background:
+        #2e7d32;
+
 }
 
 .ft-page button.ft-danger {
-    background: #d32f2f;
+
+    background:
+        #d32f2f;
+
 }
 
 .ft-page button.ft-secondary {
-    background: var(--ph);
+
+    background:
+        var(--ph);
+
     color: #fff;
+
 }
 
-.ft-page .ft-request + .ft-request {
-    margin-top: 12px;
+.ft-page input[type="text"] {
+
+    border:
+        2px solid
+        var(--accent);
+
+    padding:
+        10px;
+
+    background:
+        var(--sp);
+
+    color:
+        var(--text);
+
+    outline: none;
+
 }
 
-.ft-page .ft-empty-request {
-    text-align: center;
-    color: var(--text2);
-    padding: 10px;
+.ft-page input[type="text"]:focus {
+
+    border-color:
+        var(--accent);
+
 }
 
-.ft-page .ft-expire {
-    margin-top: 10px;
-    font-size: 14px;
-    color: var(--text2);
+.ft-page input::placeholder {
+
+    color:
+        var(--ph);
+
+}
+
+.ft-request-list {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        12px;
+
+}
+
+.ft-request-item {
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        10px;
+
+    padding:
+        15px;
+
+}
+
+.ft-request-header {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+}
+
+.ft-request-status {
+
+    font-size:
+        12px;
+
+    padding:
+        4px 8px;
+
+    border-radius:
+        20px;
+
+    background:
+        var(--sp);
+
+}
+
+.ft-request-status.pending {
+
+    color:
+        var(--accent);
+
+}
+
+.ft-request-status.accepted {
+
+    color:
+        #2e7d32;
+
+}
+
+.ft-request-status.rejected {
+
+    color:
+        #d32f2f;
+
+}
+
+.ft-request-status.cancelled {
+
+    color:
+        var(--text2);
+
+}
+
+.ft-empty {
+
+    text-align:
+        center;
+
+    color:
+        var(--text2);
+
+    padding:
+        10px;
+
 }
 
 @media (max-width: 600px) {
 
     .ft-page {
-        padding: 58px 10px 20px;
+
+        padding:
+            58px
+            10px
+            20px;
+
     }
 
     .ft-page h1 {
-        font-size: 1.9em;
+
+        font-size:
+            1.9em;
+
     }
 
     .ft-page .ft-card {
-        padding: 15px;
+
+        padding:
+            15px;
+
     }
 
     .ft-page .ft-code {
-        font-size: 30px;
+
+        font-size:
+            30px;
+
     }
 
-    .ft-page .ft-actions {
-        flex-direction: column;
-        gap: 0;
+    .ft-request-header {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
     }
 
 }
 
 </style>
+
 </head>
 
 <body data-title="File Transfer">
 
+
 <div id="fetch-container"></div>
+
 
 <main class="ft-page">
 
-    <!-- HOME -->
 
-    <section id="homePage" class="ft-page-view active">
+<!-- =====================================================
+     HOME
+===================================================== -->
 
-        <h2>File Transfer</h2>
+<section
+    id="homePage"
+    class="ft-page-view active"
+>
 
-        <div class="ft-card">
+    <h2>
+        File Transfer
+    </h2>
 
-            <button id="sendButton">
-                Kirim
-            </button>
+    <div class="ft-card">
 
-            <button id="receiveButton">
-                Terima
-            </button>
-
-        </div>
-
-        <div id="connectionStatus" class="ft-info">
-            Menghubungkan...
-        </div>
-
-    </section>
-
-
-    <!-- KIRIM -->
-
-    <section id="sendPage" class="ft-page-view">
-
-        <h2>Kirim File</h2>
-
-        <div class="ft-card">
-
-            <p>
-                Pilih satu file untuk dikirim.
-            </p>
-
-            <input
-                type="file"
-                id="fileInput"
-            >
-
-            <button id="uploadButton">
-                Upload
-            </button>
-
-            <div
-                id="progressContainer"
-                class="ft-progress-container ft-hidden"
-            >
-                <div
-                    id="progress"
-                    class="ft-progress"
-                ></div>
-            </div>
-
-            <p
-                id="uploadStatus"
-                class="ft-status"
-            ></p>
-
-            <p
-                id="uploadError"
-                class="ft-error"
-            ></p>
-
-        </div>
-
-        <button
-            id="backSendButton"
-            class="ft-secondary"
-        >
-            Kembali
+        <button id="sendButton">
+            Kirim
         </button>
 
-    </section>
+        <button id="receiveButton">
+            Terima
+        </button>
+
+    </div>
+
+    <div
+        id="connectionStatus"
+        class="ft-info"
+    >
+        Menghubungkan...
+    </div>
+
+</section>
 
 
-    <!-- HOST -->
+<!-- =====================================================
+     KIRIM
+===================================================== -->
 
-    <section id="hostPage" class="ft-page-view">
+<section
+    id="sendPage"
+    class="ft-page-view"
+>
 
-        <h2>Room</h2>
+    <h2>
+        Kirim File
+    </h2>
 
-        <div class="ft-card ft-center">
+    <div class="ft-card">
 
-            <div class="ft-small">
-                Kode Room
-            </div>
+        <p>
+            Pilih satu file untuk dikirim.
+        </p>
+
+        <input
+            type="file"
+            id="fileInput"
+        >
+
+        <button id="uploadButton">
+            Upload
+        </button>
+
+        <div
+            id="progressContainer"
+            class="ft-progress-container ft-hidden"
+        >
 
             <div
-                id="hostCode"
-                class="ft-code"
-            >
-                ------
-            </div>
-
-            <div class="ft-file">
-                <span id="hostFile">
-                    -
-                </span>
-            </div>
-
-            <div
-                id="hostStatus"
-                class="ft-status"
-            >
-                Menunggu penerima...
-            </div>
-
-            <div
-                id="hostExpire"
-                class="ft-expire"
+                id="progress"
+                class="ft-progress"
             ></div>
 
         </div>
 
+        <p
+            id="uploadStatus"
+            class="ft-status"
+        ></p>
 
-        <!-- REQUEST LIST -->
+        <p
+            id="uploadError"
+            class="ft-error"
+        ></p>
+
+    </div>
+
+    <button
+        id="backSendButton"
+        class="ft-secondary"
+    >
+        Kembali
+    </button>
+
+</section>
+
+
+<!-- =====================================================
+     HOST
+===================================================== -->
+
+<section
+    id="hostPage"
+    class="ft-page-view"
+>
+
+    <h2>
+        Room
+    </h2>
+
+    <div class="ft-card ft-center">
+
+        <div class="ft-small">
+            Kode Room
+        </div>
 
         <div
-            id="requestCard"
-            class="ft-card ft-hidden"
+            id="hostCode"
+            class="ft-code"
         >
+            ------
+        </div>
 
-            <h3>
-                Permintaan Masuk
-            </h3>
+        <div class="ft-file">
 
-            <div id="requestList"></div>
+            <span id="hostFile">
+                -
+            </span>
 
         </div>
 
-
-        <!-- ACCEPTED -->
+        <div
+            id="hostStatus"
+            class="ft-status"
+        >
+            Menunggu penerima...
+        </div>
 
         <div
-            id="acceptedCard"
-            class="ft-card ft-hidden"
+            id="roomExpiry"
+            class="ft-small"
+        >
+        </div>
+
+    </div>
+
+
+    <!-- REQUEST LIST -->
+
+    <div class="ft-card">
+
+        <h3>
+            Permintaan Masuk
+        </h3>
+
+        <div
+            id="requestList"
+            class="ft-request-list"
         >
 
-            <h3>
-                Penerima
-            </h3>
-
-            <p>
-                <b id="acceptedName">
-                    -
-                </b>
-                sudah diterima.
-            </p>
+            <div
+                class="ft-empty"
+                id="requestEmpty"
+            >
+                Belum ada permintaan.
+            </div>
 
         </div>
 
+    </div>
 
-        <button
-            id="deleteRoomButton"
-            class="ft-danger"
+
+    <button
+        id="deleteRoomButton"
+        class="ft-danger"
+    >
+        Hapus Room
+    </button>
+
+</section>
+
+
+<!-- =====================================================
+     TERIMA
+===================================================== -->
+
+<section
+    id="receivePage"
+    class="ft-page-view"
+>
+
+    <h2>
+        Terima File
+    </h2>
+
+    <div class="ft-card">
+
+        <label for="nameInput">
+            Nama
+        </label>
+
+        <input
+            id="nameInput"
+            type="text"
+            maxlength="30"
+            placeholder="Masukkan nama"
         >
-            Hapus Room
+
+        <br><br>
+
+        <label for="codeInput">
+            Kode Room
+        </label>
+
+        <input
+            id="codeInput"
+            type="text"
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="6 digit"
+        >
+
+        <button id="joinButton">
+            Kirim Permintaan
         </button>
 
-    </section>
+        <p
+            id="joinError"
+            class="ft-error"
+        ></p>
+
+    </div>
+
+    <button
+        id="backReceiveButton"
+        class="ft-secondary"
+    >
+        Kembali
+    </button>
+
+</section>
 
 
-    <!-- TERIMA -->
+<!-- =====================================================
+     WAITING
+===================================================== -->
 
-    <section id="receivePage" class="ft-page-view">
+<section
+    id="waitingPage"
+    class="ft-page-view"
+>
 
-        <h2>Terima File</h2>
+    <h2>
+        Menunggu
+    </h2>
 
-        <div class="ft-card">
+    <div class="ft-card ft-center">
 
-            <label for="nameInput">
-                Nama
-            </label>
+        <p>
+            Permintaan sudah dikirim.
+        </p>
 
-            <input
-                id="nameInput"
-                type="text"
-                maxlength="30"
-                placeholder="Masukkan nama"
-            >
+        <div
+            id="waitingCode"
+            class="ft-code"
+        >
+            ------
+        </div>
 
-            <br><br>
-
-            <label for="codeInput">
-                Kode Room
-            </label>
-
-            <input
-                id="codeInput"
-                type="text"
-                inputmode="numeric"
-                maxlength="6"
-                placeholder="6 digit"
-            >
-
-            <button id="joinButton">
-                Kirim Permintaan
-            </button>
-
-            <p
-                id="joinError"
-                class="ft-error"
-            ></p>
-
+        <div
+            id="waitingStatus"
+            class="ft-status"
+        >
+            Menunggu host menerima...
         </div>
 
         <button
-            id="backReceiveButton"
+            id="cancelRequestButton"
             class="ft-secondary"
         >
-            Kembali
+            Batalkan
         </button>
 
-    </section>
+    </div>
+
+</section>
 
 
-    <!-- MENUNGGU -->
+<!-- =====================================================
+     DOWNLOAD
+===================================================== -->
 
-    <section id="waitingPage" class="ft-page-view">
+<section
+    id="downloadPage"
+    class="ft-page-view"
+>
 
-        <h2>Menunggu</h2>
+    <h2>
+        File Siap
+    </h2>
 
-        <div class="ft-card ft-center">
+    <div class="ft-card ft-center">
 
-            <p>
-                Permintaan sudah dikirim.
-            </p>
-
-            <div
-                id="waitingCode"
-                class="ft-code"
-            >
-                ------
-            </div>
-
-            <div
-                id="waitingStatus"
-                class="ft-status"
-            >
-                Menunggu host menerima...
-            </div>
-
-            <button
-                id="cancelRequestButton"
-                class="ft-secondary"
-            >
-                Batalkan
-            </button>
-
+        <div class="ft-small">
+            Room
         </div>
 
-    </section>
-
-
-    <!-- DOWNLOAD -->
-
-    <section id="downloadPage" class="ft-page-view">
-
-        <h2>File Siap</h2>
-
-        <div class="ft-card ft-center">
-
-            <div class="ft-small">
-                Room
-            </div>
-
-            <div
-                id="downloadCode"
-                class="ft-code"
-            >
-                ------
-            </div>
-
-            <div
-                id="downloadFile"
-                class="ft-file"
-            >
-                -
-            </div>
-
-            <button id="downloadButton">
-                Download File
-            </button>
-
-            <p
-                id="downloadStatus"
-                class="ft-status"
-            ></p>
-
+        <div
+            id="downloadCode"
+            class="ft-code"
+        >
+            ------
         </div>
 
-    </section>
+        <div
+            id="downloadFile"
+            class="ft-file"
+        >
+            -
+        </div>
+
+        <button
+            id="downloadButton"
+        >
+            Download File
+        </button>
+
+        <p
+            id="downloadStatus"
+            class="ft-status"
+        ></p>
+
+    </div>
+
+</section>
+
 
 </main>
 
@@ -599,22 +937,25 @@ h2 {
 
 <script type="module">
 
+
+/* ========================================================
+   SUPABASE
+======================================================== */
+
 import {
     createClient
-} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+}
+from
+"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-
-/*
-========================================================
-SUPABASE
-========================================================
-*/
 
 const SUPABASE_URL =
     "https://juuoofdtpsbvgjfwtuvy.supabase.co";
 
+
 const SUPABASE_KEY =
     "sb_publishable_guhUiQKd6KYCab6J94B2_A_1GT9P7rg";
+
 
 const supabase =
     createClient(
@@ -623,11 +964,9 @@ const supabase =
     );
 
 
-/*
-========================================================
-GLOBAL
-========================================================
-*/
+/* ========================================================
+   GLOBAL
+======================================================== */
 
 let currentUser = null;
 
@@ -642,16 +981,15 @@ let hostPoll = null;
 let receiverPoll = null;
 
 
-/*
-========================================================
-ELEMENT
-========================================================
-*/
+/* ========================================================
+   ELEMENT
+======================================================== */
 
 const pages =
     document.querySelectorAll(
         ".ft-page-view"
     );
+
 
 const homePage =
     document.getElementById(
@@ -751,31 +1089,20 @@ const hostStatus =
         "hostStatus"
     );
 
-const hostExpire =
+const roomExpiry =
     document.getElementById(
-        "hostExpire"
+        "roomExpiry"
     );
 
-
-const requestCard =
-    document.getElementById(
-        "requestCard"
-    );
 
 const requestList =
     document.getElementById(
         "requestList"
     );
 
-
-const acceptedCard =
+const requestEmpty =
     document.getElementById(
-        "acceptedCard"
-    );
-
-const acceptedName =
-    document.getElementById(
-        "acceptedName"
+        "requestEmpty"
     );
 
 
@@ -849,21 +1176,21 @@ const connectionStatus =
     );
 
 
-/*
-========================================================
-SHOW PAGE
-========================================================
-*/
+/* ========================================================
+   PAGE
+======================================================== */
 
 function showPage(page) {
 
-    pages.forEach(function(item) {
+    pages.forEach(
+        function(item) {
 
-        item.classList.remove(
-            "active"
-        );
+            item.classList.remove(
+                "active"
+            );
 
-    });
+        }
+    );
 
     page.classList.add(
         "active"
@@ -877,11 +1204,9 @@ function showPage(page) {
 }
 
 
-/*
-========================================================
-GENERATE CODE
-========================================================
-*/
+/* ========================================================
+   CODE
+======================================================== */
 
 function generateCode() {
 
@@ -893,11 +1218,9 @@ function generateCode() {
 }
 
 
-/*
-========================================================
-SAFE FILE NAME
-========================================================
-*/
+/* ========================================================
+   FILE NAME
+======================================================== */
 
 function safeFileName(name) {
 
@@ -909,11 +1232,36 @@ function safeFileName(name) {
 }
 
 
-/*
-========================================================
-AUTH
-========================================================
-*/
+/* ========================================================
+   FORMAT TIME
+======================================================== */
+
+function formatExpiry(dateString) {
+
+    if (!dateString) {
+        return "";
+    }
+
+    const date =
+        new Date(dateString);
+
+    return (
+        "Room berlaku sampai " +
+        date.toLocaleTimeString(
+            "id-ID",
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        )
+    );
+
+}
+
+
+/* ========================================================
+   AUTH
+======================================================== */
 
 async function initAuth() {
 
@@ -927,9 +1275,7 @@ async function initAuth() {
 
 
         if (error) {
-
             throw error;
-
         }
 
 
@@ -951,9 +1297,7 @@ async function initAuth() {
 
 
             if (result.error) {
-
                 throw result.error;
-
             }
 
 
@@ -1002,20 +1346,21 @@ async function initAuth() {
 await initAuth();
 
 
-/*
-========================================================
-NAVIGASI
-========================================================
-*/
+/* ========================================================
+   NAVIGATION
+======================================================== */
 
 sendButton.onclick =
 function() {
 
-    uploadError.textContent = "";
+    uploadError.textContent =
+        "";
 
-    uploadStatus.textContent = "";
+    uploadStatus.textContent =
+        "";
 
-    fileInput.value = "";
+    fileInput.value =
+        "";
 
     progress.style.width =
         "0%";
@@ -1024,7 +1369,9 @@ function() {
         "ft-hidden"
     );
 
-    showPage(sendPage);
+    showPage(
+        sendPage
+    );
 
 };
 
@@ -1032,13 +1379,18 @@ function() {
 receiveButton.onclick =
 function() {
 
-    codeInput.value = "";
+    codeInput.value =
+        "";
 
-    nameInput.value = "";
+    nameInput.value =
+        "";
 
-    joinError.textContent = "";
+    joinError.textContent =
+        "";
 
-    showPage(receivePage);
+    showPage(
+        receivePage
+    );
 
 };
 
@@ -1046,7 +1398,9 @@ function() {
 backSendButton.onclick =
 function() {
 
-    showPage(homePage);
+    showPage(
+        homePage
+    );
 
 };
 
@@ -1054,22 +1408,22 @@ function() {
 backReceiveButton.onclick =
 function() {
 
-    showPage(homePage);
+    showPage(
+        homePage
+    );
 
 };
 
 
-/*
-========================================================
-CREATE UNIQUE CODE
-========================================================
-*/
+/* ========================================================
+   UNIQUE CODE
+======================================================== */
 
 async function createUniqueCode() {
 
     for (
         let i = 0;
-        i < 10;
+        i < 20;
         i++
     ) {
 
@@ -1092,9 +1446,7 @@ async function createUniqueCode() {
 
 
         if (error) {
-
             throw error;
-
         }
 
 
@@ -1117,18 +1469,18 @@ async function createUniqueCode() {
 }
 
 
-/*
-========================================================
-UPLOAD
-========================================================
-*/
+/* ========================================================
+   UPLOAD
+======================================================== */
 
 uploadButton.onclick =
 async function() {
 
-    uploadError.textContent = "";
+    uploadError.textContent =
+        "";
 
-    uploadStatus.textContent = "";
+    uploadStatus.textContent =
+        "";
 
 
     const file =
@@ -1165,10 +1517,21 @@ async function() {
 
 
     progress.style.width =
-        "10%";
+        "5%";
+
+
+    let roomId =
+        null;
+
+    let filePath =
+        null;
 
 
     try {
+
+        /* ------------------------------------------------
+           CREATE ROOM FIRST
+        ------------------------------------------------ */
 
         uploadStatus.textContent =
             "Membuat room...";
@@ -1178,7 +1541,7 @@ async function() {
             await createUniqueCode();
 
 
-        const roomId =
+        roomId =
             crypto.randomUUID();
 
 
@@ -1188,55 +1551,12 @@ async function() {
             );
 
 
-        const filePath =
+        filePath =
             roomId +
             "/" +
             crypto.randomUUID() +
             "-" +
             cleanName;
-
-
-        uploadStatus.textContent =
-            "Mengupload file...";
-
-
-        progress.style.width =
-            "30%";
-
-
-        const {
-            error:
-                storageError
-        } =
-        await supabase
-            .storage
-            .from("files")
-            .upload(
-                filePath,
-                file,
-                {
-                    upsert: false,
-
-                    contentType:
-                        file.type ||
-                        "application/octet-stream"
-                }
-            );
-
-
-        if (storageError) {
-
-            throw storageError;
-
-        }
-
-
-        progress.style.width =
-            "75%";
-
-
-        uploadStatus.textContent =
-            "Menyimpan room...";
 
 
         const expiresAt =
@@ -1247,8 +1567,7 @@ async function() {
 
 
         const {
-            error:
-                roomError
+            error: roomError
         } =
         await supabase
             .from("rooms")
@@ -1283,14 +1602,54 @@ async function() {
 
         if (roomError) {
 
-            await supabase
-                .storage
-                .from("files")
-                .remove([
-                    filePath
-                ]);
-
             throw roomError;
+
+        }
+
+
+        progress.style.width =
+            "20%";
+
+
+        /* ------------------------------------------------
+           UPLOAD FILE
+        ------------------------------------------------ */
+
+        uploadStatus.textContent =
+            "Mengupload file...";
+
+
+        const {
+            error:
+                uploadErrorResult
+        } =
+        await supabase
+            .storage
+            .from("files")
+            .upload(
+                filePath,
+                file,
+                {
+                    upsert: false,
+
+                    contentType:
+                        file.type ||
+                        "application/octet-stream"
+                }
+            );
+
+
+        if (uploadErrorResult) {
+
+            await supabase
+                .from("rooms")
+                .delete()
+                .eq(
+                    "id",
+                    roomId
+                );
+
+            throw uploadErrorResult;
 
         }
 
@@ -1302,6 +1661,10 @@ async function() {
         uploadStatus.textContent =
             "Upload selesai.";
 
+
+        /* ------------------------------------------------
+           HOST STATE
+        ------------------------------------------------ */
 
         hostRoomId =
             roomId;
@@ -1316,28 +1679,29 @@ async function() {
         hostCode.textContent =
             code;
 
+
         hostFile.textContent =
             file.name;
+
+
+        roomExpiry.textContent =
+            formatExpiry(
+                expiresAt
+            );
+
 
         hostStatus.textContent =
             "Menunggu penerima...";
 
 
-        hostExpire.textContent =
-            "Room berlaku selama 30 menit.";
-
-
-        requestCard.classList.add(
-            "ft-hidden"
+        renderRequestList(
+            []
         );
 
 
-        acceptedCard.classList.add(
-            "ft-hidden"
+        showPage(
+            hostPage
         );
-
-
-        showPage(hostPage);
 
 
         startHostPolling();
@@ -1351,6 +1715,9 @@ async function() {
             error.message ||
             "Upload gagal.";
 
+        progress.style.width =
+            "0%";
+
     }
 
 
@@ -1360,11 +1727,9 @@ async function() {
 };
 
 
-/*
-========================================================
-HOST POLLING
-========================================================
-*/
+/* ========================================================
+   HOST POLLING
+======================================================== */
 
 function startHostPolling() {
 
@@ -1389,18 +1754,17 @@ function stopHostPolling() {
             hostPoll
         );
 
-        hostPoll = null;
+        hostPoll =
+            null;
 
     }
 
 }
 
 
-/*
-========================================================
-CHECK HOST ROOM
-========================================================
-*/
+/* ========================================================
+   CHECK HOST ROOM
+======================================================== */
 
 async function checkHostRoom() {
 
@@ -1415,6 +1779,10 @@ async function checkHostRoom() {
 
 
     try {
+
+        /* ------------------------------------------------
+           ROOM
+        ------------------------------------------------ */
 
         const {
             data: room,
@@ -1453,29 +1821,30 @@ async function checkHostRoom() {
                 "hostRoomId"
             );
 
-            hostRoomId = null;
+            hostRoomId =
+                null;
 
-            requestCard.classList.add(
-                "ft-hidden"
-            );
+            requestList.innerHTML =
+                "";
 
-            acceptedCard.classList.add(
-                "ft-hidden"
+            requestEmpty.textContent =
+                "Room sudah dihapus.";
+
+            requestList.appendChild(
+                requestEmpty
             );
 
             hostStatus.textContent =
-                "Room sudah tidak tersedia.";
+                "Room sudah dihapus.";
 
             return;
 
         }
 
 
-        /*
-        --------------------------------------------
-        Cek expired
-        --------------------------------------------
-        */
+        /* ------------------------------------------------
+           EXPIRED
+        ------------------------------------------------ */
 
         if (
             room.expires_at &&
@@ -1484,7 +1853,12 @@ async function checkHostRoom() {
             ) <= new Date()
         ) {
 
+            stopHostPolling();
+
             hostStatus.textContent =
+                "Room sudah kedaluwarsa.";
+
+            roomExpiry.textContent =
                 "Room sudah kedaluwarsa.";
 
             return;
@@ -1492,20 +1866,25 @@ async function checkHostRoom() {
         }
 
 
-        /*
-        --------------------------------------------
-        Ambil semua request
-        --------------------------------------------
-        */
+        roomExpiry.textContent =
+            formatExpiry(
+                room.expires_at
+            );
+
+
+        /* ------------------------------------------------
+           REQUESTS
+        ------------------------------------------------ */
 
         const {
             data: requests,
-            error:
-                requestError
+            error: requestError
         } =
         await supabase
             .from("room_requests")
-            .select("*")
+            .select(
+                "id,room_id,requester_id,requester_name,status,created_at,updated_at"
+            )
             .eq(
                 "room_id",
                 hostRoomId
@@ -1529,55 +1908,14 @@ async function checkHostRoom() {
         }
 
 
-        renderHostRequests(
+        renderRequestList(
             requests || []
         );
 
 
-        /*
-        --------------------------------------------
-        Cari accepted
-        --------------------------------------------
-        */
-
-        const accepted =
-            (requests || []).find(
-                function(request) {
-
-                    return (
-                        request.status ===
-                        "accepted"
-                    );
-
-                }
-            );
-
-
-        if (accepted) {
-
-            acceptedCard.classList.remove(
-                "ft-hidden"
-            );
-
-
-            acceptedName.textContent =
-                accepted.requester_name ||
-                "Penerima";
-
-
-            hostStatus.textContent =
-                "Penerima sudah diterima.";
-
-        }
-        else {
-
-            acceptedCard.classList.add(
-                "ft-hidden"
-            );
-
-
-            const pending =
-                (requests || []).filter(
+        const pendingCount =
+            (requests || [])
+                .filter(
                     function(request) {
 
                         return (
@@ -1586,35 +1924,47 @@ async function checkHostRoom() {
                         );
 
                     }
-                );
+                )
+                .length;
 
 
-            if (pending.length > 0) {
+        const acceptedCount =
+            (requests || [])
+                .filter(
+                    function(request) {
 
-                hostStatus.textContent =
-                    pending.length +
-                    " permintaan menunggu.";
+                        return (
+                            request.status ===
+                            "accepted"
+                        );
 
-            }
-            else {
+                    }
+                )
+                .length;
 
-                hostStatus.textContent =
-                    "Menunggu penerima...";
 
-            }
+        if (pendingCount > 0) {
+
+            hostStatus.textContent =
+                pendingCount +
+                " permintaan menunggu persetujuan.";
 
         }
+        else if (
+            acceptedCount > 0
+        ) {
 
+            hostStatus.textContent =
+                acceptedCount +
+                " penerima sudah diterima. Menunggu permintaan lain...";
 
-        /*
-        --------------------------------------------
-        Countdown
-        --------------------------------------------
-        */
+        }
+        else {
 
-        updateExpireText(
-            room.expires_at
-        );
+            hostStatus.textContent =
+                "Menunggu penerima...";
+
+        }
 
     }
     catch(error) {
@@ -1626,65 +1976,62 @@ async function checkHostRoom() {
 }
 
 
-/*
-========================================================
-RENDER REQUEST LIST
-========================================================
-*/
+/* ========================================================
+   RENDER REQUEST LIST
+======================================================== */
 
-function renderHostRequests(
+function renderRequestList(
     requests
 ) {
 
-    const pendingRequests =
-        requests.filter(
-            function(request) {
-
-                return (
-                    request.status ===
-                    "pending"
-                );
-
-            }
-        );
+    requestList.innerHTML =
+        "";
 
 
     if (
-        pendingRequests.length === 0
+        !requests ||
+        requests.length === 0
     ) {
 
-        requestCard.classList.add(
-            "ft-hidden"
-        );
+        const empty =
+            document.createElement(
+                "div"
+            );
 
-        requestList.innerHTML =
-            "";
+        empty.className =
+            "ft-empty";
+
+        empty.textContent =
+            "Belum ada permintaan.";
+
+        requestList.appendChild(
+            empty
+        );
 
         return;
 
     }
 
 
-    requestCard.classList.remove(
-        "ft-hidden"
-    );
-
-
-    requestList.innerHTML =
-        "";
-
-
-    pendingRequests.forEach(
+    requests.forEach(
         function(request) {
 
-            const wrapper =
+            const item =
                 document.createElement(
                     "div"
                 );
 
+            item.className =
+                "ft-request-item";
 
-            wrapper.className =
-                "ft-request";
+
+            const header =
+                document.createElement(
+                    "div"
+                );
+
+            header.className =
+                "ft-request-header";
 
 
             const name =
@@ -1692,69 +2039,100 @@ function renderHostRequests(
                     "div"
                 );
 
-
             name.className =
                 "ft-request-name";
-
 
             name.textContent =
                 request.requester_name ||
                 "Tanpa nama";
 
 
-            const text =
+            const status =
+                document.createElement(
+                    "span"
+                );
+
+            status.className =
+                "ft-request-status " +
+                request.status;
+
+            status.textContent =
+                request.status;
+
+
+            header.appendChild(
+                name
+            );
+
+            header.appendChild(
+                status
+            );
+
+
+            item.appendChild(
+                header
+            );
+
+
+            const info =
                 document.createElement(
                     "div"
                 );
 
-
-            text.className =
+            info.className =
                 "ft-small";
 
+            info.textContent =
+                "Meminta akses ke file.";
 
-            text.textContent =
-                "ingin menerima file.";
-
-
-            const actions =
-                document.createElement(
-                    "div"
-                );
+            item.appendChild(
+                info
+            );
 
 
-            actions.className =
-                "ft-actions";
+            /* ------------------------------------------------
+               PENDING
+            ------------------------------------------------ */
+
+            if (
+                request.status ===
+                "pending"
+            ) {
+
+                const actions =
+                    document.createElement(
+                        "div"
+                    );
+
+                actions.className =
+                    "ft-actions";
 
 
-            const reject =
-                document.createElement(
-                    "button"
-                );
+                const reject =
+                    document.createElement(
+                        "button"
+                    );
+
+                reject.className =
+                    "ft-danger";
+
+                reject.textContent =
+                    "Tolak";
 
 
-            reject.className =
-                "ft-danger";
+                const accept =
+                    document.createElement(
+                        "button"
+                    );
+
+                accept.className =
+                    "ft-success";
+
+                accept.textContent =
+                    "Terima";
 
 
-            reject.textContent =
-                "Tolak";
-
-
-            const accept =
-                document.createElement(
-                    "button"
-                );
-
-
-            accept.className =
-                "ft-success";
-
-
-            accept.textContent =
-                "Terima";
-
-
-            reject.onclick =
+                reject.onclick =
                 function() {
 
                     rejectRequest(
@@ -1764,7 +2142,7 @@ function renderHostRequests(
                 };
 
 
-            accept.onclick =
+                accept.onclick =
                 function() {
 
                     acceptRequest(
@@ -1774,30 +2152,105 @@ function renderHostRequests(
                 };
 
 
-            actions.appendChild(
-                reject
-            );
+                actions.appendChild(
+                    reject
+                );
 
-            actions.appendChild(
-                accept
-            );
+                actions.appendChild(
+                    accept
+                );
 
 
-            wrapper.appendChild(
-                name
-            );
+                item.appendChild(
+                    actions
+                );
 
-            wrapper.appendChild(
-                text
-            );
+            }
 
-            wrapper.appendChild(
-                actions
-            );
+
+            /* ------------------------------------------------
+               ACCEPTED
+            ------------------------------------------------ */
+
+            if (
+                request.status ===
+                "accepted"
+            ) {
+
+                const acceptedInfo =
+                    document.createElement(
+                        "div"
+                    );
+
+                acceptedInfo.className =
+                    "ft-success-text";
+
+                acceptedInfo.textContent =
+                    "Penerima sudah diterima.";
+
+                item.appendChild(
+                    acceptedInfo
+                );
+
+            }
+
+
+            /* ------------------------------------------------
+               REJECTED
+            ------------------------------------------------ */
+
+            if (
+                request.status ===
+                "rejected"
+            ) {
+
+                const rejectedInfo =
+                    document.createElement(
+                        "div"
+                    );
+
+                rejectedInfo.className =
+                    "ft-error";
+
+                rejectedInfo.textContent =
+                    "Permintaan ditolak.";
+
+                item.appendChild(
+                    rejectedInfo
+                );
+
+            }
+
+
+            /* ------------------------------------------------
+               CANCELLED
+            ------------------------------------------------ */
+
+            if (
+                request.status ===
+                "cancelled"
+            ) {
+
+                const cancelledInfo =
+                    document.createElement(
+                        "div"
+                    );
+
+                cancelledInfo.className =
+                    "ft-small";
+
+                cancelledInfo.textContent =
+                    "Permintaan dibatalkan.";
+
+                item.appendChild(
+                    cancelledInfo
+                );
+
+            }
 
 
             requestList.appendChild(
-                wrapper
+                item
             );
 
         }
@@ -1806,11 +2259,9 @@ function renderHostRequests(
 }
 
 
-/*
-========================================================
-ACCEPT REQUEST
-========================================================
-*/
+/* ========================================================
+   ACCEPT REQUEST
+======================================================== */
 
 async function acceptRequest(
     requestId
@@ -1826,33 +2277,20 @@ async function acceptRequest(
     }
 
 
-    if (
-        !confirm(
-            "Terima permintaan ini?"
-        )
-    ) {
-
-        return;
-
-    }
-
-
     try {
 
-        /*
-        --------------------------------------------
-        Pastikan request masih pending
-        --------------------------------------------
-        */
-
         const {
-            data: request,
-            error:
-                requestError
+            data,
+            error
         } =
         await supabase
             .from("room_requests")
-            .select("*")
+            .update({
+
+                status:
+                    "accepted"
+
+            })
             .eq(
                 "id",
                 requestId
@@ -1861,148 +2299,34 @@ async function acceptRequest(
                 "room_id",
                 hostRoomId
             )
-            .eq(
-                "status",
-                "pending"
-            )
+            .select()
             .maybeSingle();
 
 
-        if (requestError) {
+        if (error) {
 
-            throw requestError;
+            throw error;
 
         }
 
 
-        if (!request) {
+        if (!data) {
 
             throw new Error(
-                "Permintaan sudah tidak tersedia."
+                "Request tidak ditemukan atau tidak memiliki akses."
             );
 
         }
 
 
         /*
-        --------------------------------------------
-        Accept request yang dipilih
-        --------------------------------------------
-        */
-
-        const {
-            error:
-                acceptError
-        } =
-        await supabase
-            .from("room_requests")
-            .update({
-                status:
-                    "accepted"
-            })
-            .eq(
-                "id",
-                requestId
-            )
-            .eq(
-                "room_id",
-                hostRoomId
-            )
-            .eq(
-                "status",
-                "pending"
-            );
-
-
-        if (acceptError) {
-
-            throw acceptError;
-
-        }
-
-
-        /*
-        --------------------------------------------
-        Tolak semua request lain
-        --------------------------------------------
-        */
-
-        const {
-            error:
-                rejectOthersError
-        } =
-        await supabase
-            .from("room_requests")
-            .update({
-                status:
-                    "rejected"
-            })
-            .eq(
-                "room_id",
-                hostRoomId
-            )
-            .eq(
-                "status",
-                "pending"
-            )
-            .neq(
-                "id",
-                requestId
-            );
-
-
-        if (rejectOthersError) {
-
-            throw rejectOthersError;
-
-        }
-
-
-        /*
-        --------------------------------------------
-        Update room
-        --------------------------------------------
-        */
-
-        const {
-            error:
-                roomError
-        } =
-        await supabase
-            .from("rooms")
-            .update({
-                status:
-                    "accepted"
-            })
-            .eq(
-                "id",
-                hostRoomId
-            )
-            .eq(
-                "host_id",
-                currentUser.id
-            );
-
-
-        if (roomError) {
-
-            throw roomError;
-
-        }
-
-
-        acceptedName.textContent =
-            request.requester_name ||
-            "Penerima";
-
-
-        acceptedCard.classList.remove(
-            "ft-hidden"
-        );
-
-
-        hostStatus.textContent =
-            "Penerima sudah diterima.";
+         * PENTING:
+         *
+         * HANYA requestId ini yang
+         * berubah menjadi accepted.
+         *
+         * Request lain tetap pending.
+         */
 
 
         await checkHostRoom();
@@ -2022,26 +2346,37 @@ async function acceptRequest(
 }
 
 
-/*
-========================================================
-REJECT REQUEST
-========================================================
-*/
+/* ========================================================
+   REJECT REQUEST
+======================================================== */
 
 async function rejectRequest(
     requestId
 ) {
 
+    if (
+        !hostRoomId ||
+        !currentUser
+    ) {
+
+        return;
+
+    }
+
+
     try {
 
         const {
+            data,
             error
         } =
         await supabase
             .from("room_requests")
             .update({
+
                 status:
                     "rejected"
+
             })
             .eq(
                 "id",
@@ -2051,15 +2386,22 @@ async function rejectRequest(
                 "room_id",
                 hostRoomId
             )
-            .eq(
-                "status",
-                "pending"
-            );
+            .select()
+            .maybeSingle();
 
 
         if (error) {
 
             throw error;
+
+        }
+
+
+        if (!data) {
+
+            throw new Error(
+                "Request tidak ditemukan atau tidak memiliki akses."
+            );
 
         }
 
@@ -2081,11 +2423,9 @@ async function rejectRequest(
 }
 
 
-/*
-========================================================
-RESTORE HOST
-========================================================
-*/
+/* ========================================================
+   RESTORE HOST
+======================================================== */
 
 async function restoreHostRoom(
     roomId
@@ -2138,6 +2478,22 @@ async function restoreHostRoom(
         }
 
 
+        if (
+            data.expires_at &&
+            new Date(
+                data.expires_at
+            ) <= new Date()
+        ) {
+
+            localStorage.removeItem(
+                "hostRoomId"
+            );
+
+            return;
+
+        }
+
+
         hostRoomId =
             data.id;
 
@@ -2150,8 +2506,10 @@ async function restoreHostRoom(
             data.file_name;
 
 
-        hostExpire.textContent =
-            "Room berlaku selama 30 menit.";
+        roomExpiry.textContent =
+            formatExpiry(
+                data.expires_at
+            );
 
 
         showPage(
@@ -2171,81 +2529,9 @@ async function restoreHostRoom(
 }
 
 
-/*
-========================================================
-EXPIRE TEXT
-========================================================
-*/
-
-function updateExpireText(
-    expiresAt
-) {
-
-    if (!expiresAt) {
-
-        hostExpire.textContent =
-            "";
-
-        return;
-
-    }
-
-
-    const expire =
-        new Date(
-            expiresAt
-        );
-
-
-    const now =
-        new Date();
-
-
-    const difference =
-        expire.getTime() -
-        now.getTime();
-
-
-    if (difference <= 0) {
-
-        hostExpire.textContent =
-            "Room sudah kedaluwarsa.";
-
-        return;
-
-    }
-
-
-    const minutes =
-        Math.floor(
-            difference /
-            60000
-        );
-
-
-    const seconds =
-        Math.floor(
-            (difference %
-                60000) /
-            1000
-        );
-
-
-    hostExpire.textContent =
-        "Berakhir dalam " +
-        minutes +
-        " menit " +
-        seconds +
-        " detik.";
-
-}
-
-
-/*
-========================================================
-JOIN ROOM
-========================================================
-*/
+/* ========================================================
+   JOIN ROOM
+======================================================== */
 
 joinButton.onclick =
 async function() {
@@ -2300,11 +2586,9 @@ async function() {
 
     try {
 
-        /*
-        --------------------------------------------
-        Cari room
-        --------------------------------------------
-        */
+        /* ------------------------------------------------
+           FIND ROOM
+        ------------------------------------------------ */
 
         const {
             data: room,
@@ -2312,7 +2596,9 @@ async function() {
         } =
         await supabase
             .from("rooms")
-            .select("*")
+            .select(
+                "id,code,host_id,file_name,file_path,file_size,status,expires_at"
+            )
             .eq(
                 "code",
                 code
@@ -2320,6 +2606,10 @@ async function() {
             .eq(
                 "status",
                 "waiting"
+            )
+            .gt(
+                "expires_at",
+                new Date().toISOString()
             )
             .maybeSingle();
 
@@ -2334,37 +2624,11 @@ async function() {
         if (!room) {
 
             throw new Error(
-                "Room tidak ditemukan atau sudah tidak tersedia."
+                "Room tidak ditemukan atau sudah kedaluwarsa."
             );
 
         }
 
-
-        /*
-        --------------------------------------------
-        Cek expired
-        --------------------------------------------
-        */
-
-        if (
-            room.expires_at &&
-            new Date(
-                room.expires_at
-            ) <= new Date()
-        ) {
-
-            throw new Error(
-                "Room sudah kedaluwarsa."
-            );
-
-        }
-
-
-        /*
-        --------------------------------------------
-        Jangan masuk room sendiri
-        --------------------------------------------
-        */
 
         if (
             room.host_id ===
@@ -2378,20 +2642,23 @@ async function() {
         }
 
 
-        /*
-        --------------------------------------------
-        Cek apakah user sudah request
-        --------------------------------------------
-        */
+        receiverRoomId =
+            room.id;
+
+
+        /* ------------------------------------------------
+           CEK REQUEST LAMA USER
+        ------------------------------------------------ */
 
         const {
             data: existingRequest,
-            error:
-                existingError
+            error: existingError
         } =
         await supabase
             .from("room_requests")
-            .select("*")
+            .select(
+                "id,status"
+            )
             .eq(
                 "room_id",
                 room.id
@@ -2399,6 +2666,13 @@ async function() {
             .eq(
                 "requester_id",
                 currentUser.id
+            )
+            .in(
+                "status",
+                [
+                    "pending",
+                    "accepted"
+                ]
             )
             .maybeSingle();
 
@@ -2410,178 +2684,88 @@ async function() {
         }
 
 
-        /*
-        --------------------------------------------
-        Jika sudah accepted
-        --------------------------------------------
-        */
-
-        if (
-            existingRequest &&
-            existingRequest.status ===
-            "accepted"
-        ) {
-
-            receiverRoomId =
-                room.id;
+        if (existingRequest) {
 
             receiverRequestId =
                 existingRequest.id;
 
-            downloadCode.textContent =
-                room.code;
 
-            downloadFile.textContent =
-                room.file_name;
+            if (
+                existingRequest.status ===
+                "accepted"
+            ) {
 
-            downloadStatus.textContent =
-                "File siap diunduh.";
+                waitingCode.textContent =
+                    room.code;
 
-            showPage(
-                downloadPage
-            );
+                waitingStatus.textContent =
+                    "Kamu sudah diterima host.";
 
-            return;
+                downloadCode.textContent =
+                    room.code;
 
-        }
+                downloadFile.textContent =
+                    room.file_name;
 
+                downloadStatus.textContent =
+                    "File siap diunduh.";
 
-        /*
-        --------------------------------------------
-        Jika sudah pending
-        --------------------------------------------
-        */
+                showPage(
+                    downloadPage
+                );
 
-        if (
-            existingRequest &&
-            existingRequest.status ===
-            "pending"
-        ) {
+                startReceiverPolling();
 
-            receiverRoomId =
-                room.id;
-
-            receiverRequestId =
-                existingRequest.id;
-
-            waitingCode.textContent =
-                room.code;
-
-            waitingStatus.textContent =
-                "Menunggu host menerima...";
-
-            showPage(
-                waitingPage
-            );
-
-            startReceiverPolling();
-
-            return;
-
-        }
-
-
-        /*
-        --------------------------------------------
-        Jika request lama rejected
-        --------------------------------------------
-        */
-
-        if (
-            existingRequest &&
-            existingRequest.status ===
-            "rejected"
-        ) {
-
-            const {
-                data: updatedRequest,
-                error:
-                    updateError
-            } =
-            await supabase
-                .from("room_requests")
-                .update({
-
-                    requester_name:
-                        name,
-
-                    status:
-                        "pending",
-
-                    updated_at:
-                        new Date().toISOString()
-
-                })
-                .eq(
-                    "id",
-                    existingRequest.id
-                )
-                .select()
-                .single();
-
-
-            if (updateError) {
-
-                throw updateError;
+                return;
 
             }
 
 
-            receiverRoomId =
-                room.id;
-
-            receiverRequestId =
-                updatedRequest.id;
+            throw new Error(
+                "Kamu sudah memiliki permintaan yang sedang menunggu."
+            );
 
         }
-        else {
-
-            /*
-            ----------------------------------------
-            Request baru
-            ----------------------------------------
-            */
-
-            const {
-                data: newRequest,
-                error:
-                    insertError
-            } =
-            await supabase
-                .from("room_requests")
-                .insert({
-
-                    room_id:
-                        room.id,
-
-                    requester_id:
-                        currentUser.id,
-
-                    requester_name:
-                        name,
-
-                    status:
-                        "pending"
-
-                })
-                .select()
-                .single();
 
 
-            if (insertError) {
+        /* ------------------------------------------------
+           CREATE REQUEST
+        ------------------------------------------------ */
 
-                throw insertError;
+        const {
+            data: request,
+            error: requestError
+        } =
+        await supabase
+            .from("room_requests")
+            .insert({
 
-            }
+                room_id:
+                    room.id,
+
+                requester_id:
+                    currentUser.id,
+
+                requester_name:
+                    name,
+
+                status:
+                    "pending"
+
+            })
+            .select()
+            .single();
 
 
-            receiverRoomId =
-                room.id;
+        if (requestError) {
 
-            receiverRequestId =
-                newRequest.id;
+            throw requestError;
 
         }
+
+
+        receiverRequestId =
+            request.id;
 
 
         waitingCode.textContent =
@@ -2617,21 +2801,19 @@ async function() {
 };
 
 
-/*
-========================================================
-RECEIVER POLLING
-========================================================
-*/
+/* ========================================================
+   RECEIVER POLLING
+======================================================== */
 
 function startReceiverPolling() {
 
     stopReceiverPolling();
 
-    checkReceiverRoom();
+    checkReceiverRequest();
 
     receiverPoll =
         setInterval(
-            checkReceiverRoom,
+            checkReceiverRequest,
             1500
         );
 
@@ -2646,23 +2828,21 @@ function stopReceiverPolling() {
             receiverPoll
         );
 
-        receiverPoll = null;
+        receiverPoll =
+            null;
 
     }
 
 }
 
 
-/*
-========================================================
-CHECK RECEIVER
-========================================================
-*/
+/* ========================================================
+   CHECK RECEIVER REQUEST
+======================================================== */
 
-async function checkReceiverRoom() {
+async function checkReceiverRequest() {
 
     if (
-        !receiverRoomId ||
         !receiverRequestId ||
         !currentUser
     ) {
@@ -2674,20 +2854,15 @@ async function checkReceiverRoom() {
 
     try {
 
-        /*
-        --------------------------------------------
-        Ambil request MILIK USER INI
-        --------------------------------------------
-        */
-
         const {
             data: request,
-            error:
-                requestError
+            error
         } =
         await supabase
             .from("room_requests")
-            .select("*")
+            .select(
+                "id,room_id,requester_id,requester_name,status"
+            )
             .eq(
                 "id",
                 receiverRequestId
@@ -2699,11 +2874,9 @@ async function checkReceiverRoom() {
             .maybeSingle();
 
 
-        if (requestError) {
+        if (error) {
 
-            console.error(
-                requestError
-            );
+            console.error(error);
 
             return;
 
@@ -2715,96 +2888,25 @@ async function checkReceiverRoom() {
             stopReceiverPolling();
 
             waitingStatus.textContent =
-                "Permintaan sudah tidak tersedia.";
+                "Permintaan tidak ditemukan.";
 
             return;
 
         }
 
-
-        /*
-        --------------------------------------------
-        DITERIMA
-        --------------------------------------------
-        */
 
         if (
             request.status ===
-            "accepted"
+            "pending"
         ) {
 
-            /*
-            Pastikan room masih ada
-            */
-
-            const {
-                data: room,
-                error:
-                    roomError
-            } =
-            await supabase
-                .from("rooms")
-                .select("*")
-                .eq(
-                    "id",
-                    receiverRoomId
-                )
-                .maybeSingle();
-
-
-            if (roomError) {
-
-                console.error(
-                    roomError
-                );
-
-                return;
-
-            }
-
-
-            if (!room) {
-
-                stopReceiverPolling();
-
-                waitingStatus.textContent =
-                    "Room sudah dihapus.";
-
-                return;
-
-            }
-
-
-            stopReceiverPolling();
-
-
-            downloadCode.textContent =
-                room.code;
-
-
-            downloadFile.textContent =
-                room.file_name;
-
-
-            downloadStatus.textContent =
-                "Kamu sudah diterima host.";
-
-
-            showPage(
-                downloadPage
-            );
-
+            waitingStatus.textContent =
+                "Menunggu host menerima...";
 
             return;
 
         }
 
-
-        /*
-        --------------------------------------------
-        DITOLAK
-        --------------------------------------------
-        */
 
         if (
             request.status ===
@@ -2821,8 +2923,105 @@ async function checkReceiverRoom() {
         }
 
 
-        waitingStatus.textContent =
-            "Menunggu host menerima...";
+        if (
+            request.status ===
+            "cancelled"
+        ) {
+
+            stopReceiverPolling();
+
+            waitingStatus.textContent =
+                "Permintaan dibatalkan.";
+
+            return;
+
+        }
+
+
+        if (
+            request.status ===
+            "accepted"
+        ) {
+
+            stopReceiverPolling();
+
+
+            /* ------------------------------------------------
+               AMBIL ROOM
+            ------------------------------------------------ */
+
+            const {
+                data: room,
+                error: roomError
+            } =
+            await supabase
+                .from("rooms")
+                .select(
+                    "id,code,file_name,file_path,status,expires_at"
+                )
+                .eq(
+                    "id",
+                    request.room_id
+                )
+                .maybeSingle();
+
+
+            if (roomError) {
+
+                console.error(
+                    roomError
+                );
+
+                waitingStatus.textContent =
+                    roomError.message;
+
+                return;
+
+            }
+
+
+            if (!room) {
+
+                waitingStatus.textContent =
+                    "Room sudah tidak tersedia.";
+
+                return;
+
+            }
+
+
+            if (
+                room.expires_at &&
+                new Date(
+                    room.expires_at
+                ) <= new Date()
+            ) {
+
+                waitingStatus.textContent =
+                    "Room sudah kedaluwarsa.";
+
+                return;
+
+            }
+
+
+            downloadCode.textContent =
+                room.code;
+
+
+            downloadFile.textContent =
+                room.file_name;
+
+
+            downloadStatus.textContent =
+                "Host sudah menerima permintaan kamu.";
+
+
+            showPage(
+                downloadPage
+            );
+
+        }
 
     }
     catch(error) {
@@ -2834,11 +3033,9 @@ async function checkReceiverRoom() {
 }
 
 
-/*
-========================================================
-CANCEL REQUEST
-========================================================
-*/
+/* ========================================================
+   CANCEL REQUEST
+======================================================== */
 
 cancelRequestButton.onclick =
 async function() {
@@ -2868,7 +3065,12 @@ async function() {
         } =
         await supabase
             .from("room_requests")
-            .delete()
+            .update({
+
+                status:
+                    "cancelled"
+
+            })
             .eq(
                 "id",
                 receiverRequestId
@@ -2876,6 +3078,10 @@ async function() {
             .eq(
                 "requester_id",
                 currentUser.id
+            )
+            .eq(
+                "status",
+                "pending"
             );
 
 
@@ -2889,11 +3095,10 @@ async function() {
         stopReceiverPolling();
 
 
-        receiverRoomId =
+        receiverRequestId =
             null;
 
-
-        receiverRequestId =
+        receiverRoomId =
             null;
 
 
@@ -2920,11 +3125,9 @@ async function() {
 };
 
 
-/*
-========================================================
-DOWNLOAD
-========================================================
-*/
+/* ========================================================
+   DOWNLOAD
+======================================================== */
 
 downloadButton.onclick =
 async function() {
@@ -2936,7 +3139,7 @@ async function() {
     ) {
 
         downloadStatus.textContent =
-            "Data room tidak ditemukan.";
+            "Informasi request tidak ditemukan.";
 
         return;
 
@@ -2948,25 +3151,24 @@ async function() {
 
 
     downloadStatus.textContent =
-        "Menyiapkan download...";
+        "Memeriksa akses...";
 
 
     try {
 
-        /*
-        --------------------------------------------
-        Pastikan request user ACCEPTED
-        --------------------------------------------
-        */
+        /* ------------------------------------------------
+           PASTIKAN REQUEST INI ACCEPTED
+        ------------------------------------------------ */
 
         const {
             data: request,
-            error:
-                requestError
+            error: requestError
         } =
         await supabase
             .from("room_requests")
-            .select("status,room_id,requester_id")
+            .select(
+                "id,room_id,requester_id,status"
+            )
             .eq(
                 "id",
                 receiverRequestId
@@ -2978,6 +3180,10 @@ async function() {
             .eq(
                 "requester_id",
                 currentUser.id
+            )
+            .eq(
+                "status",
+                "accepted"
             )
             .maybeSingle();
 
@@ -2992,39 +3198,24 @@ async function() {
         if (!request) {
 
             throw new Error(
-                "Permintaan tidak ditemukan."
+                "Permintaan kamu belum diterima host."
             );
 
         }
 
 
-        if (
-            request.status !==
-            "accepted"
-        ) {
-
-            throw new Error(
-                "Kamu belum diterima host."
-            );
-
-        }
-
-
-        /*
-        --------------------------------------------
-        Ambil room
-        --------------------------------------------
-        */
+        /* ------------------------------------------------
+           AMBIL ROOM
+        ------------------------------------------------ */
 
         const {
             data: room,
-            error:
-                roomError
+            error: roomError
         } =
         await supabase
             .from("rooms")
             .select(
-                "id,code,file_name,file_path,status,expires_at"
+                "id,file_name,file_path,expires_at"
             )
             .eq(
                 "id",
@@ -3043,17 +3234,11 @@ async function() {
         if (!room) {
 
             throw new Error(
-                "Room sudah dihapus."
+                "Room tidak ditemukan."
             );
 
         }
 
-
-        /*
-        --------------------------------------------
-        Cek expired
-        --------------------------------------------
-        */
 
         if (
             room.expires_at &&
@@ -3069,16 +3254,17 @@ async function() {
         }
 
 
-        /*
-        --------------------------------------------
-        Download file
-        --------------------------------------------
-        */
+        /* ------------------------------------------------
+           DOWNLOAD STORAGE
+        ------------------------------------------------ */
+
+        downloadStatus.textContent =
+            "Menyiapkan download...";
+
 
         const {
             data: fileData,
-            error:
-                fileError
+            error: fileError
         } =
         await supabase
             .storage
@@ -3160,11 +3346,9 @@ async function() {
 };
 
 
-/*
-========================================================
-DELETE ROOM
-========================================================
-*/
+/* ========================================================
+   DELETE ROOM
+======================================================== */
 
 deleteRoomButton.onclick =
 async function() {
@@ -3198,15 +3382,13 @@ async function() {
 
     try {
 
-        /*
-        --------------------------------------------
-        Ambil file
-        --------------------------------------------
-        */
+        /* ------------------------------------------------
+           AMBIL FILE PATH
+        ------------------------------------------------ */
 
         const {
-            data,
-            error
+            data: room,
+            error: roomError
         } =
         await supabase
             .from("rooms")
@@ -3224,14 +3406,14 @@ async function() {
             .maybeSingle();
 
 
-        if (error) {
+        if (roomError) {
 
-            throw error;
+            throw roomError;
 
         }
 
 
-        if (!data) {
+        if (!room) {
 
             throw new Error(
                 "Room tidak ditemukan."
@@ -3240,14 +3422,12 @@ async function() {
         }
 
 
-        /*
-        --------------------------------------------
-        Hapus Storage
-        --------------------------------------------
-        */
+        /* ------------------------------------------------
+           DELETE STORAGE
+        ------------------------------------------------ */
 
         if (
-            data.file_path
+            room.file_path
         ) {
 
             const {
@@ -3258,7 +3438,7 @@ async function() {
                 .storage
                 .from("files")
                 .remove([
-                    data.file_path
+                    room.file_path
                 ]);
 
 
@@ -3271,14 +3451,11 @@ async function() {
         }
 
 
-        /*
-        --------------------------------------------
-        Hapus room
-        --------------------------------------------
-        Requests ikut terhapus
-        karena ON DELETE CASCADE
-        --------------------------------------------
-        */
+        /* ------------------------------------------------
+           DELETE ROOM
+           room_requests ikut terhapus
+           karena ON DELETE CASCADE.
+        ------------------------------------------------ */
 
         const {
             error:
@@ -3320,16 +3497,6 @@ async function() {
             "";
 
 
-        requestCard.classList.add(
-            "ft-hidden"
-        );
-
-
-        acceptedCard.classList.add(
-            "ft-hidden"
-        );
-
-
         showPage(
             homePage
         );
@@ -3352,7 +3519,25 @@ async function() {
 
 };
 
+
+/* ========================================================
+   CLEANUP POLLING
+======================================================== */
+
+window.addEventListener(
+    "beforeunload",
+    function() {
+
+        stopHostPolling();
+
+        stopReceiverPolling();
+
+    }
+);
+
 </script>
 
+
 </body>
+
 </html>
