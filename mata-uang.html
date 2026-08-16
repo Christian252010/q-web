@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="template.css">
-  <title>Currency Converter</title>
+  <title>Mata Uang</title>
   <script src="https://unpkg.com/lucide@latest"></script>
 
 </head>
@@ -23,18 +23,21 @@ body {
 .input-box {
   background: var(--card);
   padding: 15px;
-  border-radius: 12px;
+  border-radius: 8px;
   margin-bottom: 15px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.3)
 }
 
-input {
-  width: 100%;
+#amount, #result {
+  width: 93.5%;
+  border-radius: 6px;
   padding: 10px;
   font-size: 18px;
-  background: transparent;
+  background: var(--ins);
   border: none;
   color: var(--text);
   outline: none;
+  box-shadow: inset 0px 0px 8px 1px rgba(0,0,0,0.1);
 }
 
 .dropdown {
@@ -48,26 +51,29 @@ input {
   padding: 10px;
   background: var(--sp);
   color: var(--text);
-  border-radius: 8px;
+  border: 2px solid var(--bdr2);
+  border-radius: 6px;
   cursor: pointer;
 }
 
 .options {
   position: absolute;
   width: 100%;
-  max-height: 220px;
+  max-height: 420px;
   overflow-y: auto;
   color: var(--text);
   background: var(--sp);
-  border-radius: 8px;
+  border-radius: 6px;
   display: none;
   z-index: 10;
   margin-top: 10px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.3)
 }
 
 .option {
   padding: 10px;
   display: flex;
+  border-bottom: 2px solid var(--bdr2);
   justify-content: space-between;
   cursor: pointer;
 }
@@ -82,7 +88,16 @@ input {
   margin: 10px 0;
   font-size: 20px;
   -webkit-tap-highlight-color: transparent;
+  color: var(--ph);
+}
+
+.label{
   color: var(--text);
+  margin-bottom:4px;
+  font-size:17px;
+  margin-left: 4px;
+  opacity:0.7;
+  font-weight: bold;
 }
 </style>
 
@@ -95,16 +110,16 @@ input {
 <div class="container">
 
   <div class="input-box">
+    <div class="label">Input</div>
     <div class="dropdown" id="fromDropdown">
       <div class="selected">Loading...</div>
       <div class="options"></div>
     </div>
     <input type="number" id="amount" placeholder="Masukkan nilai">
-  </div>
 
   <div class="swap" onclick="swap()"><i data-lucide="arrow-up-down"></i></div>
 
-  <div class="input-box">
+    <div class="label">Output</div>
     <div class="dropdown" id="toDropdown">
       <div class="selected">Loading...</div>
       <div class="options"></div>
