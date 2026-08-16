@@ -111,3 +111,10 @@ fetch('template.html')
       pageTitle.textContent = document.body.getAttribute("data-title");
     }
   });
+  
+function home() {
+  window.location.href = 'index.html';
+}
+function profile() {
+  window.location.href = 'profile.html';
+}
