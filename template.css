@@ -381,14 +381,14 @@ a.active .icon {
 
 .btns button {
   display: flex;
-  background: #00000016;
+  background: #00000010;
   -webkit-tap-highlight-color: transparent;
   color: #fff;
   border: none;
   width: 38px;
   height: 38px;
   padding: 2px;
-  border-radius: 8px;
+  border-radius: 6px;
   align-items: center;
   justify-content: center;
 }
