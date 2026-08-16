@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
-  <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="dashboard.css">
   <link rel="stylesheet" href="template.css">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -55,6 +54,11 @@
     <div class="menu-label">Kalkulator Rumus</div>
   </div>
   
+  <div class="menu-box" onclick="bukaMenu('percent.html')">
+    <i data-lucide="square-percent" class="menu-icon"></i>
+    <div class="menu-label">Persentase</div>
+  </div>
+  
   <div class="menu-box" onclick="bukaMenu('romawi.html')">
     <i data-lucide="landmark" class="menu-icon"></i>
     <div class="menu-label">Romawi</div>
@@ -64,7 +68,7 @@
     <i data-lucide="server" class="menu-icon"></i>
     <div class="menu-label">Subnetting</div>
   </div>
-  
+
   <div class="menu-box" onclick="bukaMenu('file-transfer.html')">
     <i data-lucide="folder-open" class="menu-icon"></i>
     <div class="menu-label">File Transfer</div>
@@ -100,10 +104,5 @@ searchInput.addEventListener("keyup", function() {
 </script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2311491136628334"
      crossorigin="anonymous"></script>
-<script>
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js");
-}
-</script>
 </body>
 </html>
