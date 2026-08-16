@@ -39,10 +39,10 @@ h1 {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-button:hover, li:hover {
-  transform: scale(1.05);
+/*button:active, li:hover {
+  transform: rotate(180deg);
   transition: 0.3s;
-}
+}*/
 i {
   font-style: italic;
   color: #6b7280;
@@ -357,6 +357,7 @@ strong {
   
   .grid-container {
     display: flex;
+    align-items: center;
     flex-direction: column;
     gap: 12px;
     padding: 16px;
@@ -367,6 +368,8 @@ strong {
     border-radius: 6px;
     padding: 12px 16px;
     text-align: center;
+    width: 95%;
+    max-width: 800px;
     cursor: pointer;
     transition: 0.2s;
     color: var(--text);
@@ -376,7 +379,10 @@ strong {
   }
   
   .menu-box:hover {
-    transform: scale(1.04);
+    transform: scale(1.02);
+    background: var(--accent);
+    color: white;
+    stroke: white;
   }
 
 /*  .menu-box:active {
@@ -409,7 +415,7 @@ strong {
 .search-box {
   position: relative;
   width: 90%;
-  max-width: 600px;
+  max-width: 500px;
   margin: 0 auto;
 }
 
