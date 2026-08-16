@@ -79,3 +79,7 @@ btn.addEventListener("click", () => {
   document.body.classList.toggle("dark");
   updateUI();
 });
+
+function home() {
+  window.location.href = 'index.html';
+}
