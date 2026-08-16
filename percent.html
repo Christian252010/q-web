@@ -1,0 +1,568 @@
+<!DOCTYPE html><html lang="id">  <head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>Persentase</title>  
+<script src="https://unpkg.com/lucide@latest"></script>  
+<link rel="stylesheet" href="template.css">  
+<style>  
+body {  
+  font-family:Arial;  
+  background:var(--bg);  
+  display:flex;  
+  justify-content:center;  
+  align-items:flex-start;  
+}  
+
+.card {
+  background:tranparent;
+  padding:20px;
+  border-radius:15px;
+  margin-top: 50px;
+  width:100%;
+  max-width: 600px;
+  /* box-shadow:0 5px 20px rgba(0,0,0,.1); */
+}
+
+.htg {
+font-size: 14px;
+font-weight: bold;
+margin-left: 8px;
+color: var(--text);
+}
+
+.dropdown {
+position:relative;
+z-index:11;
+}
+
+.dropdown-btn {
+padding:10px;
+padding-left: 14px;
+/* border:1px solid #ccc; */
+border-radius:10px;
+cursor:pointer;
+color: var(--text);
+font-weight: bold;
+background:var(--card);
+}
+
+/* .dropdown-btn.dim{background:#e0e0e0} */
+.dropdown-menu {
+position:absolute;
+left:0;
+width:100%;
+padding-left: 5px;
+background:var(--card);
+color:var(--text);
+font-weight: bold;
+border-radius:10px;
+box-shadow:0 0 900px rgba(0,0,0,1);
+transform:translateY(100%);
+opacity:0;
+pointer-events:none;
+transition:.3s;
+z-index:11;
+}
+
+.dropdown.open .dropdown-menu {
+opacity:1;
+transform:translateY(10%);
+pointer-events:auto;
+}
+
+.dropdown-menu div {
+padding:10px;
+cursor:pointer;
+}
+
+.dropdown-menu div:hover {
+background:#222;
+}
+
+.info {
+display: inline-flex;
+position: absolute;
+gap: 4px;
+right: 30px;
+justify-content: right;
+color:gray;
+font-size:12px;
+margin-top: 8px;
+}
+
+.ic {
+width: 15px;
+height: 15px;
+margin-top: 2px;
+}
+
+.labels {
+display:flex;
+margin-left:8px;
+gap:36px;
+font-size:14px;
+margin-bottom:4px;
+}
+
+.labels span {
+flex:1;
+font-size: 14px;
+text-align:left;
+}
+
+.row {
+display:flex;
+margin-top: 30px;
+margin-bottom: 20px;
+justify-content: center;
+align-items:center;
+gap:12px;
+}
+
+.input-wrapper {
+display: flex;
+position:relative;
+width: 100%;
+}
+
+#operator {
+margin-top: 24px;
+color: var(--text);
+}
+
+.input-wrapper input {
+width:100%;
+height: 50px;
+padding:10px;
+padding-right: 12px;
+font-size: 22px;
+border-radius:10px;
+border: none;
+background: var(--card);
+color:var(--text);
+text-align:right;
+box-sizing: border-box;
+}
+
+input:focus {
+outline: none;
+}
+
+.has-unit-right input {
+padding-right: 30px;
+}
+.has-unit-left input {
+padding-left: 30px;
+}
+
+.unit.right {
+right: 8px;
+left: auto;
+}
+.unit.left {
+left: 8px;
+right: auto;
+}
+
+.unit {
+position:absolute;
+right:10px;
+top:50%;
+transform:translateY(-50%);
+font-size:20px;
+color:gray;
+pointer-events: none;
+white-space: nowrap;
+}
+
+.result {
+font-size: 18px;
+display:flex;
+justify-content:space-between;
+padding:10px;
+}
+
+.hsl {
+color:var(--text);
+font-size: 14px;
+font-weight: bold;
+margin-left: 8px;
+}
+
+.rst {
+padding-left: 8px;
+padding-right: 8px;
+border-radius:10px;
+background:var(--card);
+color:var(--text);
+}
+
+.popup {
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.5);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:2000;
+}
+
+.popup-content {
+background:var(--card);
+color:var(--text);
+padding:20px;
+border-radius:10px;
+width:260px;
+text-align:center;
+}
+
+.field {
+display: flex;
+flex-direction: column;
+flex: 1;
+gap: 2px;
+}
+
+.field label {
+font-size: 14px;
+font-weight: bold;
+margin-left: 8px;
+color:var(--text);
+}
+
+.dropdown-menu div {
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 10px;
+cursor: pointer;
+}
+
+.dropdown-menu i {
+width: 16px;
+height: 16px;
+}
+
+.dropdown-btn {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.dropdown-menu div {
+display: flex;
+align-items: center;
+gap: 14px;
+}
+
+.dropdown-btn svg,
+.dropdown-menu svg {
+color: var(--accent) !important;
+width: 26px;
+height: 26px;
+}
+
+.overlay {
+opacity:0;
+transition:.3s;
+z-index: 11;
+}
+.overlay.show {
+opacity:1;
+}
+</style>
+
+</head>  
+<body data-title="Persentase">  
+<div id="fetch-container"></div>  <div class="card">  
+  <span class="htg">Hitung</span>  
+  <div class="info" onclick="showInfo()">  
+    <i class="ic" data-lucide="alert-circle"></i>  
+    <span>info</span>  
+  </div>  
+  <div class="dropdown" id="dropdown">  
+    <div class="dropdown-btn" onclick="toggleDropdown()" id="selected">Pilih</div>  
+    <div class="dropdown-menu" id="menu"></div>  
+  </div>    <div class="row">  <div class="field">  
+  <label class="lb" id="labelA"></label>  
+  <div class="input-wrapper" id="wrapA">  
+    <input id="a" inputmode="decimal" placeholder="-">  
+    <span class="unit" id="unitA"></span>  
+  </div>  
+</div>  
+
+<i id="operator" data-lucide="plus"></i>  
+
+<div class="field">  
+  <label class="lb" id="labelB"></label>  
+  <div class="input-wrapper" id="wrapB">  
+    <input id="b" inputmode="decimal" placeholder="-">  
+    <span class="unit" id="unitB"></span>  
+  </div>  
+</div>
+
+  </div>  <span class="hsl">Hasil</span>
+
+  <div class="rst">  
+    <div class="result">  
+      <span id="label1"></span>  
+      <span id="result1"></span>  
+    </div>  <div class="result" id="resultBox2">  
+  <span id="label2"></span>  
+  <span id="result2"></span>  
+</div>
+
+  </div>  
+</div>  <div class="popup" id="popup" onclick="closePopup()">  
+  <div class="popup-content" onclick="event.stopPropagation()">  
+    <p id="infoText"></p>  
+  </div>  
+</div>  <script src="fetch.js"></script>  <script>  
+const config={  
+diskon:{  
+  name:"Diskon",  
+  icon:"badge-percent",  
+  labelA:"Nilai",  
+  labelB:"Diskon",  
+  unitA:"",  
+  unitB:"%",  
+  resultUnitA:"%",  
+  resultUnitB:"",  
+  operator:"minus",  
+  calc:(a,b)=>({  
+    r1:a*b/100,  
+    r2:a-(a*b/100)}),  
+  label1:"Diskon",  
+  label2:"Hasil Akhir",  
+  info:"Menghitung persentase"  
+},  
+kenaikan:{  
+  name:"Kenaikan",  
+  icon:"trending-up",  
+  labelA:"Nilai",  
+  labelB:"Kenaikan",  
+  unitA:"",  
+  unitB:"%",  
+  resultUnitA:"%",  
+  resultUnitB:"",  
+  operator:"plus",  
+  calc:(a,b)=>({  
+    r1:a*b/100,  
+    r2:a+(a*b/100)}),  
+  label1:"Kenaikan",  
+  label2:"Nilai Akhir",  
+  info:"Menghitung kenaikan nilai"  
+},  
+kanan:{  
+  name:"Persen dari A ke B",  
+  icon:"corner-down-right",  
+  labelA:"Nilai A",  
+  labelB:"Nilai B",  
+  unitA:"A",  
+  unitB:"B",  
+  unitPosA:"left",  
+  unitPosB:"left",  
+  resultUnitA:"%",  
+  operator:"arrow-right",  
+  calc:(a,b)=>({  
+    r1:(b-a)/a*100}),  
+  label1:"Persen",  
+  hide2:true,  
+  info:"Persentase perubahan dari A ke B"  
+},  
+kiri:{  
+  name:"Persen A dari B",  
+  icon:"corner-down-left",  
+  labelA:"Nilai A",  
+  labelB:"Nilai B",  
+  unitA:"A",  
+  unitB:"B",  
+  unitPosA:"left",  
+  unitPosB:"left",  
+  resultUnitA:"%",  
+  operator:"arrow-left",  
+  calc:(a,b)=>({  
+    r1:a/b*100}),  
+  label1:"Persen",  
+  hide2:true,  
+  info:"Persentase A terhadap B"  
+}  
+};  
+  
+let current='diskon';  
+  
+const dropdown = document.getElementById("dropdown");  
+const selected = document.getElementById("selected");  
+const menu = document.getElementById("menu");  
+  
+// 🔥 OVERLAY  
+const overlay = document.createElement("div");  
+overlay.style.position = "fixed";  
+overlay.style.inset = "0";  
+overlay.style.background = "rgba(0,0,0,0.5)";  
+overlay.style.display = "none";  
+overlay.style.zIndex = "11";  
+document.body.appendChild(overlay);  
+  
+// ===== DROPDOWN LIST =====  
+Object.keys(config).forEach(k=>{  
+  const div = document.createElement('div');  
+  
+  div.innerHTML = `  
+    <i data-lucide="${config[k].icon}"></i>  
+    <span>${config[k].name}</span>  
+  `;  
+  
+  div.onclick = () => selectMode(k);  
+  
+  menu.appendChild(div);  
+});  
+  
+lucide.createIcons();  
+  
+// ===== DROPDOWN CONTROL =====  
+function toggleDropdown(){  
+  const open = dropdown.classList.toggle('open');  
+  
+  overlay.style.display = open ? 'block' : 'none';  
+}  
+  
+overlay.onclick = ()=>{  
+  dropdown.classList.remove('open');  
+  overlay.style.display = 'none';  
+}  
+  
+function selectMode(k){  
+  current = k;  
+  
+  selected.innerHTML = `  
+    <i data-lucide="${config[k].icon}"></i>  
+    <span>${config[k].name}</span>  
+  `;  
+  
+  lucide.createIcons();  
+  
+  dropdown.classList.remove('open');  
+  overlay.style.display = 'none';  
+  
+  update();  
+}  
+  
+// ===== INPUT =====  
+function clean(val){  
+  val = val.replace(/[^0-9,.-]/g,'');  
+  val = val.replace(/(?!^)-/g,'');  
+  
+  let parts = val.split(',');  
+  if(parts.length>2) val = parts[0]+','+parts.slice(1).join('');  
+  
+  return val;  
+}  
+  
+function parse(val){  
+  return parseFloat(val.replace(/\./g,'').replace(',','.')) || 0;  
+}  
+  
+function format(n){  
+  if(!isFinite(n)) return '0';  
+  return n.toLocaleString('id-ID',{maximumFractionDigits:2});  
+}  
+  
+function handleInput(e){  
+  let val = clean(e.target.value);  
+  
+  let pure = val.replace(/[^0-9]/g,'').slice(0,7);  
+  
+  let decimal = val.includes(',') ? ','+val.split(',')[1] : '';  
+  
+  let num = parseFloat(pure) || 0;  
+  
+  e.target.value = pure ? format(num)+decimal : '';  
+  
+  calc();  
+}  
+  
+function handleBlur(e){  
+  const num = parse(e.target.value);  
+  e.target.value = num ? format(num) : '';  
+}  
+  
+a.addEventListener('input',handleInput);  
+b.addEventListener('input',handleInput);  
+a.addEventListener('blur',handleBlur);  
+b.addEventListener('blur',handleBlur);  
+  
+// ===== UPDATE UI =====  
+function update(){  
+  const c = config[current];  
+  
+  labelA.innerText = c.labelA;  
+  labelB.innerText = c.labelB;  
+  
+  unitA.innerText = c.unitA;  
+  unitB.innerText = c.unitB;  
+  
+  unitA.className = "unit " + (c.unitPosA || 'right');  
+  unitB.className = "unit " + (c.unitPosB || 'right');  
+  
+  wrapA.className = "input-wrapper";  
+  wrapB.className = "input-wrapper";  
+  
+  if(c.unitA){  
+    wrapA.classList.add(c.unitPosA === 'left' ? 'has-unit-left':'has-unit-right');  
+  }  
+  
+  if(c.unitB){  
+    wrapB.classList.add(c.unitPosB === 'left' ? 'has-unit-left':'has-unit-right');  
+  }  
+  
+  label1.innerText = c.label1;  
+  label2.innerText = c.label2 || '';  
+  
+  operator.setAttribute('data-lucide',c.operator);  
+  lucide.createIcons();  
+  
+  resultBox2.style.display = c.hide2 ? 'none':'flex';  
+  
+  calc();  
+}  
+  
+// ===== CALC =====  
+function calc(){  
+  const c = config[current];  
+  
+  const A = parse(a.value);  
+  const B = parse(b.value);  
+  
+  const r = c.calc(A,B);  
+  
+  result1.innerHTML = format(r.r1) +  
+    (c.resultUnitA ? ' <span style="color:gray">'+c.resultUnitA+'</span>' : '');  
+  
+  if(r.r2 !== undefined){  
+    result2.innerHTML = format(r.r2) +  
+      (c.resultUnitB ? ' <span style="color:gray">'+c.resultUnitB+'</span>' : '');  
+  }  
+}  
+  
+// ===== INFO =====  
+function showInfo(){  
+  infoText.innerText = config[current].info;  
+  popup.style.display = 'flex';  
+}  
+  
+function closePopup(){  
+  popup.style.display = 'none';  
+}  
+  
+// ===== INIT =====  
+selected.innerHTML = `  
+  <i data-lucide="${config[current].icon}"></i>  
+  <span>${config[current].name}</span>  
+`;  
+  
+lucide.createIcons();  
+update();  
+</script>  
+</body>  
+</html>
