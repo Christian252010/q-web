@@ -14,16 +14,19 @@
   --daccent: seagreen;
   --text: #000;
   --bg: #fff;
-  --card: #eaeaea;
+  --card: #f1f1f1;
   --filter: none;
   --ph: #aaa;
-  --sp: #dfdfdf;
+  --sp: #e4e4e4;
   --border: #ddd;
   --dy: #eee;
   --text2: #666;
   --bdr: #cfd8cf;
+  --bdr2: #d6d6d6;
   --tr: #fff;
   --td: #f7f7f7;
+  --ins: #00000010;
+  --sdh: #00000010;
 }
 
 body.dark {
@@ -39,8 +42,11 @@ body.dark {
   --dy: #ccc;
   --text2: #ccc;
   --bdr: #3d4b4b;
+  --bdr2: #666;
   --tr: #323232;
   --td: #292929;
+  --ins: #00000030;
+  --sdh: #ffffff1a;
 }
 
 body {
@@ -66,7 +72,7 @@ body {
   box-sizing: border-box;
   font-weight: bold;
   font-size: 15px;
-  z-index: 10;
+  z-index: 999;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
@@ -110,24 +116,23 @@ body {
 .sidebar {
   position: fixed;
   top: 0;
-  left: 0;
-  transform: translateX(-100%);
-  width: 100vw;
-  height: 100vh;
+  left: -240px;
+  width: 220px;
+  height: 100%;
   background-color: var(--bg);
-  color: #ff0000;
+  color: #fff;
   padding-top: 45px;
-  transition: transform 0.4s ease;
+  transition: left 0.3s ease;
   box-sizing: border-box;
   box-shadow: 3px 0 12px rgba(0, 0, 0, 0.4);
-  z-index: 9;
+  z-index: 99;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .sidebar.active {
-  transform: translateX(0);
+  left: 0;
 }
 
 /* SEARCH BAR */
@@ -138,7 +143,7 @@ body {
   margin-bottom: 4px;
 }
 .sidebar-search input {
-  width: 100%;
+  width: 40%;
   padding: 10px 8px;
   border-radius: 4px;
   outline: none;
@@ -178,20 +183,18 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 15px;
+  padding: 13px 22px;
   text-decoration: none;
   color: var(--text);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
   letter-spacing: 0.3px;
   transition: all 0.25s ease;
-  background: var(--card);
-  margin: 12px 18px;
-  border-radius: 6px;
 }
 
 .sidebar a:hover {
-  transform: scale(1.04);
+  background: var(--accent);
+  color: white;
 }
 
 .icons {
@@ -240,10 +243,15 @@ body {
   transform: translateX(4px);
 }*/
 
+.sidebar a.active {
+  background: var(--card);
+  border-left: 4px solid var(--accent);
+  color: var(--accent);
+}
+
 /*.sidebar a.active {
-  background-color: #2b2b2b;
-  /*border-left: 4px solid teal;*/
-  color: teal;
+  background: var(--accent);
+  color: white;
 }*/
 
 a.active .icon {
@@ -313,7 +321,7 @@ a.active .icon {
   color: var(--text);
   padding: 8px;
   font-size: 20px;
-  padding-left: 20px;
+  padding-left: 14px;
   font-weight: bold;
   margin-top: 8px;
   margin-bottom: -14px;
@@ -339,7 +347,7 @@ a.active .icon {
 }
 
 .sidebarr-search input {
-  width: 90%;
+  width: 80%;
   padding: 9px 8px 9px 36px;
   border-radius: 4px;
   outline: none;
@@ -364,23 +372,30 @@ a.active .icon {
   margin: 0 auto;
 }
 
-.btn24 {
-  background: transparent;
+.btns {
+  display: flex;
+  position: fixed;
+  right: 6px;
+  gap: 6px;
+}
+
+.btns button {
+  display: flex;
+  background: #00000016;
+  -webkit-tap-highlight-color: transparent;
   color: #fff;
   border: none;
+  width: 38px;
+  height: 38px;
   padding: 2px;
   border-radius: 8px;
-  cursor: pointer;
-  display: flex;
   align-items: center;
-  transition:transform 0.4s ease;
-  width: 45px;
-  height: 45px;
   justify-content: center;
-  position: fixed;
-  top: 0px;
-  right: 6px;
-  -webkit-tap-highlight-color: transparent;
+}
+
+.btn24 {
+  cursor: pointer;
+  transition:transform 0.4s ease;
 }
 
 .btn24:active {
