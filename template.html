@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Qris-Tian Web</title>
-  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="template.css">
   <script src="https://unpkg.com/lucide@latest"></script>
 <style>
@@ -73,9 +72,17 @@ body {
   <h2 id="pageTitle">Loading...</h2>
   
   <!--<div class="live-clock" id="liveClock"></div>-->
-  <button class="btn24" id="toggle">️
-    <i id="icon" data-lucide="sun"></i>
-  </button>
+  <div class="btns">
+    <button class="btn25" id="toggle1" onclick="home()">️
+      <i id="icon2" data-lucide="home"></i>
+    </button>
+    <button class="btn26" id="toggle2" onclick="profile()">️
+      <i id="icon3" data-lucide="user"></i>
+    </button>
+    <button class="btn24" id="toggle">️
+      <i id="icon" data-lucide="sun"></i>
+    </button>
+  </div>
 </div>
 
 <!-- DOCK -->
@@ -153,6 +160,11 @@ body {
       <span>Kalkulator Rumus</span>
     </a>
     
+    <a href="percent.html">
+      <i data-lucide="square-percent" class="icons"></i>
+      <span>Persentase</span>
+    </a>
+    
     <a href="romawi.html">
       <i data-lucide="landmark" class="icons"></i>
       <span>Romawi</span>
@@ -162,7 +174,7 @@ body {
       <i data-lucide="server" class="icons"></i>
       <span>Subnetting</span>
     </a>
-    
+  
     <a href="file-transfer.html">
       <i data-lucide="folder-open" class="icons"></i>
       <span>File Transfer</span>
@@ -249,12 +261,11 @@ searchInput.addEventListener("keyup", function() {
     box.style.display = label.includes(filter) ? "flex" : "none";
   });
 });
-</script>
-<script src="template.js"></script>
-<script>
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js");
+
+function home() {
+  window.location.href = 'index.html';
 }
 </script>
+<script src="template.js"></script>
 </body>
 </html>
