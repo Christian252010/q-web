@@ -6,10 +6,7 @@
 <title>Jadwal Pelajaran</title>
 <link rel="stylesheet" href="template.css">
 <script src="https://unpkg.com/lucide@latest"></script>
-
 <style>
-
-
 body{
   font-family:Arial,sans-serif;
   background: var(--bg);
@@ -85,7 +82,7 @@ h1{
 }
 
 .left{display:flex;gap:8px;align-items:center}
-.time{color:#999;font-size:.85em}
+.time{color:#999;font-size:.85em;margin-top:3px;}
 
 /*.active{
   background:rgba(0,0,0,0.1);
@@ -423,6 +420,11 @@ h1 {
     opacity:1;
   }
 }
+
+.icf {
+  margin-bottom: -5px;
+  padding-right: 5px;
+}
 </style>
 <!--<style>
 body.dark .card {
@@ -533,11 +535,10 @@ const toMin = t => {
 
 /* ===== ICON ===== */
 const mapelIcon={
-  "Matematika":"calculator","B.Indo":"pen","B.Inggris":"languages",
-  "Agama":"moon-star","Informatika":"monitor","Dasar TJKT":"server",
-  "PIPAS":"flask-conical","Olahraga":"dumbbell","Sejarah":"scroll",
-  "PPKN":"landmark","B.Jawa":"feather","Koding":"code-xml",
-  "Seni Budaya":"palette","BK":"user"
+  "Matematika":"calculator","B.Indonesia":"notebook-pen","B.Inggris":"languages",
+  "Agama":"moon-star","Pemrograman Mobile":"monitor","Kejuruan":"server",
+  "KIK":"chart-no-axes-combined","Olahraga":"dumbbell","Sejarah":"scroll",
+  "PPKN":"landmark","B.Jawa":"feather","Koding":"code-xml","BK":"user"
 };
 const spesialIcon={
   "Upacara":"flag","Istirahat":"coffee",
@@ -560,19 +561,19 @@ function clearFake(){localStorage.clear();location.reload()}
 
 /* ===== JADWAL ===== */
 const jadwalA={
-1:[{jam:"07.45-10.05",mapel:"Seni Budaya"},{jam:"10.30-15.15",mapel:"PIPAS"}],
-2:[{jam:"07.00-10.50",mapel:"PIPAS"},{jam:"10.50-15.15",mapel:"Dasar TJKT"}],
-3:[{jam:"07.00-13.45",mapel:"Dasar TJKT"},{jam:"13.45-15.15",mapel:"BK"}],
-4:[{jam:"07.00-09.55",mapel:"Informatika"},{jam:"10.15-15.15",mapel:"Dasar TJKT"}],
-5:[{jam:"07.15-09.55",mapel:"Koding"},{jam:"10.10-14.05",mapel:"Informatika"}]
+1:[{jam:"07.45-10.05",mapel:"Pemrograman Mobile"},{jam:"10.30-15.15",mapel:"Kejuruan"}],
+2:[{jam:"07.00-09.55",mapel:"Koding"},{jam:"10.15-11.25",mapel:"BK"},{jam:"11.25-15.15",mapel:"Kejuruan"}],
+3:[{jam:"07.00-12.00",mapel:"Kejuruan"},{jam:"13.00-15.15",mapel:"Pemrograman Mobile"}],
+4:[{jam:"07.00-14.30",mapel:"Kejuruan"},{jam:"14.30-15.15",mapel:"BK"}],
+5:[{jam:"07.15-14.05",mapel:"Kejuruan"}]
 };
 
 const jadwalB={
-1:[{jam:"07.45-09.30",mapel:"Agama"},{jam:"09.30-12.00",mapel:"Matematika"},{jam:"12.55-15.15",mapel:"B.Inggris"}],
-2:[{jam:"07.00-09.15",mapel:"Olahraga"},{jam:"09.16-10.50",mapel:"Sejarah"},{jam:"10.50-12.00",mapel:"PPKN"},{jam:"12.55-15.15",mapel:"B.Indo"}],
-3:[{jam:"07.00-08.35",mapel:"B.Jawa"},{jam:"08.35-11.25",mapel:"B.Indo"},{jam:"11.25-15.15",mapel:"Matematika"}],
-4:[{jam:"07.00-09.15",mapel:"Agama"},{jam:"09.15-11.25",mapel:"Olahraga"},{jam:"11.25-13.45",mapel:"Sejarah"},{jam:"13.45-15.15",mapel:"BK"}],
-5:[{jam:"07.00-08.35",mapel:"PPKN"},{jam:"08.35-11.30",mapel:"B.Inggris"},{jam:"12.45-14.05",mapel:"B.Jawa"}]
+1:[{jam:"07.45-10.05",mapel:"B.Inggris"},{jam:"10.30-11.30",mapel:"Olahraga"},{jam:"11.30-14.05",mapel:"Matematika"},{jam:"14.05-15.15",mapel:"B.Indonesia"}],
+2:[{jam:"07.00-09.15",mapel:"Agama"},{jam:"09.15-10.50",mapel:"Sejarah"},{jam:"10.50-14.05",mapel:"B.Indonesia"},{jam:"14.05-15.15",mapel:"PPKN"}],
+3:[{jam:"07.00-08.35",mapel:"PPKN"},{jam:"08.35-09.55",mapel:"B.Jawa"},{jam:"10.15-12.00",mapel:"Matematika"},{jam:"13.00-15.15",mapel:"B.Inggris"}],
+4:[{jam:"07.00-08.35",mapel:"Olahraga"},{jam:"08.35-12.00",mapel:"KIK"},{jam:"13.00-14.30",mapel:"Sejarah"},{jam:"14.30-15.15",mapel:"B.Jawa"}],
+5:[{jam:"07.15-09.15",mapel:"Agama"},{jam:"09.15-14.05",mapel:"KIK"}]
 };
 
 const spesial={
@@ -593,7 +594,7 @@ if(isBesok) tgl.setDate(tgl.getDate()+1);
 const hari=tgl.getDay();
 const hariAsli = now.getDay(); // hari sebenarnya (untuk NOW)
 
-const startA=new Date("2026-02-16");
+const startA=new Date("2026-08-08");
 const isA=Math.floor((tgl-startA)/(1000*60*60*24*7))%2===0;
 const aktif=isA?jadwalA:jadwalB;
 
@@ -681,7 +682,10 @@ function renderFull(title,data){
 
   ${v.map(m=>`
     <div class="day-item">
-      <span>• <span class="mapel">${m.mapel}</span></span>
+      <span>
+        <i class="icf" data-lucide="${mapelIcon[m.mapel] || "book"}"></i>
+        <span class="mapel">${m.mapel}</span>
+      </span>
       <span class="time">${m.jam}</span>
     </div>
   `).join("")}
@@ -747,19 +751,6 @@ lucide.createIcons();
 
 lucide.createIcons();
 </script>
-<!--<script>
-function autoThemeByTime(){
-  const hour = new Date().getHours();
-
-  if(hour >= 18 || hour < 6){
-    document.body.classList.add("dark");
-  }else{
-    document.body.classList.remove("dark");
-  }
-}
-
-autoThemeByTime();
-</script>-->
 <!--<script>
 function setThemeByTime(){
   const hour = new Date().getHours();
