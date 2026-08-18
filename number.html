@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://unpkg.com/lucide@latest"></script>  
+<link rel="stylesheet" href="template.css">
+
+<title>Number Converter</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+
+    padding:20px;
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+.converter{
+    display: flex;
+    flex-direction: column;
+    margin-top: 50px;
+    width:100%;
+    max-width:600px;
+    justify-content: center;
+    align-items: center;
+
+    background: var(--card);
+
+    padding:25px;
+
+    border-radius:8px;
+
+    box-shadow:0 0 8px 4px rgba(0,0,0,.15);
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
+h1{
+    text-align:center;
+
+    margin:0 0 25px;
+
+    font-size:24px;
+}
+
+
+/* =========================
+   FIELD
+========================= */
+
+.field{
+    width: 100%;
+    display:flex;
+    flex-direction:column;
+    margin-top: -6px;
+    gap:8px;
+}
+
+.field2 {
+  margin-top: -18px;
+}
+
+label{
+    color: var(--text);
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom: -6px;
+}
+
+
+/* =========================
+   CUSTOM DROPDOWN
+========================= */
+
+.custom-select{
+    position:relative;
+    width:100%;
+}
+
+.select-button{
+    display: flex;
+    width:calc(100% - 20px);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:8px;
+
+    border:2px solid var(--bdr2);
+    border-radius:6px;
+    color: var(--text);
+
+    background: var(--sp);
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    user-select:none;
+}
+
+.select-button:hover{
+    border-color:#999;
+}
+
+.select-arrow{
+    display: flex;
+    align-items: center;
+    font-size:13px;
+    transform-origin: center;
+    transition:.2s;
+}
+
+.custom-select.open
+.select-arrow{
+    transform:rotate(180deg);
+}
+
+
+/* =========================
+   DROPDOWN MENU
+========================= */
+
+.select-menu{
+    position:absolute;
+
+    top:calc(100% + 5px);
+    left:0;
+    right:0;
+
+    background: var(--card);
+
+    border-radius:6px;
+
+    box-shadow: 0 0 8px 4px rgba(0,0,0,.15);
+
+    max-height:300px;
+
+    overflow-y:auto;
+
+    display:none;
+
+    z-index:100;
+}
+
+.custom-select.open
+.select-menu{
+    display:block;
+}
+
+
+/* =========================
+   OPTION
+========================= */
+
+.select-option{
+    display: flex;
+    justify-content: space-between;
+    padding:11px 12px;
+    color: var(--text);
+    cursor:pointer;
+    border-bottom: 2px solid var(--sp);
+    font-size:15px;
+}
+
+.select-option:hover{
+    background: var(--ph);
+}
+
+.select-option.active{
+    background:var(--accent);
+    color: white;
+    font-weight:bold;
+}
+
+
+/* =========================
+   INPUT
+========================= */
+
+#inputNumber{
+    width:calc(100% - 20px);
+    background: var(--ins);
+    border: none;
+    border-radius:6px;
+
+    padding:10px;
+
+    font-size:18px;
+
+    outline:none;
+    box-shadow: inset 0px 0px 8px 1px rgba(0,0,0,0.1);
+}
+
+#inputNumber:focus{
+    border-color:#555;
+}
+
+
+/* =========================
+   SWAP
+========================= */
+
+.swap{
+    width:44px;
+    height:44px;
+    color: var(--text);
+    background: none;
+    border: none;
+    margin:15px auto;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:22px;
+    cursor:pointer;
+    transition:.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.swap:active{
+    transform:scale(1.08);
+}
+
+
+/* =========================
+   RESULT
+========================= */
+
+.result-box{
+    display:flex;
+    align-items:center;
+
+    padding:6px 10px;
+
+    width: calc(100% - 20px);
+
+    border-radius:6px;
+
+    background: var(--ins);
+
+    font-size:18px;
+
+    word-break:break-all;
+    box-shadow: inset 0px 0px 8px 1px rgba(0,0,0,0.1);
+}
+
+.error{
+    margin-top:8px;
+    color: crimson;
+    font-size:13px;
+    display:none;
+    margin-bottom: -14px;
+}
+</style>
+</head>
+
+
+<body data-title="Numeric">
+
+<div id="fetch-container"></div>
+
+<div class="converter">
+
+
+
+
+    <!-- =====================
+         INPUT
+    ====================== -->
+
+    <div class="field">
+
+        <label>Dari</label>
+
+        <div
+            class="custom-select"
+            id="fromSelect"
+        >
+
+            <div class="select-button">
+
+                <span class="selected-text">
+                    Base 2 (Binary)
+                </span>
+
+                <span class="select-arrow">
+                    <i data-lucide="chevron-down"></i>
+                </span>
+
+            </div>
+
+            <div class="select-menu"></div>
+
+        </div>
+
+
+        <input
+            id="inputNumber"
+            type="text"
+            placeholder="Masukkan angka..."
+            autocomplete="off"
+            spellcheck="false"
+        >
+
+    </div>
+
+
+    <!-- =====================
+         SWAP
+    ====================== -->
+
+    <button
+        class="swap"
+        id="swapBtn"
+        type="button"
+        title="Tukar basis"
+    >
+      <i data-lucide="arrow-down-up"></i>
+    </button>
+
+
+    <!-- =====================
+         OUTPUT BASE
+    ====================== -->
+
+    <div class="field field2">
+
+        <label>Ke</label>
+
+        <div
+            class="custom-select"
+            id="toSelect"
+        >
+
+            <div class="select-button">
+
+                <span class="selected-text">
+                    Base 10 (Decimal)
+                </span>
+
+                <span class="select-arrow">
+                    <i data-lucide="chevron-down"></i>
+                </span>
+
+            </div>
+
+            <div class="select-menu"></div>
+
+        </div>
+        <div class="result">
+    
+            <div
+                class="result-box"
+                id="result"
+            >
+                -
+            </div>
+    
+            <div
+                class="error"
+                id="error"
+            >
+                Angka tidak valid.
+            </div>
+    
+        </div>
+
+    </div>
+
+
+    <!-- =====================
+         RESULT
+    ====================== -->
+
+
+</div>
+
+<script src="fetch.js"></script>
+
+<script>
+
+/* =====================================================
+   BASIS 2 - 15
+===================================================== */
+
+const bases = [];
+
+for(let i = 2; i <= 16; i++){
+    bases.push(i);
+}
+
+
+/* =====================================================
+   NAMA BASIS
+===================================================== */
+
+const baseNames = {
+
+    2: "Binary",
+    3: "Ternary",
+    4: "Quaternary",
+    5: "Quinary",
+    6: "Senary",
+    7: "Septenary",
+    8: "Octal",
+    9: "Nonary",
+    10: "Decimal",
+    11: "Undecimal",
+    12: "Duodecimal",
+    13: "Tridecimal",
+    14: "Tetradecimal",
+    15: "Pentadecimal",
+    16: "Hexadecimal"
+
+};
+
+
+function getBaseName(base){
+
+    return baseNames[base];
+
+}
+
+
+/* =====================================================
+   ELEMENT
+===================================================== */
+
+const fromSelect =
+    document.getElementById("fromSelect");
+
+const toSelect =
+    document.getElementById("toSelect");
+
+const inputNumber =
+    document.getElementById("inputNumber");
+
+const result =
+    document.getElementById("result");
+
+const error =
+    document.getElementById("error");
+
+const swapBtn =
+    document.getElementById("swapBtn");
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let fromBase = 2;
+let toBase = 10;
+
+
+/* =====================================================
+   UPDATE TEXT DROPDOWN
+===================================================== */
+
+function updateSelectText(select, base){
+
+    select.querySelector(
+        ".selected-text"
+    ).textContent =
+        `${getBaseName(base)} - ${base}`;
+
+}
+
+
+/* =====================================================
+   BUAT OPTION
+===================================================== */
+
+function buildOptions(
+    select,
+    selectedBase,
+    onSelect
+){
+
+    const menu =
+        select.querySelector(
+            ".select-menu"
+        );
+
+    menu.innerHTML = "";
+
+
+    bases.forEach(base => {
+
+        const option =
+            document.createElement("div");
+
+        option.className =
+            "select-option";
+
+
+        if(base === selectedBase){
+
+            option.classList.add(
+                "active"
+            );
+
+        }
+
+
+        option.innerHTML =
+            `<b>${getBaseName(base)}</b> <span>${base}</span>`;
+
+
+        option.addEventListener(
+            "click",
+            () => {
+
+                onSelect(base);
+
+                select.classList.remove(
+                    "open"
+                );
+
+            }
+        );
+
+
+        menu.appendChild(option);
+
+    });
+
+}
+
+
+/* =====================================================
+   FROM DROPDOWN
+===================================================== */
+
+function updateFromDropdown(){
+
+    updateSelectText(
+        fromSelect,
+        fromBase
+    );
+
+
+    buildOptions(
+        fromSelect,
+        fromBase,
+        base => {
+
+            fromBase = base;
+
+            updateFromDropdown();
+
+            convert();
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   TO DROPDOWN
+===================================================== */
+
+function updateToDropdown(){
+
+    updateSelectText(
+        toSelect,
+        toBase
+    );
+
+
+    buildOptions(
+        toSelect,
+        toBase,
+        base => {
+
+            toBase = base;
+
+            updateToDropdown();
+
+            convert();
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   INIT DROPDOWN
+===================================================== */
+
+updateFromDropdown();
+
+updateToDropdown();
+
+
+/* =====================================================
+   BUKA DROPDOWN
+===================================================== */
+
+document
+    .querySelectorAll(".select-button")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+
+                const parent =
+                    button.parentElement;
+
+
+                document
+                    .querySelectorAll(
+                        ".custom-select"
+                    )
+                    .forEach(select => {
+
+                        if(select !== parent){
+
+                            select.classList.remove(
+                                "open"
+                            );
+
+                        }
+
+                    });
+
+
+                parent.classList.toggle(
+                    "open"
+                );
+
+            }
+        );
+
+    });
+
+
+/* =====================================================
+   KLIK DI LUAR
+===================================================== */
+
+document.addEventListener(
+    "click",
+    () => {
+
+        document
+            .querySelectorAll(
+                ".custom-select"
+            )
+            .forEach(select => {
+
+                select.classList.remove(
+                    "open"
+                );
+
+            });
+
+    }
+);
+
+
+/* =====================================================
+   VALIDASI ANGKA
+===================================================== */
+
+function isValidNumber(
+    value,
+    base
+){
+
+    if(value === ""){
+        return false;
+    }
+
+
+    value =
+        value.toUpperCase();
+
+
+    for(const char of value){
+
+        let digit;
+
+
+        if(
+            char >= "0" &&
+            char <= "9"
+        ){
+
+            digit =
+                char.charCodeAt(0) -
+                48;
+
+        }
+
+        else if(
+            char >= "A" &&
+            char <= "F"
+        ){
+
+            digit =
+                char.charCodeAt(0) -
+                55;
+
+        }
+
+        else{
+
+            return false;
+
+        }
+
+
+        if(digit >= base){
+
+            return false;
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+/* =====================================================
+   STRING → BIGINT
+===================================================== */
+
+function stringToBigInt(
+    value,
+    base
+){
+
+    value =
+        value.toUpperCase();
+
+
+    let number = 0n;
+
+    const bigBase =
+        BigInt(base);
+
+
+    for(const char of value){
+
+        let digit;
+
+
+        if(
+            char >= "0" &&
+            char <= "9"
+        ){
+
+            digit =
+                char.charCodeAt(0) -
+                48;
+
+        }
+
+        else{
+
+            digit =
+                char.charCodeAt(0) -
+                55;
+
+        }
+
+
+        number =
+            number * bigBase +
+            BigInt(digit);
+
+    }
+
+
+    return number;
+
+}
+
+
+/* =====================================================
+   BIGINT → STRING
+===================================================== */
+
+function bigIntToString(
+    number,
+    base
+){
+
+    if(number === 0n){
+
+        return "0";
+
+    }
+
+
+    const digits =
+        "0123456789ABCDEF";
+
+
+    const bigBase =
+        BigInt(base);
+
+
+    let output = "";
+
+
+    while(number > 0n){
+
+        const remainder =
+            Number(
+                number % bigBase
+            );
+
+
+        output =
+            digits[remainder] +
+            output;
+
+
+        number =
+            number / bigBase;
+
+    }
+
+
+    return output;
+
+}
+
+
+/* =====================================================
+   CONVERT
+===================================================== */
+
+function convert(){
+
+    const value =
+        inputNumber.value
+            .trim()
+            .toUpperCase();
+
+
+    error.style.display =
+        "none";
+
+
+    /*
+       Kalau input kosong,
+       jangan ubah hasil menjadi
+       sesuatu yang aneh.
+    */
+
+    if(value === ""){
+
+        result.textContent = "-";
+
+        return;
+
+    }
+
+
+    /* VALIDASI */
+
+    if(
+        !isValidNumber(
+            value,
+            fromBase
+        )
+    ){
+
+        result.textContent =
+            "-";
+
+        error.textContent =
+            `Digit tidak valid untuk Base ${fromBase}.`;
+
+        error.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    try{
+
+        const decimal =
+            stringToBigInt(
+                value,
+                fromBase
+            );
+
+
+        const converted =
+            bigIntToString(
+                decimal,
+                toBase
+            );
+
+
+        result.textContent =
+            converted;
+
+    }
+
+    catch(e){
+
+        result.textContent =
+            "-";
+
+        error.textContent =
+            "Terjadi kesalahan saat konversi.";
+
+        error.style.display =
+            "block";
+
+    }
+
+}
+
+
+/* =====================================================
+   INPUT
+===================================================== */
+
+inputNumber.addEventListener(
+    "input",
+    () => {
+
+        const position =
+            inputNumber.selectionStart;
+
+
+        inputNumber.value =
+            inputNumber.value
+                .toUpperCase();
+
+
+        inputNumber.setSelectionRange(
+            position,
+            position
+        );
+
+
+        convert();
+
+    }
+);
+
+
+/* =====================================================
+   SWAP
+===================================================== */
+
+swapBtn.addEventListener(
+    "click",
+    () => {
+
+        /*
+           Simpan nilai lama
+        */
+
+        const oldFrom =
+            fromBase;
+
+        const oldTo =
+            toBase;
+
+
+        /*
+           Tukar basis
+        */
+
+        fromBase =
+            oldTo;
+
+        toBase =
+            oldFrom;
+
+
+        /*
+           HANYA masukkan hasil
+           ke input jika hasil
+           memang merupakan angka.
+
+           Jadi saat pertama membuka
+           web dengan hasil "-",
+           input TIDAK akan berubah
+           menjadi "-".
+        */
+
+        const currentResult =
+            result.textContent.trim();
+
+
+        if(
+            currentResult !== "-" &&
+            currentResult !== ""
+        ){
+
+            inputNumber.value =
+                currentResult;
+
+        }
+
+
+        /*
+           Update dropdown
+        */
+
+        updateFromDropdown();
+
+        updateToDropdown();
+
+
+        /*
+           Konversi ulang
+        */
+
+        convert();
+
+    }
+);
+
+
+/* =====================================================
+   INITIAL
+===================================================== */
+
+convert();
+
+</script>
+
+</body>
+</html>
