@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://unpkg.com/lucide@latest"></script>  
+<link rel="stylesheet" href="template.css">
+
+<title>Konversi Panjang</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+
+    padding:20px;
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+.converter{
+    display: flex;
+    flex-direction: column;
+    margin-top: 50px;
+    width:100%;
+    max-width:600px;
+    justify-content: center;
+    align-items: center;
+
+    background: var(--card);
+
+    padding:25px;
+
+    border-radius:8px;
+
+    box-shadow:0 0 8px 4px rgba(0,0,0,.15);
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
+h1{
+    text-align:center;
+
+    margin:0 0 25px;
+
+    font-size:24px;
+}
+
+
+/* =========================
+   FIELD
+========================= */
+
+.field{
+    width: 100%;
+    display:flex;
+    flex-direction:column;
+    margin-top: -6px;
+    gap:8px;
+}
+
+.field2 {
+  margin-top: -18px;
+}
+
+label{
+    color: var(--text);
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom: -6px;
+}
+
+
+/* =========================
+   CUSTOM DROPDOWN
+========================= */
+
+.custom-select{
+    position:relative;
+    width:100%;
+}
+
+.select-button{
+    display: flex;
+    width:calc(100% - 20px);
+    align-items:center;
+    justify-content:space-between;
+
+    padding:8px;
+
+    border:2px solid var(--bdr2);
+    border-radius:6px;
+    color: var(--text);
+
+    background: var(--sp);
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    user-select:none;
+}
+
+.select-button:hover{
+    border-color:#999;
+}
+
+.select-arrow{
+    display: flex;
+    align-items: center;
+    font-size:13px;
+    transform-origin: center;
+    transition:.2s;
+}
+
+.custom-select.open
+.select-arrow{
+    transform:rotate(180deg);
+}
+
+
+/* =========================
+   DROPDOWN MENU
+========================= */
+
+.select-menu{
+    position:absolute;
+
+    top:calc(100% + 5px);
+    left:0;
+    right:0;
+
+    background: var(--card);
+
+    border-radius:6px;
+
+    box-shadow: 0 0 8px 4px rgba(0,0,0,.15);
+
+    max-height:300px;
+
+    overflow-y:auto;
+
+    display:none;
+
+    z-index:100;
+}
+
+.custom-select.open
+.select-menu{
+    display:block;
+}
+
+
+/* =========================
+   OPTION
+========================= */
+
+.select-option{
+    display: flex;
+    justify-content: space-between;
+    padding:11px 12px;
+    color: var(--text);
+    cursor:pointer;
+    border-bottom: 2px solid var(--sp);
+    font-size:15px;
+}
+
+.select-option:hover{
+    background: var(--ph);
+}
+
+.select-option.active{
+    background:var(--accent);
+    color: white;
+    font-weight:bold;
+}
+
+
+/* =========================
+   INPUT
+========================= */
+
+#inputNumber{
+    width:calc(100% - 20px);
+    background: var(--ins);
+    border: none;
+    border-radius:6px;
+
+    padding:10px;
+
+    font-size:18px;
+
+    outline:none;
+    box-shadow: inset 0px 0px 8px 1px rgba(0,0,0,0.1);
+}
+
+#inputNumber:focus{
+    border-color:#555;
+}
+
+
+/* =========================
+   SWAP
+========================= */
+
+.swap{
+    width:44px;
+    height:44px;
+    color: var(--text);
+    background: none;
+    border: none;
+    margin:15px auto;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:22px;
+    cursor:pointer;
+    transition:.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.swap:active{
+    transform:scale(1.08);
+}
+
+
+/* =========================
+   RESULT
+========================= */
+
+.result-box{
+    display:flex;
+    align-items:center;
+
+    padding:6px 10px;
+
+    width: calc(100% - 20px);
+
+    border-radius:6px;
+
+    background: var(--ins);
+
+    font-size:18px;
+
+    word-break:break-all;
+    box-shadow: inset 0px 0px 8px 1px rgba(0,0,0,0.1);
+}
+
+.error{
+    margin-top:8px;
+    color: crimson;
+    font-size:13px;
+    display:none;
+    margin-bottom: -14px;
+}
+
+</style>
+</head>
+
+
+<body data-title="Panjang">
+
+<div id="fetch-container"></div>
+
+<div class="converter">
+
+
+    <!-- =====================
+         INPUT
+    ====================== -->
+
+    <div class="field">
+
+        <label>Dari</label>
+
+        <div
+            class="custom-select"
+            id="fromSelect"
+        >
+
+            <div class="select-button">
+
+                <span class="selected-text">
+                    Kilogram - kg
+                </span>
+
+                <span class="select-arrow">
+                    <i data-lucide="chevron-down"></i>
+                </span>
+
+            </div>
+
+            <div class="select-menu"></div>
+
+        </div>
+
+
+        <input
+            id="inputNumber"
+            type="text"
+            inputmode="decimal"
+            placeholder="Masukkan berat..."
+            autocomplete="off"
+            spellcheck="false"
+        >
+
+    </div>
+
+
+    <!-- =====================
+         SWAP
+    ====================== -->
+
+    <button
+        class="swap"
+        id="swapBtn"
+        type="button"
+        title="Tukar satuan"
+    >
+      <i data-lucide="arrow-down-up"></i>
+    </button>
+
+
+    <!-- =====================
+         OUTPUT
+    ====================== -->
+
+    <div class="field field2">
+
+        <label>Ke</label>
+
+        <div
+            class="custom-select"
+            id="toSelect"
+        >
+
+            <div class="select-button">
+
+                <span class="selected-text">
+                    Gram - g
+                </span>
+
+                <span class="select-arrow">
+                    <i data-lucide="chevron-down"></i>
+                </span>
+
+            </div>
+
+            <div class="select-menu"></div>
+
+        </div>
+
+
+        <div class="result">
+
+            <div
+                class="result-box"
+                id="result"
+            >
+                -
+            </div>
+
+            <div
+                class="error"
+                id="error"
+            >
+                Nilai tidak valid.
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+<script src="fetch.js"></script>
+
+<script>
+
+/* =====================================================
+   SATUAN PANJANG
+   Urutan: TERBESAR → TERKECIL
+===================================================== */
+
+const units = {
+
+    kl: {
+        name: "Kiloliter",
+        symbol: "km",
+        factor: 1000
+    },
+
+    hl: {
+        name: "Hektoliter",
+        symbol: "hl",
+        factor: 100
+    },
+
+    dal: {
+        name: "Dekaliter",
+        symbol: "dal",
+        factor: 10
+    },
+
+    l: {
+        name: "Liter",
+        symbol: "l",
+        factor: 1
+    },
+
+    dl: {
+        name: "Desiliter",
+        symbol: "dl",
+        factor: 0.1
+    },
+
+    cl: {
+        name: "Centiliter",
+        symbol: "cl",
+        factor: 0.01
+    },
+
+    ml: {
+        name: "Mililiter",
+        symbol: "ml",
+        factor: 0.001
+    },
+
+    km3: {
+        name: "Kilometer³",
+        symbol: "kl³",
+        factor: 1000000000000
+    },
+
+    hm3: {
+        name: "Hektmeter³",
+        symbol: "hm³",
+        factor: 1000000000
+    },
+
+    dam3: {
+        name: "Dekameter³",
+        symbol: "dam³",
+        factor: 1000000
+    },
+
+    m3: {
+        name: "Meter³",
+        symbol: "m³",
+        factor: 1000000
+    },
+
+    dm3: {
+        name: "Desimeter³",
+        symbol: "dm³",
+        factor: 1
+    },
+
+    cm3: {
+        name: "Centimeter³",
+        symbol: "cm³",
+        factor: 0.001
+    },
+
+    mm3: {
+        name: "Milimeter³",
+        symbol: "mm³",
+        factor: 0.000001
+    }
+
+};
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let fromUnit = "l";
+let toUnit = "dm3";
+
+
+/* =====================================================
+   ELEMENT
+===================================================== */
+
+const fromSelect =
+    document.getElementById("fromSelect");
+
+const toSelect =
+    document.getElementById("toSelect");
+
+const inputNumber =
+    document.getElementById("inputNumber");
+
+const result =
+    document.getElementById("result");
+
+const error =
+    document.getElementById("error");
+
+const swapBtn =
+    document.getElementById("swapBtn");
+
+
+/* =====================================================
+   UPDATE TEXT DROPDOWN
+===================================================== */
+
+function updateSelectText(select, unit){
+
+    const data = units[unit];
+
+    select.querySelector(
+        ".selected-text"
+    ).textContent =
+        `${data.name} - ${data.symbol}`;
+
+}
+
+
+/* =====================================================
+   BUAT OPTION
+===================================================== */
+
+function buildOptions(
+    select,
+    selectedUnit,
+    onSelect
+){
+
+    const menu =
+        select.querySelector(
+            ".select-menu"
+        );
+
+    menu.innerHTML = "";
+
+
+    Object.keys(units).forEach(unit => {
+
+        const data =
+            units[unit];
+
+
+        const option =
+            document.createElement("div");
+
+
+        option.className =
+            "select-option";
+
+
+        if(unit === selectedUnit){
+
+            option.classList.add(
+                "active"
+            );
+
+        }
+
+
+        option.innerHTML =
+            `<b>${data.name}</b> <span>${data.symbol}</span>`;
+
+
+        option.addEventListener(
+            "click",
+            () => {
+
+                onSelect(unit);
+
+                select.classList.remove(
+                    "open"
+                );
+
+            }
+        );
+
+
+        menu.appendChild(option);
+
+    });
+
+}
+
+
+/* =====================================================
+   FROM DROPDOWN
+===================================================== */
+
+function updateFromDropdown(){
+
+    updateSelectText(
+        fromSelect,
+        fromUnit
+    );
+
+
+    buildOptions(
+        fromSelect,
+        fromUnit,
+        unit => {
+
+            fromUnit = unit;
+
+            updateFromDropdown();
+
+            convert();
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   TO DROPDOWN
+===================================================== */
+
+function updateToDropdown(){
+
+    updateSelectText(
+        toSelect,
+        toUnit
+    );
+
+
+    buildOptions(
+        toSelect,
+        toUnit,
+        unit => {
+
+            toUnit = unit;
+
+            updateToDropdown();
+
+            convert();
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   INIT DROPDOWN
+===================================================== */
+
+updateFromDropdown();
+
+updateToDropdown();
+
+
+/* =====================================================
+   BUKA DROPDOWN
+===================================================== */
+
+document
+    .querySelectorAll(".select-button")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+
+                const parent =
+                    button.parentElement;
+
+
+                document
+                    .querySelectorAll(
+                        ".custom-select"
+                    )
+                    .forEach(select => {
+
+                        if(select !== parent){
+
+                            select.classList.remove(
+                                "open"
+                            );
+
+                        }
+
+                    });
+
+
+                parent.classList.toggle(
+                    "open"
+                );
+
+            }
+        );
+
+    });
+
+
+/* =====================================================
+   KLIK DI LUAR
+===================================================== */
+
+document.addEventListener(
+    "click",
+    () => {
+
+        document
+            .querySelectorAll(
+                ".custom-select"
+            )
+            .forEach(select => {
+
+                select.classList.remove(
+                    "open"
+                );
+
+            });
+
+    }
+);
+
+
+/* =====================================================
+   VALIDASI BERAT
+===================================================== */
+
+function isValidWeight(value){
+
+    /*
+       Mendukung:
+
+       10
+       10.5
+       .5
+       0.5
+       1,5
+       +10
+       -10
+    */
+
+    if(value === ""){
+        return false;
+    }
+
+
+    value =
+        value.replace(",", ".");
+
+
+    const number =
+        Number(value);
+
+
+    return Number.isFinite(number);
+
+}
+
+
+/* =====================================================
+   FORMAT HASIL
+===================================================== */
+
+function formatResult(value){
+
+    /*
+       Menghindari hasil seperti:
+
+       0.30000000000000004
+    */
+
+    if(value === 0){
+        return "0";
+    }
+
+
+    return Number(
+        value.toPrecision(15)
+    ).toString();
+
+}
+
+
+/* =====================================================
+   CONVERT
+===================================================== */
+
+function convert(){
+
+    let value =
+        inputNumber.value
+            .trim();
+
+
+    error.style.display =
+        "none";
+
+
+    /*
+       INPUT KOSONG
+    */
+
+    if(value === ""){
+
+        result.textContent =
+            "-";
+
+        return;
+
+    }
+
+
+    /*
+       VALIDASI
+    */
+
+    if(
+        !isValidWeight(value)
+    ){
+
+        result.textContent =
+            "-";
+
+        error.textContent =
+            "Masukkan angka berat yang valid.";
+
+        error.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    try{
+
+        /*
+           Koma → titik
+        */
+
+        value =
+            value.replace(",", ".");
+
+
+        const number =
+            Number(value);
+
+
+        /*
+           Konversi:
+
+           input → kilogram
+           kilogram → output
+        */
+
+        const kilogram =
+            number *
+            units[fromUnit].factor;
+
+
+        const converted =
+            kilogram /
+            units[toUnit].factor;
+
+
+        result.textContent =
+            formatResult(converted);
+
+
+    }
+
+    catch(e){
+
+        result.textContent =
+            "-";
+
+        error.textContent =
+            "Terjadi kesalahan saat konversi.";
+
+        error.style.display =
+            "block";
+
+    }
+
+}
+
+
+/* =====================================================
+   INPUT
+===================================================== */
+
+inputNumber.addEventListener(
+    "input",
+    () => {
+
+        /*
+           Jangan menghapus titik/koma
+           agar angka desimal tetap bisa
+           diketik.
+        */
+
+        convert();
+
+    }
+);
+
+
+/* =====================================================
+   SWAP
+===================================================== */
+
+swapBtn.addEventListener(
+    "click",
+    () => {
+
+        /*
+           Simpan satuan lama
+        */
+
+        const oldFrom =
+            fromUnit;
+
+        const oldTo =
+            toUnit;
+
+
+        /*
+           Tukar satuan
+        */
+
+        fromUnit =
+            oldTo;
+
+        toUnit =
+            oldFrom;
+
+
+        /*
+           Masukkan hasil sebelumnya
+           ke input
+        */
+
+        const currentResult =
+            result.textContent.trim();
+
+
+        if(
+            currentResult !== "-" &&
+            currentResult !== ""
+        ){
+
+            inputNumber.value =
+                currentResult;
+
+        }
+
+
+        /*
+           Update dropdown
+        */
+
+        updateFromDropdown();
+
+        updateToDropdown();
+
+
+        /*
+           Konversi ulang
+        */
+
+        convert();
+
+    }
+);
+
+
+/* =====================================================
+   INITIAL
+===================================================== */
+
+convert();
+
+
+/* =====================================================
+   LUCIDE
+===================================================== */
+
+lucide.createIcons();
+
+</script>
+
+</body>
+</html>
