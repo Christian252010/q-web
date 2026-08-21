@@ -61,6 +61,8 @@ body {
 </style>
 </head>
 <body>
+  
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <!-- HEADER -->
 <div class="header">
@@ -73,14 +75,15 @@ body {
   
   <!--<div class="live-clock" id="liveClock"></div>-->
   <div class="btns">
-    <button class="btn25" id="toggle1" onclick="home()">️
-      <i id="icon2" data-lucide="home"></i>
-    </button>
-    <button class="btn26" id="toggle2" onclick="profile()">️
-      <i id="icon3" data-lucide="user"></i>
-    </button>
     <button class="btn24" id="toggle">️
       <i id="icon" data-lucide="sun"></i>
+    </button>
+    <button class="menu-toggle" id="menuToggle">
+      <i data-lucide="chevron-up" class="nav-icon"></i>
+      <span class="line line-a" onclick="home()"><i data-lucide="home" class="nav-icon"></i></span>
+      <span class="line line-b" onclick="profile()"><i data-lucide="user" class="nav-icon"></i></span>
+      <span class="line line-c"><i data-lucide="history" class="nav-icon"></i></span>
+      <span class="line line-d"><i data-lucide="message-square-more" class="nav-icon"></i></span>
     </button>
   </div>
 </div>
@@ -140,31 +143,45 @@ body {
       <span>Jadwal</span>
     </a>
 
-    <a href="mata-uang.html">
-      <i data-lucide="circle-dollar-sign" class="icons"></i>
-      <span>Mata Uang</span>
+    <a href="file-transfer.html">
+      <i data-lucide="folder-open" class="icons"></i>
+      <span>File Transfer</span>
     </a>
     
+    <a href="subnet.html">
+      <i data-lucide="server" class="icons"></i>
+      <span>Subnetting</span>
+    </a>
+
     <a href="qr-code.html">
       <i data-lucide="qr-code" class="icons"></i>
       <span>QR Code</span>
-    </a>
-    
-    <a href="morse.html">
-      <i data-lucide="chart-no-axes-gantt" class="icons"></i>
-      <span>Morse</span>
-    </a>
-    
-    <a href="rumus.html">
-      <i data-lucide="function-square" class="icons"></i>
-      <span>Rumus</span>
     </a>
     
     <a href="percent.html">
       <i data-lucide="square-percent" class="icons"></i>
       <span>Persentase</span>
     </a>
+    <a href="rumus.html">
+      <i data-lucide="function-square" class="icons"></i>
+      <span>Rumus</span>
+    </a>
     
+    <a href="jawa.html">
+      <i data-lucide="scroll-text" class="icons"></i>
+      <span>Aksara Jawa</span>
+    </a>
+
+    <a href="mata-uang.html">
+      <i data-lucide="circle-dollar-sign" class="icons"></i>
+      <span>Mata Uang</span>
+    </a>
+
+    <a href="morse.html">
+      <i data-lucide="chart-no-axes-gantt" class="icons"></i>
+      <span>Morse</span>
+    </a>
+
     <a href="romawi.html">
       <i data-lucide="landmark" class="icons"></i>
       <span>Romawi</span>
@@ -174,17 +191,7 @@ body {
       <i data-lucide="binary" class="icons"></i>
       <span>Numeric</span>
     </a>
-    
-    <a href="subnet.html">
-      <i data-lucide="server" class="icons"></i>
-      <span>Subnetting</span>
-    </a>
   
-    <a href="file-transfer.html">
-      <i data-lucide="folder-open" class="icons"></i>
-      <span>File Transfer</span>
-    </a>
-
     <a href="panjang.html">
       <i data-lucide="ruler" class="icons"></i>
       <span>Panjang</span>
@@ -227,6 +234,7 @@ body {
   </div>-->
 </div>
 
+<script src="template.js"></script>
 <script>
   lucide.createIcons();
   
@@ -306,6 +314,5 @@ function home() {
   window.location.href = 'index.html';
 }
 </script>
-<script src="template.js"></script>
 </body>
 </html>
