@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="template.css">
+
+  <title>Aksara Jawa Konverter</title>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body data-title="Aksara Jawa">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+.sidebarr-search input{
+  width:103.5% !important;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  justify-content:center;
+  padding:20px;
+}
+
+.container{
+  margin-top:50px;
+  width:100%;
+  max-width:700px;
+  background:var(--card);
+  border-radius:10px;
+  padding:20px;
+  box-shadow:0 4px 18px rgba(0,0,0,0.4);
+}
+
+textarea{
+  width:100%;
+  min-height:80px;
+  resize:none;
+  border:none;
+  outline:none;
+  border-radius:8px;
+  padding:15px;
+  font-size:18px;
+  background:var(--sp);
+  color:var(--text);
+}
+
+#output{
+  font-family:
+    "Noto Sans Javanese",
+    "Javanese Text",
+    "Noto Sans",
+    Arial,
+    sans-serif;
+}
+
+.middle{
+  display:flex;
+  justify-content:center;
+  margin:15px 0;
+}
+
+.swap{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  border:none;
+  background:none;
+
+  color:var(--text);
+  font-size:28px;
+
+  cursor:pointer;
+
+  transition:transform .3s ease;
+
+  -webkit-tap-highlight-color:transparent;
+}
+
+.swap:hover{
+  transform:scale(1.1);
+}
+
+.label{
+  margin-bottom:4px;
+  font-size:16px;
+  margin-left:4px;
+  opacity:.7;
+  font-weight:bold;
+}
+
+#copyBtn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+
+  width:100%;
+
+  margin-top:12px;
+
+  padding:14px;
+
+  border:none;
+  border-radius:8px;
+
+  background:var(--accent);
+  color:white;
+
+  font-weight:600;
+  font-size:16px;
+
+  cursor:pointer;
+
+  transition:.3s;
+}
+
+#copyBtn:active{
+  transform:scale(1.02);
+}
+
+.topbar{
+  display:flex;
+  justify-content:flex-end;
+
+  margin-right:2px;
+  margin-bottom:-4px;
+}
+
+#resetBtn{
+  position:absolute;
+
+  width:18px;
+  height:18px;
+
+  border:none;
+  border-radius:8px;
+
+  background:transparent;
+  color:var(--text);
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  opacity:.7;
+
+  transition:.2s;
+
+  z-index:6;
+
+  -webkit-tap-highlight-color:transparent;
+}
+
+#resetBtn:active{
+  transform:scale(.96);
+}
+
+</style>
+
+
+<div id="fetch-container"></div>
+
+
+<div class="container">
+
+  <div class="topbar">
+
+    <button id="resetBtn">
+      <i data-lucide="rotate-ccw"></i>
+    </button>
+
+  </div>
+
+
+  <div class="label" id="inputLabel">
+    Teks Latin
+  </div>
+
+  <textarea
+    id="input"
+    placeholder="Masukkan teks..."
+    spellcheck="false"
+  ></textarea>
+
+
+  <div class="middle">
+
+    <button class="swap" id="swap">
+
+      <i data-lucide="arrow-up-down"></i>
+
+    </button>
+
+  </div>
+
+
+  <div class="label" id="outputLabel">
+    Aksara Jawa
+  </div>
+
+  <textarea
+    id="output"
+    placeholder="Hasil..."
+    readonly
+    spellcheck="false"
+  ></textarea>
+
+
+  <button id="copyBtn">
+
+    <i data-lucide="copy"></i>
+
+    <span>Copy Hasil</span>
+
+  </button>
+
+</div>
+
+
+<script src="fetch.js"></script>
+
+<script>
+
+/* =========================================================
+   LUCIDE
+========================================================= */
+
+lucide.createIcons();
+
+
+/* =========================================================
+   AKSARA DASAR
+========================================================= */
+
+const aksara = {
+
+  h:  "ꦲ",
+  n:  "ꦤ",
+  c:  "ꦕ",
+  r:  "ꦫ",
+  k:  "ꦏ",
+
+  d:  "ꦢ",
+  t:  "ꦠ",
+  s:  "ꦱ",
+  w:  "ꦮ",
+  l:  "ꦭ",
+
+  p:  "ꦥ",
+  dh: "ꦝ",
+  j:  "ꦗ",
+  y:  "ꦪ",
+
+  ny: "ꦚ",
+  m:  "ꦩ",
+  g:  "ꦒ",
+  b:  "ꦧ",
+  th: "ꦛ",
+  ng: "ꦔ"
+
+};
+
+
+/* =========================================================
+   AKSARA JAWA → LATIN
+========================================================= */
+
+const jawaCharToLatin = {
+
+  "ꦲ":"h",
+  "ꦤ":"n",
+  "ꦕ":"c",
+  "ꦫ":"r",
+  "ꦏ":"k",
+
+  "ꦢ":"d",
+  "ꦠ":"t",
+  "ꦱ":"s",
+  "ꦮ":"w",
+  "ꦭ":"l",
+
+  "ꦥ":"p",
+  "ꦝ":"dh",
+  "ꦗ":"j",
+  "ꦪ":"y",
+
+  "ꦚ":"ny",
+  "ꦩ":"m",
+  "ꦒ":"g",
+  "ꦧ":"b",
+  "ꦛ":"th",
+  "ꦔ":"ng"
+
+};
+
+
+/* =========================================================
+   URUTAN KONSONAN LATIN
+========================================================= */
+
+const consonantList = [
+
+  "ng",
+  "ny",
+  "dh",
+  "th",
+
+  "h",
+  "n",
+  "c",
+  "r",
+  "k",
+  "d",
+  "t",
+  "s",
+  "w",
+  "l",
+  "p",
+  "j",
+  "y",
+  "m",
+  "g",
+  "b"
+
+];
+
+
+/* =========================================================
+   VOKAL
+========================================================= */
+
+const vowels = [
+  "é",
+  "ê",
+  "a",
+  "i",
+  "u",
+  "e",
+  "o"
+];
+
+
+function getVowel(text,index){
+
+  for(const vowel of vowels){
+
+    if(text.startsWith(vowel,index)){
+
+      return vowel;
+
+    }
+
+  }
+
+  return null;
+
+}
+
+
+/* =========================================================
+   CEK KONSONAN
+========================================================= */
+
+function getConsonant(text,index){
+
+  for(const key of consonantList){
+
+    if(text.startsWith(key,index)){
+
+      return key;
+
+    }
+
+  }
+
+  return null;
+
+}
+
+
+/* =========================================================
+   SANDHANGAN SWARA
+========================================================= */
+
+const sandhangan = {
+
+  a:  "",
+
+  i:  "ꦶ",
+
+  u:  "ꦸ",
+
+  e:  "ꦺ",
+
+  é:  "ꦺ",
+
+  ê: "ꦼ",
+
+  o:  "ꦺꦴ"
+
+};
+
+
+/* =========================================================
+   SANDHANGAN JAWA
+========================================================= */
+
+const SANDHANGAN = {
+
+  WULU: "ꦶ",
+  SUKU: "ꦸ",
+  TALING: "ꦺ",
+  PEPET: "ꦼ",
+  TARUNG: "ꦴ",
+
+  CECAK: "ꦁ",
+  LAYAR: "ꦂ",
+  WIGNYAN: "ꦃ",
+
+  CAKRA: "ꦿ",
+  CAKRA_KERET: "ꦽ",
+  PENGKAL: "ꦾ",
+
+  PANGKON: "꧀"
+
+};
+
+
+/* =========================================================
+   AKSARA SWARA
+========================================================= */
+
+const aksaraSwara = {
+
+  a:  "ꦄ",
+  i:  "ꦆ",
+  u:  "ꦈ",
+  e:  "ꦌ",
+  é:  "ꦌ",
+  ê: "ꦄ",
+  o:  "ꦎ"
+
+};
+
+
+const swaraToLatin = {
+
+  "ꦄ":"a",
+  "ꦆ":"i",
+  "ꦈ":"u",
+  "ꦌ":"e",
+  "ꦎ":"o"
+
+};
+
+
+/* =========================================================
+   ANGKA
+========================================================= */
+
+const angkaJawa = {
+
+  "0":"꧐",
+  "1":"꧑",
+  "2":"꧒",
+  "3":"꧓",
+  "4":"꧔",
+  "5":"꧕",
+  "6":"꧖",
+  "7":"꧗",
+  "8":"꧘",
+  "9":"꧙"
+
+};
+
+
+const angkaLatin = {
+
+  "꧐":"0",
+  "꧑":"1",
+  "꧒":"2",
+  "꧓":"3",
+  "꧔":"4",
+  "꧕":"5",
+  "꧖":"6",
+  "꧗":"7",
+  "꧘":"8",
+  "꧙":"9"
+
+};
+
+
+/* =========================================================
+   TANDA BACA
+========================================================= */
+
+const tandaBaca = {
+
+  ".":"꧉",
+  ",":"꧈",
+  ":":"꧇",
+  ";":"꧈",
+  "!":"꧊",
+  "?":"꧋"
+
+};
+
+
+const tandaBacaLatin = {
+
+  "꧉":".",
+  "꧈":",",
+  "꧊":"!",
+  "꧋":"?"
+
+};
+
+
+/* =========================================================
+   SANDHANGAN → VOKAL
+========================================================= */
+
+function readVowelFromJawa(text,index){
+
+  /*
+    Taling + tarung = o
+  */
+
+  if(
+    text[index] === SANDHANGAN.TALING &&
+    text[index + 1] === SANDHANGAN.TARUNG
+  ){
+
+    return {
+      vowel:"o",
+      length:2
+    };
+
+  }
+
+
+  if(text[index] === SANDHANGAN.WULU){
+
+    return {
+      vowel:"i",
+      length:1
+    };
+
+  }
+
+
+  if(text[index] === SANDHANGAN.SUKU){
+
+    return {
+      vowel:"u",
+      length:1
+    };
+
+  }
+
+
+  if(text[index] === SANDHANGAN.TALING){
+
+    return {
+      vowel:"e",
+      length:1
+    };
+
+  }
+
+
+  if(text[index] === SANDHANGAN.PEPET){
+
+    return {
+      vowel:"ê",
+      length:1
+    };
+
+  }
+
+
+  return {
+    vowel:"a",
+    length:0
+  };
+
+}
+
+
+/* =========================================================
+   LATIN → AKSARA JAWA
+========================================================= */
+
+function convertWord(word){
+
+  let result = "";
+  let i = 0;
+
+  word = word.toLowerCase();
+
+  while(i < word.length){
+
+    /* =========================================
+       ANGKA
+    ========================================= */
+
+    if(/\d/.test(word[i])){
+
+      let angka = "";
+
+      while(
+        i < word.length &&
+        /\d/.test(word[i])
+      ){
+
+        angka += angkaJawa[word[i]];
+
+        i++;
+
+      }
+
+      result += "꧇" + angka + "꧇";
+
+      continue;
+    }
+
+
+    /* =========================================
+       TANDA BACA
+    ========================================= */
+
+    if(tandaBaca[word[i]]){
+
+      result += tandaBaca[word[i]];
+
+      i++;
+
+      continue;
+    }
+
+
+    /* =========================================
+       VOKAL AWAL
+    ========================================= */
+
+    const firstVowel = getVowel(word,i);
+
+    if(firstVowel){
+
+      result += aksaraSwara[firstVowel];
+
+      i += firstVowel.length;
+
+      continue;
+    }
+
+
+    /* =========================================
+       KONSONAN
+    ========================================= */
+
+    const consonant = getConsonant(word,i);
+
+    if(!consonant){
+
+      result += word[i];
+
+      i++;
+
+      continue;
+    }
+
+    i += consonant.length;
+
+
+    /* =========================================
+       CEK R MATI
+    =========================================
+
+       Contoh:
+
+       harga
+       h a r g a
+           ↑
+         layar
+
+       hasil:
+       ꦲꦂꦒ
+    */
+
+    if(consonant === "r"){
+
+      /*
+        Kalau setelah r bukan vokal,
+        berarti r merupakan konsonan mati.
+
+        Jangan menghasilkan ꦫ + pangkon.
+
+        Tetapi gunakan layar pada aksara
+        sebelumnya.
+      */
+
+      const nextVowel = getVowel(word,i);
+
+      if(!nextVowel){
+
+        /*
+          Hapus pangkon sebelumnya jika ada.
+
+          Dalam kasus seperti:
+
+          ... + ꦲ + ꦫ
+
+          kita tidak ingin:
+
+          ꦲꦫ꧀
+
+          melainkan:
+
+          ꦲꦂ
+        */
+
+        result += SANDHANGAN.LAYAR;
+
+        continue;
+      }
+    }
+
+
+    /* =========================================
+       PENGKAL
+    ========================================= */
+
+    if(word[i] === "y"){
+
+      const vowelAfterY =
+        getVowel(word,i + 1);
+
+      if(vowelAfterY){
+
+        result +=
+          aksara[consonant] +
+          SANDHANGAN.PENGKAL;
+
+        if(vowelAfterY !== "a"){
+
+          result +=
+            sandhangan[vowelAfterY];
+
+        }
+
+        i +=
+          1 + vowelAfterY.length;
+
+        continue;
+      }
+    }
+
+
+    /* =========================================
+       CAKRA
+    ========================================= */
+
+    if(word[i] === "r"){
+
+      const vowelAfterR =
+        getVowel(word,i + 1);
+
+      if(vowelAfterR){
+
+        /*
+          krê
+        */
+
+        if(vowelAfterR === "ê"){
+
+          result +=
+            aksara[consonant] +
+            SANDHANGAN.CAKRA_KERET;
+
+        }
+
+        else{
+
+          result +=
+            aksara[consonant] +
+            SANDHANGAN.CAKRA;
+
+          if(vowelAfterR !== "a"){
+
+            result +=
+              sandhangan[vowelAfterR];
+
+          }
+
+        }
+
+        i +=
+          1 + vowelAfterR.length;
+
+        continue;
+      }
+    }
+
+
+    /* =========================================
+       VOKAL
+    ========================================= */
+
+    const vowel =
+      getVowel(word,i);
+
+
+    /* =========================================
+       TIDAK ADA VOKAL
+    ========================================= */
+
+    if(!vowel){
+
+      /*
+        H akhir / mati
+        → wignyan
+      */
+
+      if(consonant === "h"){
+
+        result +=
+          aksara[consonant] +
+          SANDHANGAN.WIGNYAN;
+
+        continue;
+      }
+
+
+      /*
+        R sudah ditangani di atas.
+      */
+
+
+      /*
+        Konsonan mati biasa
+        → pangkon
+      */
+
+      result +=
+        aksara[consonant] +
+        SANDHANGAN.PANGKON;
+
+      continue;
+    }
+
+
+    /* =========================================
+       AKSARA + VOKAL
+    ========================================= */
+
+    result +=
+      aksara[consonant] +
+      sandhangan[vowel];
+
+    i += vowel.length;
+
+
+    /* =========================================
+       CECAK AKHIR
+    ========================================= */
+
+    if(
+      word.startsWith("ng",i) &&
+      i + 2 === word.length
+    ){
+
+      result +=
+        SANDHANGAN.CECAK;
+
+      i += 2;
+
+      continue;
+    }
+
+
+    /* =========================================
+       LAYAR AKHIR
+    ========================================= */
+
+    if(
+      word[i] === "r" &&
+      i + 1 === word.length
+    ){
+
+      result +=
+        SANDHANGAN.LAYAR;
+
+      i++;
+
+      continue;
+    }
+
+
+    /* =========================================
+       WIGNYAN AKHIR
+    ========================================= */
+
+    if(
+      word[i] === "h" &&
+      i + 1 === word.length
+    ){
+
+      result +=
+        SANDHANGAN.WIGNYAN;
+
+      i++;
+
+      continue;
+    }
+
+  }
+
+  return result;
+}
+
+
+/* =========================================================
+   LATIN → JAWA
+========================================================= */
+
+function latinToJawa(text){
+
+  let result = "";
+
+  let i = 0;
+
+
+  while(i < text.length){
+
+
+    /* =========================================
+       ANGKA + SPASI
+    ========================================= */
+
+    if(/\d/.test(text[i])){
+
+      let angka = "";
+
+
+      while(i < text.length){
+
+        if(/\d/.test(text[i])){
+
+          angka +=
+            angkaJawa[text[i]];
+
+          i++;
+
+          continue;
+
+        }
+
+
+        if(/\s/.test(text[i])){
+
+          let j = i;
+
+
+          while(
+            j < text.length &&
+            /\s/.test(text[j])
+          ){
+
+            j++;
+
+          }
+
+
+          if(
+            j < text.length &&
+            /\d/.test(text[j])
+          ){
+
+            angka +=
+              text.slice(i,j);
+
+            i = j;
+
+            continue;
+
+          }
+
+        }
+
+
+        break;
+
+      }
+
+
+      result +=
+        "꧇" +
+        angka +
+        "꧇";
+
+      continue;
+
+    }
+
+
+    /* =========================================
+       SPASI
+    ========================================= */
+
+    if(/\s/.test(text[i])){
+
+      result += text[i];
+
+      i++;
+
+      continue;
+
+    }
+
+
+    /* =========================================
+       KATA
+    ========================================= */
+
+    let start = i;
+
+
+    while(
+      i < text.length &&
+      !/\s/.test(text[i]) &&
+      !/\d/.test(text[i])
+    ){
+
+      i++;
+
+    }
+
+
+    result +=
+      convertWord(
+        text.slice(start,i)
+      );
+
+  }
+
+
+  return result;
+
+}
+
+
+/* =========================================================
+   MEMBACA SATU AKSARA JAWA
+========================================================= */
+
+function readJawaSyllable(text,index){
+
+  const base =
+    jawaCharToLatin[text[index]];
+
+
+  if(base === undefined){
+
+    return null;
+
+  }
+
+
+  let i = index + 1;
+
+  let latin = base;
+
+  let hasVowel = false;
+
+  let hasPangkon = false;
+
+
+  /* =========================================
+     CAKRA
+  ========================================= */
+
+  if(text[i] === SANDHANGAN.CAKRA){
+
+    latin += "r";
+
+    i++;
+
+  }
+
+
+  /* =========================================
+     CAKRA KERET
+  ========================================= */
+
+  else if(
+    text[i] === SANDHANGAN.CAKRA_KERET
+  ){
+
+    latin += "rê";
+
+    i++;
+
+    hasVowel = true;
+
+  }
+
+
+  /* =========================================
+     PENGKAL
+  ========================================= */
+
+  else if(
+    text[i] === SANDHANGAN.PENGKAL
+  ){
+
+    latin += "y";
+
+    i++;
+
+  }
+
+
+  /* =========================================
+     VOKAL
+  ========================================= */
+
+  const vowel =
+    readVowelFromJawa(text,i);
+
+
+  if(vowel.length > 0){
+
+    latin += vowel.vowel;
+
+    i += vowel.length;
+
+    hasVowel = true;
+
+  }
+
+
+  /* =========================================
+     CECAK
+  ========================================= */
+
+    if(text[i] === SANDHANGAN.CECAK){
+    
+      /*
+        Aksara dasar tanpa sandhangan
+        mempunyai vokal bawaan "a".
+    
+        ꦏꦁ
+        = kang
+    
+        bukan kng
+      */
+    
+      if(!hasVowel){
+    
+        latin += "a";
+    
+      }
+    
+      latin += "ng";
+    
+      i++;
+    
+      return {
+        text:latin,
+        next:i
+      };
+    
+    }
+
+
+  /* =========================================
+     LAYAR
+  ========================================= */
+
+  if(text[i] === SANDHANGAN.LAYAR){
+
+    /*
+      ꦏꦂ = kar
+
+      BUKAN kr
+    */
+
+    if(!hasVowel){
+
+      latin += "a";
+
+    }
+
+    latin += "r";
+
+    i++;
+
+    return {
+      text:latin,
+      next:i
+    };
+
+  }
+
+
+  /* =========================================
+     WIGNYAN
+  ========================================= */
+
+  if(text[i] === SANDHANGAN.WIGNYAN){
+
+    if(!hasVowel){
+
+      latin += "a";
+
+    }
+
+    latin += "h";
+
+    i++;
+
+    return {
+      text:latin,
+      next:i
+    };
+
+  }
+
+
+  /* =========================================
+     PANGKON
+  ========================================= */
+
+  if(text[i] === SANDHANGAN.PANGKON){
+
+    hasPangkon = true;
+
+    i++;
+
+    /*
+      Pangkon berarti konsonan mati.
+    */
+
+    return {
+      text:latin,
+      next:i
+    };
+
+  }
+
+
+  /* =========================================
+     VOKAL BAWAAN
+  ========================================= */
+
+  if(!hasVowel){
+
+    /*
+      ꦏꦿ = kra
+      ꦏꦾ = kya
+
+      Jadi aksara dengan cakra/pengkal
+      tetap mempunyai vokal a.
+    */
+
+    latin += "a";
+
+  }
+
+
+  return {
+    text:latin,
+    next:i
+  };
+
+}
+
+
+/* =========================================================
+   JAWA → LATIN
+========================================================= */
+
+function jawaToLatin(text){
+
+  let result = "";
+
+  let i = 0;
+
+
+  while(i < text.length){
+
+    const char =
+      text[i];
+
+
+    /* =========================================
+       ANGKA
+    ========================================= */
+
+    if(char === "꧇"){
+
+      /*
+        Pastikan ini benar-benar pembuka
+        angka, bukan tanda baca biasa.
+      */
+
+      let j = i + 1;
+
+      let containsNumber = false;
+
+
+      while(
+        j < text.length &&
+        text[j] !== "꧇"
+      ){
+
+        if(
+          angkaLatin[text[j]] !== undefined
+        ){
+
+          containsNumber = true;
+
+        }
+
+        else if(
+          !/\s/.test(text[j])
+        ){
+
+          break;
+
+        }
+
+        j++;
+
+      }
+
+
+      if(
+        containsNumber &&
+        text[j] === "꧇"
+      ){
+
+        let angka = "";
+
+        i++;
+
+
+        while(
+          i < text.length &&
+          text[i] !== "꧇"
+        ){
+
+          if(
+            angkaLatin[text[i]] !== undefined
+          ){
+
+            angka +=
+              angkaLatin[text[i]];
+
+          }
+
+          else{
+
+            /*
+              Spasi di antara angka
+              tetap dipertahankan.
+            */
+
+            angka += text[i];
+
+          }
+
+          i++;
+
+        }
+
+
+        if(text[i] === "꧇"){
+
+          i++;
+
+        }
+
+
+        result += angka;
+
+        continue;
+
+      }
+
+
+      /*
+        Kalau bukan blok angka,
+        anggap sebagai tanda titik dua.
+      */
+
+      result += ":";
+
+      i++;
+
+      continue;
+
+    }
+
+
+    /* =========================================
+       TANDA BACA
+    ========================================= */
+
+    if(
+      tandaBacaLatin[char] !== undefined
+    ){
+
+      result +=
+        tandaBacaLatin[char];
+
+      i++;
+
+      continue;
+
+    }
+
+
+    /* =========================================
+       AKSARA SWARA
+    ========================================= */
+
+    if(
+      swaraToLatin[char] !== undefined
+    ){
+
+      result +=
+        swaraToLatin[char];
+
+      i++;
+
+      continue;
+
+    }
+
+
+    /* =========================================
+       AKSARA DASAR
+    ========================================= */
+
+    const syllable =
+      readJawaSyllable(
+        text,
+        i
+      );
+
+
+    if(syllable){
+
+      result +=
+        syllable.text;
+
+      i =
+        syllable.next;
+
+      continue;
+
+    }
+
+
+    /* =========================================
+       SPASI / KARAKTER LAIN
+    ========================================= */
+
+    result += char;
+
+    i++;
+
+  }
+
+
+  return result;
+
+}
+
+
+/* =========================================================
+   ELEMENT HTML
+========================================================= */
+
+const input =
+  document.getElementById("input");
+
+const output =
+  document.getElementById("output");
+
+const swapBtn =
+  document.getElementById("swap");
+
+const resetBtn =
+  document.getElementById("resetBtn");
+
+const copyBtn =
+  document.getElementById("copyBtn");
+
+const inputLabel =
+  document.getElementById("inputLabel");
+
+const outputLabel =
+  document.getElementById("outputLabel");
+
+
+/* =========================================================
+   MODE
+========================================================= */
+
+let mode =
+  "latinToJawa";
+
+
+/* =========================================================
+   CONVERT
+========================================================= */
+
+function convert(){
+
+  if(mode === "latinToJawa"){
+
+    output.value =
+      latinToJawa(
+        input.value
+      );
+
+  }
+
+  else if(mode === "jawaToLatin"){
+
+    output.value =
+      jawaToLatin(
+        input.value
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+input.addEventListener(
+  "input",
+  ()=>{
+    convert();
+  }
+);
+
+
+/* =========================================================
+   SWAP
+========================================================= */
+
+swapBtn.addEventListener(
+  "click",
+  ()=>{
+
+    const temp =
+      input.value;
+
+    input.value =
+      output.value;
+
+    output.value =
+      temp;
+
+
+    if(mode === "latinToJawa"){
+
+      mode =
+        "jawaToLatin";
+
+
+      inputLabel.textContent =
+        "Aksara Jawa";
+
+      outputLabel.textContent =
+        "Teks Latin";
+
+
+      input.style.fontFamily =
+        '"Noto Sans Javanese", "Javanese Text", sans-serif';
+
+      output.style.fontFamily =
+        'Arial, sans-serif';
+
+    }
+
+    else{
+
+      mode =
+        "latinToJawa";
+
+
+      inputLabel.textContent =
+        "Teks Latin";
+
+      outputLabel.textContent =
+        "Aksara Jawa";
+
+
+      input.style.fontFamily =
+        'Arial, sans-serif';
+
+      output.style.fontFamily =
+        '"Noto Sans Javanese", "Javanese Text", sans-serif';
+
+    }
+
+
+    convert();
+
+  }
+);
+
+
+/* =========================================================
+   COPY
+========================================================= */
+
+copyBtn.addEventListener(
+  "click",
+  async ()=>{
+
+    if(!output.value)
+      return;
+
+
+    try{
+
+      await navigator.clipboard.writeText(
+        output.value
+      );
+
+    }
+
+    catch(error){
+
+      output.select();
+
+      document.execCommand(
+        "copy"
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+resetBtn.addEventListener(
+  "click",
+  ()=>{
+
+    input.value = "";
+
+    output.value = "";
+
+  }
+);
+
+</script>
+
+</body>
+</html>
