@@ -1,30 +1,109 @@
 lucide.createIcons();
 
-const sidebar = document.querySelector('.sidebar');
-const menuBtn = document.getElementById('menuBtn');
+const menuToggle = document.getElementById("menuToggle");
 
-// Klik tombol ☰ untuk buka/tutup sidebar + animasi
-menuBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  sidebar.classList.toggle('active');
-  menuBtn.classList.toggle('active');
+const buttons = {
+  A: () => {
+    alert("Berhasil")
+  },
+
+  B: () => {
+    console.log("Tombol B");
+  },
+
+  C: () => {
+    console.log("Tombol C");
+  },
+
+  D: () => {
+    console.log("Tombol D");
+  }
+};
+
+
+// ============================
+// KLIK MENU
+// ============================
+
+menuToggle.addEventListener("click", (e) => {
+
+  const clickedButton = e.target.closest(".line");
+
+  // Jika yang diklik adalah A/B/C/D
+  if (clickedButton) {
+
+    const value = clickedButton.textContent.trim();
+
+    // Jalankan fungsi tombol
+    if (buttons[value]) {
+      buttons[value]();
+    }
+
+    // Tutup menu
+    menuToggle.classList.remove("open");
+
+    return;
+  }
+
+  // Jika yang diklik area menu utama
+  menuToggle.classList.toggle("open");
 });
 
-// Klik di luar sidebar → tutup
-document.addEventListener('click', (e) => {
-  const isInsideSidebar = sidebar.contains(e.target);
-  const isMenuBtn = menuBtn.contains(e.target);
-  if (!isInsideSidebar && !isMenuBtn) {
-    sidebar.classList.remove('active');
-    menuBtn.classList.remove('active');
+
+// ============================
+// KLIK DI LUAR MENU
+// ============================
+
+document.addEventListener("click", (e) => {
+
+  if (!menuToggle.contains(e.target)) {
+    menuToggle.classList.remove("open");
+  }
+
+});
+/* =====================================
+   SIDEBAR
+===================================== */
+
+const sidebar = document.getElementById('sidebar');
+const menuBtn = document.getElementById('menuBtn');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+function openSidebar() {
+  sidebar.classList.add('active');
+  menuBtn.classList.add('active');
+  sidebarOverlay.classList.add('active');
+}
+
+function closeSidebar() {
+  sidebar.classList.remove('active');
+  menuBtn.classList.remove('active');
+  sidebarOverlay.classList.remove('active');
+}
+
+/* Tombol menu */
+
+menuBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+
+  if (sidebar.classList.contains('active')) {
+    closeSidebar();
+  } else {
+    openSidebar();
   }
 });
 
-// Klik link dalam sidebar → tutup juga
+/* Klik area gelap */
+
+sidebarOverlay.addEventListener('click', () => {
+  closeSidebar();
+});
+
+/* Klik menu sidebar */
+
 document.querySelectorAll('.sidebar a').forEach(link => {
   link.addEventListener('click', () => {
-    sidebar.classList.remove('active');
-    menuBtn.classList.remove('active');
+    closeSidebar();
   });
 });
 
