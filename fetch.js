@@ -7,7 +7,7 @@ fetch('template.html')
     document.getElementById('fetch-container').innerHTML = html;
 
   lucide.createIcons();
-
+  
   const btn24 = document.getElementById("toggle");
   let isOn = true;
 
@@ -56,6 +56,68 @@ fetch('template.html')
     document.body.classList.toggle("dark");
     updateUI();
   });
+  
+  const menuToggle = document.getElementById("menuToggle");
+  
+  const buttons = {
+    A: () => {
+      alert("Berhasil")
+    },
+  
+    B: () => {
+      console.log("Tombol B");
+    },
+  
+    C: () => {
+      console.log("Tombol C");
+    },
+  
+    D: () => {
+      console.log("Tombol D");
+    }
+  };
+  
+  
+  // ============================
+  // KLIK MENU
+  // ============================
+  
+  menuToggle.addEventListener("click", (e) => {
+  
+    const clickedButton = e.target.closest(".line");
+  
+    // Jika yang diklik adalah A/B/C/D
+    if (clickedButton) {
+  
+      const value = clickedButton.textContent.trim();
+  
+      // Jalankan fungsi tombol
+      if (buttons[value]) {
+        buttons[value]();
+      }
+  
+      // Tutup menu
+      menuToggle.classList.remove("open");
+  
+      return;
+    }
+  
+    // Jika yang diklik area menu utama
+    menuToggle.classList.toggle("open");
+  });
+  
+  
+  // ============================
+  // KLIK DI LUAR MENU
+  // ============================
+  
+  document.addEventListener("click", (e) => {
+  
+    if (!menuToggle.contains(e.target)) {
+      menuToggle.classList.remove("open");
+    }
+  
+  });
     
   const searchInput = document.getElementById("sidebarrSearch");
   const menuBoxes = document.querySelectorAll(".sidebar-menu a");
@@ -69,28 +131,52 @@ fetch('template.html')
     });
   });
 
-    const sidebar = document.querySelector('.sidebar');
+    /* =====================================
+       SIDEBAR
+    ===================================== */
+    
+    const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('menuBtn');
-
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    function openSidebar() {
+      sidebar.classList.add('active');
+      menuBtn.classList.add('active');
+      sidebarOverlay.classList.add('active');
+    }
+    
+    function closeSidebar() {
+      sidebar.classList.remove('active');
+      menuBtn.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
+    }
+    
+    /* Tombol menu */
+    
     menuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      sidebar.classList.toggle('active');
-      menuBtn.classList.toggle('active');
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
-        sidebar.classList.remove('active');
-        menuBtn.classList.remove('active');
+    
+      if (sidebar.classList.contains('active')) {
+        closeSidebar();
+      } else {
+        openSidebar();
       }
     });
-
+    
+    /* Klik area gelap */
+    
+    sidebarOverlay.addEventListener('click', () => {
+      closeSidebar();
+    });
+    
+    /* Klik menu sidebar */
+    
     document.querySelectorAll('.sidebar a').forEach(link => {
       link.addEventListener('click', () => {
-        sidebar.classList.remove('active');
-        menuBtn.classList.remove('active');
+        closeSidebar();
       });
     });
+
 
     const currentPage = window.location.pathname.split('/').pop();
     document.querySelectorAll('.sidebar a').forEach(link => {
