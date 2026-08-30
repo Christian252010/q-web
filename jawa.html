@@ -171,6 +171,231 @@ textarea{
   transform:scale(.96);
 }
 
+/* =========================================================
+   KEYBOARD VIRTUAL AKSARA JAWA
+========================================================= */
+
+.jawa-keyboard{
+
+  position:fixed;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  width:100%;
+
+  display:none;
+
+  padding:
+    8px
+    max(12px, env(safe-area-inset-right))
+    calc(12px + env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left));
+
+  background:var(--card);
+
+  border-top:
+    1px solid
+    rgba(128,128,128,.25);
+
+  box-shadow:
+    0 -4px 18px
+    rgba(0,0,0,.25);
+
+  z-index:9999;
+
+  user-select:none;
+
+  -webkit-user-select:none;
+
+}
+
+
+/* =========================================================
+   ROW
+========================================================= */
+
+.keyboard-row{
+  display:grid;
+  gap:5px;
+  margin-bottom:5px;
+}
+
+.jawa-keyboard.mode-1 .keyboard-row{
+  grid-template-columns:repeat(8, minmax(0, 1fr));
+}
+
+.jawa-keyboard.mode-2 .keyboard-row{
+  grid-template-columns:repeat(10, minmax(0, 1fr));
+}
+
+/* =========================================================
+   BOTTOM
+========================================================= */
+
+.keyboard-bottom{
+  display:grid;
+
+  grid-template-columns:
+    60px 1fr 60px;
+
+  gap:5px;
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.keyboard-key{
+  width:100%;
+  min-width:0;
+  height:42px;
+  padding:0;
+
+  border:none;
+  border-radius:6px;
+
+  background:var(--sp);
+  color:var(--text2);
+
+  font-size:21px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+
+  transition:
+    transform .08s ease,
+    background .12s ease;
+}
+
+
+.keyboard-key:active{
+
+  transform:scale(.94);
+
+}
+
+
+/* =========================================================
+   SPASI
+========================================================= */
+
+.keyboard-space{
+  font-family:Arial,sans-serif;
+  font-size:14px;
+  background: var(--accent);
+  color: white;
+}
+
+.keyboard-enter{
+  font-family:Arial,sans-serif;
+  font-size:22px;
+  font-weight:bold;
+  background: var(--accent);
+  color: white;
+}
+
+
+/* =========================================================
+   SWITCH
+========================================================= */
+
+.keyboard-switch{
+  font-family:Arial,sans-serif;
+  font-size:22px;
+  font-weight:bold;
+  background: var(--accent);
+  color: white;
+}
+
+
+/* =========================================================
+   LAYAR KECIL
+========================================================= */
+
+@media(max-width:500px){
+
+  .keyboard-row{
+
+    grid-template-columns:
+      repeat(10,1fr);
+
+  }
+
+  .keyboard-key{
+
+    height:44px;
+
+    font-size:19px;
+
+  }
+
+}
+
+
+/* =========================================================
+   LAYAR SANGAT KECIL
+========================================================= */
+
+@media(max-width:360px){
+
+  .keyboard-key{
+
+    height:42px;
+
+    font-size:17px;
+
+  }
+
+  .keyboard-bottom{
+
+    grid-template-columns:
+      1fr 52px;
+
+  }
+
+}
+
+#input[readonly]{
+  caret-color:var(--text);
+  caret-width: 2px;
+}
+
+.input-wrapper{
+  position:relative;
+}
+
+.custom-caret{
+  position:relative;
+
+  width:1px;
+  height:20px;
+  margin-top: 8px;
+
+  background:var(--text);
+
+  pointer-events:none;
+
+  animation:caretBlink 1s step-end infinite;
+
+  display:none;
+
+  z-index:10;
+}
+
+@keyframes caretBlink{
+  50%{
+    opacity:0;
+  }
+}
 </style>
 
 
@@ -192,12 +417,20 @@ textarea{
     Teks Latin
   </div>
 
-  <textarea
-    id="input"
-    placeholder="Masukkan teks..."
-    spellcheck="false"
-  ></textarea>
-
+  <div class="input-wrapper">
+  
+    <textarea
+      id="input"
+      placeholder="Masukkan teks..."
+      spellcheck="false"
+    ></textarea>
+  
+    <div
+      id="customCaret"
+      class="custom-caret">
+    </div>
+  
+  </div>
 
   <div class="middle">
 
@@ -232,8 +465,650 @@ textarea{
 
 </div>
 
+<!-- =====================================================
+     KEYBOARD AKSARA JAWA
+===================================================== -->
+
+<div id="jawaKeyboard" class="jawa-keyboard">
+
+  <div class="keyboard-row" id="keyboardRow1"></div>
+
+  <div class="keyboard-row" id="keyboardRow2"></div>
+
+  <div class="keyboard-row" id="keyboardRow3"></div>
+  
+  <div class="keyboard-row" id="keyboardRow4"></div>
+
+  <div class="keyboard-bottom">
+  
+    <button
+      class="keyboard-key keyboard-switch"
+      id="keyboardSwitch">
+      ⇄
+    </button>
+   
+  
+    <button
+      class="keyboard-key keyboard-space"
+      id="keyboardSpace">
+      Spasi
+    </button>
+   
+    <button
+      class="keyboard-key keyboard-enter"
+      id="keyboardEnter">
+      ↵
+    </button>
+  
+  
+  </div>
+
+</div>
+
 
 <script src="fetch.js"></script>
+
+<script>
+/* =========================================================
+   KEYBOARD JAWA
+========================================================= */
+
+const jawaKeyboard =
+  document.getElementById("jawaKeyboard");
+
+const keyboardRow1 =
+  document.getElementById("keyboardRow1");
+
+const keyboardRow2 =
+  document.getElementById("keyboardRow2");
+
+const keyboardRow3 =
+  document.getElementById("keyboardRow3");
+
+const keyboardRow4 =
+  document.getElementById("keyboardRow4");
+
+const keyboardSpace =
+  document.getElementById("keyboardSpace");
+
+const keyboardSwitch =
+  document.getElementById("keyboardSwitch");
+
+const keyboardEnter =
+  document.getElementById("keyboardEnter");
+
+const customCaret =
+  document.getElementById("customCaret");
+
+function updateCustomCaret(){
+
+  if(mode !== "jawaToLatin"){
+    customCaret.style.display = "none";
+    return;
+  }
+
+  const cursor =
+    input.selectionStart;
+
+  const text =
+    input.value.substring(0,cursor);
+
+  /*
+    Buat elemen sementara untuk
+    mengukur posisi cursor.
+  */
+
+  const mirror =
+    document.createElement("div");
+
+  const style =
+    window.getComputedStyle(input);
+
+  mirror.style.position = "absolute";
+  mirror.style.visibility = "hidden";
+  mirror.style.whiteSpace = "pre-wrap";
+  mirror.style.wordWrap = "break-word";
+
+  mirror.style.font =
+    style.font;
+
+  mirror.style.fontSize =
+    style.fontSize;
+
+  mirror.style.lineHeight =
+    style.lineHeight;
+
+  mirror.style.padding =
+    style.padding;
+
+  mirror.style.border =
+    style.border;
+
+  mirror.style.width =
+    input.clientWidth + "px";
+
+  mirror.style.boxSizing =
+    "border-box";
+
+  mirror.textContent =
+    text;
+
+  const marker =
+    document.createElement("span");
+
+  marker.textContent = "\u200b";
+
+  mirror.appendChild(marker);
+
+  document.body.appendChild(mirror);
+
+
+  const markerRect =
+    marker.getBoundingClientRect();
+
+  const inputRect =
+    input.getBoundingClientRect();
+
+
+  let left =
+    markerRect.left -
+    inputRect.left -
+    input.scrollLeft;
+
+  let top =
+    markerRect.top -
+    inputRect.top -
+    input.scrollTop;
+
+
+  /*
+    Sesuaikan dengan posisi textarea
+  */
+
+  customCaret.style.left =
+    left + "px";
+
+  customCaret.style.top =
+    top + "px";
+
+  customCaret.style.display =
+    "block";
+
+
+  document.body.removeChild(mirror);
+
+}
+/* =========================================================
+   LAYOUT KEYBOARD
+========================================================= */
+
+const keyboardLayouts = [
+
+  /* =======================================================
+     MODE 1
+  ======================================================= */
+
+  [
+    [
+      "ꦲ","ꦤ","ꦕ","ꦫ",
+      "ꦏ","ꦶ","ꦴ","꧀"
+    ],
+  
+    [
+      "ꦢ","ꦠ","ꦱ","ꦮ",
+      "ꦭ","ꦸ","ꦂ","ꦿ"
+    ],
+  
+    [
+      "ꦥ","ꦝ","ꦗ","ꦪ",
+      "ꦚ","ꦼ","ꦃ","ꦾ"
+    ],
+  
+    [
+      "ꦩ","ꦒ","ꦧ","ꦛ",
+      "ꦔ","ꦺ","ꦁ","⌫"
+    ]
+  ],
+
+
+  /* =======================================================
+     MODE 2
+  ======================================================= */
+
+  [
+    [
+      "꧑","꧒","꧓","꧔","꧕",
+      "꧖","꧗","꧘","꧙","꧐"
+    ],
+  
+    [
+      "ꦄ","ꦅ","ꦈ","ꦌ","ꦍ",
+      "ꦎ","꧈","꧉","꧊","꧋"
+    ],
+  
+    [
+      "@","#","$","_","&",
+      "-","+","(",")","/"
+    ],
+  
+    [
+      "*",":",";",
+      "!","?",",",".","~","꧇","⌫"
+    ]
+  ]
+
+];
+
+
+let keyboardMode = 0;
+
+/* =========================================================
+   RENDER KEYBOARD
+========================================================= */
+
+function renderKeyboard(){
+
+  const layout =
+    keyboardLayouts[keyboardMode];
+
+  /* ================================
+     ATUR JUMLAH KOLOM
+  ================================= */
+
+  jawaKeyboard.classList.remove(
+    "mode-1",
+    "mode-2"
+  );
+
+  jawaKeyboard.classList.add(
+    keyboardMode === 0
+      ? "mode-1"
+      : "mode-2"
+  );
+
+
+  const rows = [
+    keyboardRow1,
+    keyboardRow2,
+    keyboardRow3,
+    keyboardRow4
+  ];
+
+
+  rows.forEach(
+    (row,rowIndex)=>{
+
+      row.innerHTML = "";
+
+      layout[rowIndex].forEach(
+        key=>{
+
+          const button =
+            document.createElement("button");
+
+          button.type = "button";
+
+          button.className =
+            "keyboard-key";
+
+          if(
+            keyboardMode === 0 &&
+            isPasanganMode() &&
+            isJawaBaseChar(key)
+          ){
+          
+            /*
+              Tampilkan bentuk pasangan
+              pada keyboard.
+          
+              Yang ditampilkan:
+              ꧀ + aksara
+          
+              Tetapi saat diklik,
+              yang dimasukkan tetap hanya
+              aksara dasarnya.
+            */
+          
+            button.textContent =
+              SANDHANGAN.PANGKON + key;
+          
+          }
+          else{
+          
+            button.textContent =
+              key;
+          
+          }
+
+          if(key === "⌫"){
+          
+            let deleteTimer = null;
+          
+            const startDelete = (e) => {
+          
+              e.preventDefault();
+          
+              /*
+                Hapus pertama
+              */
+              deleteJawaKey();
+          
+          
+              /*
+                Mulai repeat setelah 600ms
+              */
+              deleteTimer = setTimeout(() => {
+          
+                deleteTimer = setInterval(() => {
+          
+                  deleteJawaKey();
+          
+                }, 80);
+          
+              }, 600);
+          
+            };
+          
+          
+            const stopDelete = () => {
+          
+              if(deleteTimer){
+          
+                clearTimeout(deleteTimer);
+                clearInterval(deleteTimer);
+          
+                deleteTimer = null;
+          
+              }
+          
+              /*
+                BARU render setelah tombol dilepas.
+                
+                Jadi renderKeyboard() tidak
+                menghancurkan tombol ketika
+                pointer masih ditekan.
+              */
+              renderKeyboard();
+          
+            };
+          
+          
+            button.addEventListener(
+              "pointerdown",
+              startDelete
+            );
+          
+            button.addEventListener(
+              "pointerup",
+              stopDelete
+            );
+          
+            button.addEventListener(
+              "pointerleave",
+              stopDelete
+            );
+          
+            button.addEventListener(
+              "pointercancel",
+              stopDelete
+            );
+          
+          
+          }
+          else{
+          
+            button.addEventListener(
+              "click",
+              ()=>{
+          
+                insertJawaKey(key);
+          
+              }
+            );
+          
+          }
+
+          row.appendChild(button);
+
+        }
+      );
+
+    }
+  );
+
+}
+
+function isJawaBaseChar(key){
+
+  return Object.values(aksara).includes(key);
+
+}
+
+function isPasanganMode(){
+
+  if(keyboardMode !== 0)
+    return false;
+
+  const cursor =
+    input.selectionStart;
+
+  const value =
+    input.value;
+
+  if(cursor === 0)
+    return false;
+  
+  return value[cursor - 1] === SANDHANGAN.PANGKON;
+}
+
+/* =========================================================
+   INSERT KEY
+========================================================= */
+
+function insertJawaKey(key){
+
+  const start =
+    input.selectionStart;
+
+  const end =
+    input.selectionEnd;
+
+  const value =
+    input.value;
+
+
+  /*
+    Jika mode 1 dan karakter sebelumnya
+    adalah pangkon ꧀, berarti aksara yang
+    dimasukkan setelahnya adalah pasangan.
+  */
+
+  if(
+    keyboardMode === 0 &&
+    isJawaBaseChar(key) &&
+    start > 0 &&
+    value[start - 1] === "꧀"
+  ){
+
+    /*
+      Tidak perlu menambahkan ꧀ lagi.
+
+      Cukup masukkan aksara dasar.
+      Unicode/font akan membentuk pasangan:
+      
+      ꦏ꧀ + ꦤ
+      = ꦏ꧀ꦤ
+    */
+
+  }
+
+
+  input.value =
+    value.slice(0,start) +
+    key +
+    value.slice(end);
+
+
+  const position =
+    start + key.length;
+
+
+  input.focus();
+
+  input.setSelectionRange(
+    position,
+    position
+  );
+
+
+  convert();
+  
+  updateCustomCaret();
+  
+  renderKeyboard();
+
+}
+
+keyboardSpace.addEventListener(
+  "click",
+  ()=>{
+
+    insertJawaKey(" ");
+
+  }
+);
+
+keyboardEnter.addEventListener(
+  "click",
+  ()=>{
+
+    insertJawaKey("\n");
+
+  }
+);
+
+keyboardSwitch.addEventListener(
+  "click",
+  ()=>{
+
+    keyboardMode++;
+
+    if(
+      keyboardMode >=
+      keyboardLayouts.length
+    ){
+
+      keyboardMode = 0;
+
+    }
+
+
+    renderKeyboard();
+
+  }
+);
+
+function deleteJawaKey(){
+
+  const start =
+    input.selectionStart;
+
+  const end =
+    input.selectionEnd;
+
+  const value =
+    input.value;
+
+
+  /* =========================================
+     JIKA ADA TEKS YANG DIPILIH
+  ========================================= */
+
+  if(start !== end){
+
+    input.value =
+      value.slice(0,start) +
+      value.slice(end);
+
+    input.focus();
+
+    input.setSelectionRange(
+      start,
+      start
+    );
+
+    convert();
+
+    updateCustomCaret();
+
+    return;
+  }
+
+
+  /* =========================================
+     JIKA CURSOR DI AWAL
+  ========================================= */
+
+  if(start === 0){
+
+    return;
+
+  }
+
+
+  /* =========================================
+     HAPUS 1 KARAKTER
+  ========================================= */
+
+  input.value =
+    value.slice(0,start - 1) +
+    value.slice(end);
+
+
+  const position =
+    start - 1;
+
+
+  input.focus();
+
+  input.setSelectionRange(
+    position,
+    position
+  );
+
+
+  convert();
+
+  updateCustomCaret();
+
+}
+
+function showCustomCaret(){
+
+  updateCustomCaret();
+
+}
+
+input.addEventListener("click",()=>{
+  updateCustomCaret();
+  renderKeyboard();
+});
+
+input.addEventListener("keyup",()=>{
+  updateCustomCaret();
+  renderKeyboard();
+});
+
+input.addEventListener("select",()=>{
+  updateCustomCaret();
+  renderKeyboard();
+});
+
+input.addEventListener("scroll",()=>{
+  updateCustomCaret();
+});
+
+</script>
 
 <script>
 
@@ -1528,6 +2403,20 @@ const outputLabel =
 
 let mode =
   "latinToJawa";
+  
+function showJawaKeyboard(){
+
+  jawaKeyboard.style.display = "block";
+
+  renderKeyboard();
+
+}
+
+function hideJawaKeyboard(){
+
+  jawaKeyboard.style.display = "none";
+
+}
 
 
 /* =========================================================
@@ -1573,67 +2462,149 @@ input.addEventListener(
    SWAP
 ========================================================= */
 
-swapBtn.addEventListener(
-  "click",
-  ()=>{
+swapBtn.addEventListener("click",()=>{
 
-    const temp =
+  /*
+    Simpan teks berdasarkan mode saat ini.
+    
+    Mode latinToJawa:
+      input  = Latin
+      output = Jawa
+
+    Mode jawaToLatin:
+      input  = Jawa
+      output = Latin
+  */
+
+  if(mode === "latinToJawa"){
+
+    /*
+      Latin → Jawa
+      Saat swap:
+      input  menjadi hasil Jawa
+      output menjadi teks Latin
+    */
+
+    const latinText =
       input.value;
 
-    input.value =
+    const jawaText =
       output.value;
 
+
+    input.value =
+      jawaText;
+
     output.value =
-      temp;
+      latinText;
 
 
-    if(mode === "latinToJawa"){
-
-      mode =
-        "jawaToLatin";
+    mode =
+      "jawaToLatin";
 
 
-      inputLabel.textContent =
-        "Aksara Jawa";
+    inputLabel.textContent =
+      "Aksara Jawa";
 
-      outputLabel.textContent =
-        "Teks Latin";
-
-
-      input.style.fontFamily =
-        '"Noto Sans Javanese", "Javanese Text", sans-serif';
-
-      output.style.fontFamily =
-        'Arial, sans-serif';
-
-    }
-
-    else{
-
-      mode =
-        "latinToJawa";
+    outputLabel.textContent =
+      "Teks Latin";
 
 
-      inputLabel.textContent =
-        "Teks Latin";
+    input.style.fontFamily =
+      '"Noto Sans Javanese", "Javanese Text", sans-serif';
 
-      outputLabel.textContent =
-        "Aksara Jawa";
-
-
-      input.style.fontFamily =
-        'Arial, sans-serif';
-
-      output.style.fontFamily =
-        '"Noto Sans Javanese", "Javanese Text", sans-serif';
-
-    }
+    output.style.fontFamily =
+      'Arial, sans-serif';
 
 
-    convert();
+    /* ================================
+       TAMPILKAN KEYBOARD
+    ================================= */
+
+    showJawaKeyboard();
+
+
+    /*
+      Matikan keyboard HP
+    */
+
+    input.setAttribute(
+      "readonly",
+      ""
+    );
 
   }
-);
+
+  else{
+
+    /*
+      Jawa → Latin
+      Saat swap:
+      input  menjadi hasil Latin
+      output menjadi teks Jawa
+    */
+
+    const jawaText =
+      input.value;
+
+    const latinText =
+      output.value;
+
+
+    input.value =
+      latinText;
+
+    output.value =
+      jawaText;
+
+
+    mode =
+      "latinToJawa";
+
+
+    inputLabel.textContent =
+      "Teks Latin";
+
+    outputLabel.textContent =
+      "Aksara Jawa";
+
+
+    input.style.fontFamily =
+      'Arial, sans-serif';
+
+    output.style.fontFamily =
+      '"Noto Sans Javanese", "Javanese Text", sans-serif';
+
+
+    /* ================================
+       SEMBUNYIKAN KEYBOARD
+    ================================= */
+
+    hideJawaKeyboard();
+
+
+    /*
+      Aktifkan kembali keyboard HP
+    */
+
+    input.removeAttribute(
+      "readonly"
+    );
+
+  }
+
+
+  /*
+    Jangan panggil convert() di sini.
+
+    Karena isi input/output sudah merupakan
+    hasil swap yang benar.
+  */
+
+
+  input.focus();
+
+});
 
 
 /* =========================================================
@@ -1685,6 +2656,7 @@ resetBtn.addEventListener(
   }
 );
 
+renderKeyboard();
 </script>
 
 </body>
