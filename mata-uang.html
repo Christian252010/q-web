@@ -99,6 +99,31 @@ body {
   opacity:0.7;
   font-weight: bold;
 }
+
+.search-box {
+  position: sticky;
+  top: 0;
+  padding: 10px;
+  background: var(--sp);
+  z-index: 2;
+  border-bottom: 2px solid var(--bdr2);
+}
+
+.search-box input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--bdr2);
+  border-radius: 6px;
+  outline: none;
+  background: var(--ins);
+  color: var(--text);
+  font-size: 15px;
+}
+
+.search-box input::placeholder {
+  color: var(--ph);
+}
 </style>
 
 <body data-title="Nilai Tukar">
@@ -537,17 +562,50 @@ function initDropdown(id, defaultVal) {
 
   options.innerHTML = "";
 
+  // =========================
+  // SEARCH BOX
+  // =========================
+  let searchBox = document.createElement("div");
+  searchBox.className = "search-box";
+
+  let searchInput = document.createElement("input");
+  searchInput.type = "text";
+  searchInput.placeholder = "Cari mata uang...";
+
+  searchBox.appendChild(searchInput);
+  options.appendChild(searchBox);
+
+  // =========================
+  // MEMBUAT DAFTAR CURRENCY
+  // =========================
   currencies.forEach(cur => {
     let name = getName(cur);
     let flag = getFlag(cur);
 
     let div = document.createElement("div");
     div.className = "option";
-    div.innerHTML = `<span>${flag} ${name}</span><span>${cur}</span>`;
 
+    div.innerHTML = `
+      <span>${flag} ${name}</span>
+      <span>${cur}</span>
+    `;
+
+    // Pilih currency
     div.onclick = () => {
-      selected.innerHTML = `<span>${flag} ${name}</span><span>${cur}</span>`;
+      selected.innerHTML = `
+        <span>${flag} ${name}</span>
+        <span>${cur}</span>
+      `;
+
       selected.dataset.value = cur;
+
+      searchInput.value = "";
+
+      // Tampilkan kembali semua option
+      options.querySelectorAll(".option").forEach(option => {
+        option.style.display = "flex";
+      });
+
       closeAll();
       convert();
     };
@@ -555,14 +613,48 @@ function initDropdown(id, defaultVal) {
     options.appendChild(div);
   });
 
-  selected.innerHTML = `<span>${getFlag(defaultVal)} ${getName(defaultVal)}</span><span>${defaultVal}</span>`;
+  // =========================
+  // SEARCH
+  // =========================
+  searchInput.addEventListener("input", function () {
+    let keyword = this.value.toLowerCase().trim();
+
+    options.querySelectorAll(".option").forEach(option => {
+      let text = option.textContent.toLowerCase();
+
+      if (text.includes(keyword)) {
+        option.style.display = "flex";
+      } else {
+        option.style.display = "none";
+      }
+    });
+  });
+
+  // =========================
+  // DEFAULT VALUE
+  // =========================
+  selected.innerHTML = `
+    <span>${getFlag(defaultVal)} ${getName(defaultVal)}</span>
+    <span>${defaultVal}</span>
+  `;
+
   selected.dataset.value = defaultVal;
 
+  // =========================
+  // BUKA / TUTUP DROPDOWN
+  // =========================
   selected.onclick = (e) => {
     e.stopPropagation();
+
     let isOpen = options.style.display === "block";
+
     closeAll();
+
     options.style.display = isOpen ? "none" : "block";
+
+    if (!isOpen) {
+      searchInput.focus();
+    }
   };
 }
 
