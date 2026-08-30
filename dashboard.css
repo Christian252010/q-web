@@ -513,3 +513,182 @@ strong {
   transition: transform 0.3s ease;
   transform-origin: center;
 }
+
+/* =====================================
+   FLATICON ATTRIBUTION FOOTER
+===================================== */
+
+.flaticon-footer {
+  width: min(1150px, calc(100% - 24px));
+  margin: 45px auto 30px;
+  padding: 24px;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(128, 128, 128, 0.22);
+  border-radius: 8px;
+
+  background: rgba(128, 128, 128, 0.045);
+}
+
+
+/* =====================================
+   TITLE
+===================================== */
+
+.flaticon-title {
+  margin-bottom: 18px;
+
+  text-align: center;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  opacity: 0.7;
+}
+
+
+/* =====================================
+   CREDIT LIST
+===================================== */
+
+.flaticon-credits {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(250px, 1fr));
+
+  gap: 7px;
+}
+
+
+/* =====================================
+   CREDIT CARD
+===================================== */
+
+.flaticon-credits a {
+  display: block;
+
+  padding: 10px 12px;
+
+  border: 1px solid rgba(128, 128, 128, 0.14);
+  border-radius: 6px;
+
+  background: rgba(128, 128, 128, 0.035);
+
+  color: inherit;
+
+  font-size: 12px;
+  line-height: 1.45;
+
+  text-decoration: none;
+
+  opacity: 0.68;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+/* =====================================
+   HOVER
+===================================== */
+
+.flaticon-credits a:hover {
+  opacity: 1;
+
+  background: rgba(128, 128, 128, 0.09);
+
+  border-color: rgba(128, 128, 128, 0.25);
+
+  transform: translateY(-1px);
+}
+
+
+/* =====================================
+   ACTIVE
+===================================== */
+
+.flaticon-credits a:active {
+  transform: scale(0.98);
+}
+
+
+/* =====================================
+   NOTICE
+===================================== */
+
+.flaticon-notice {
+  margin-top: 18px;
+  padding-top: 15px;
+
+  border-top: 1px solid rgba(128, 128, 128, 0.15);
+
+  text-align: center;
+
+  font-size: 11px;
+  line-height: 1.6;
+
+  opacity: 0.6;
+}
+
+.flaticon-notice a {
+  color: inherit;
+
+  font-weight: 600;
+
+  text-decoration: underline;
+}
+
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media (max-width: 600px) {
+
+  .flaticon-footer {
+    width: calc(100% - 16px);
+
+    margin-top: 30px;
+
+    padding: 18px;
+
+    border-radius: 8px;
+  }
+
+
+  .flaticon-title {
+    margin-bottom: 14px;
+
+    font-size: 15px;
+  }
+
+
+  .flaticon-credits {
+    grid-template-columns: 1fr;
+
+    gap: 5px;
+  }
+
+
+  .flaticon-credits a {
+    padding: 9px 10px;
+
+    font-size: 11px;
+
+    line-height: 1.45;
+  }
+
+
+  .flaticon-notice {
+    margin-top: 15px;
+    padding-top: 13px;
+
+    font-size: 10px;
+    line-height: 1.55;
+  }
+}
