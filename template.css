@@ -31,7 +31,8 @@
 
 body.dark {
   --accent: teal;
-  --daccent: #006060;
+/*   --daccent: #006060; */
+  --daccent: #00a0a0;
   --text: #fff;
   --bg: #1f1f1f;
   --card: #2b2b2b;
@@ -116,19 +117,18 @@ body {
 .sidebar {
   position: fixed;
   top: 0;
-  left: -240px;
+  left: -100%;
   width: 220px;
   height: 100%;
   background-color: var(--bg);
   color: #fff;
   padding-top: 45px;
-  transition: left 0.3s ease;
+  transition: left 0.3s ease, width 0.1s linear;
   box-sizing: border-box;
   box-shadow: 3px 0 12px rgba(0, 0, 0, 0.4);
   z-index: 99;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .sidebar.active {
@@ -165,7 +165,7 @@ body {
 
 /* MENU SCROLL */
 .sidebar-menu {
-  flex-grow: 1;
+  flex-grow: 0;
   overflow-y: auto;
   background-color: var(--bg);
   padding-bottom: 5px;
@@ -185,7 +185,7 @@ body {
   gap: 12px;
   padding: 13px 22px;
   text-decoration: none;
-  color: var(--text);
+  color: var(--text2);
   font-size: 15px;
   font-weight: bold;
   letter-spacing: 0.3px;
@@ -193,8 +193,8 @@ body {
 }
 
 .sidebar a:hover {
-  background: var(--accent);
-  color: white;
+  background: var(--sp);
+  color: var(--text);
 }
 
 /* =====================================
@@ -225,8 +225,8 @@ body {
 }
 
 .icons {
-  width: 28px;
-  height: 28px;
+  width: 32px !important;
+  height: 32px !important;
 }
 
 .sidebar-header {
@@ -272,8 +272,12 @@ body {
 
 .sidebar a.active {
   background: var(--card);
-  border-left: 4px solid var(--accent);
-  color: var(--accent);
+  border-left: 5px solid var(--accent);
+  color: var(--text);
+}
+
+.sidebar a.active img {
+  margin-left: -5px !important;
 }
 
 /*.sidebar a.active {
@@ -281,10 +285,10 @@ body {
   color: white;
 }*/
 
-a.active .icon {
+/* a.active .icon {
   transform: scale(1.3);
   filter: invert(66%) sepia(53%) saturate(600%) hue-rotate(124deg) brightness(60%) contrast(88%);
-}
+} */
 
 .sidebar-logo {
   width: 50px !important;
@@ -296,14 +300,12 @@ a.active .icon {
 .sidebar img {
   width: 22px;
   height: 22px;
-  filter: var(--filter);
   flex-shrink: 0;
-  transition: filter 0.25s ease;
 }
 
-.sidebar a:hover img {
+/* .sidebar a:hover img {
   filter: invert(66%) sepia(53%) saturate(600%) hue-rotate(124deg) brightness(100%) contrast(88%);
-}
+} */
 
 .sidebar-footer {
   text-align: center;
@@ -344,7 +346,12 @@ a.active .icon {
   letter-spacing: 1px;
 }
 
-.sidebar label {
+.sidebar-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sidebar-top label {
   color: var(--text);
   padding: 8px;
   font-size: 20px;
@@ -352,6 +359,22 @@ a.active .icon {
   font-weight: bold;
   margin-top: 8px;
   margin-bottom: -14px;
+}
+
+#btnRight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  margin-top: 18px;
+  margin-right: 10px;
+}
+
+.btn-right {
+  width: 28px !important;
+  height: 28px !important;
 }
 
 .search-icon {
@@ -368,6 +391,7 @@ a.active .icon {
 .sidebarr-search {
   display: flex;
   justify-content: center;
+  align-items: center;
   text-align: center;
   padding: 8px 0;
   margin-right: 12px;
@@ -542,4 +566,64 @@ a.active .icon {
 
 .menu-toggle.open .line-d {
   top: 176px;
+}
+
+.sidebar.right {
+  width: 100%;
+  max-width: 600px;
+}
+
+.sidebar.right .sidebar-menu {
+  display: grid;
+  gap: 12px;
+  row-gap: 10px;
+  padding: 12px;
+  padding-right: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+}
+
+.sidebar.right a {
+  display: flex;
+  flex-direction: column;
+  height: 60px;
+  background: var(--card);
+  border-radius: 8px;
+  padding: 12px 4px;
+  text-align: center;
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 10px;
+}
+
+.sidebar.right a img {
+  width: 36px !important;
+  height: 36px !important;
+  flex-shrink: 0;
+}
+
+.sidebar.right a span {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.sidebar.right a img {
+  margin-top: 4px;
+  margin-bottom: -6px;
+}
+
+.sidebar.right .sidebarr-search input {
+  width: 94%;
+  margin-left: -8px !important;
+  transition: none;
+}
+
+.sidebar.right .search-icon {
+  left: 2px;
+  transition: none;
+}
+
+.sidebar.right a.active {
+  border: 2.5px solid var(--accent);
+  color: var(--text);
 }
