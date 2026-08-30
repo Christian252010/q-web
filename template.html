@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Qris-Tian Web</title>
-  <link rel="stylesheet" href="template.css">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="template.css">
 <style>
 /* === DOCK DARK MODE ONLY === */
 
@@ -55,7 +55,7 @@
 }
 
 /* Tambahan agar konten tidak tertutup dock */
-body {
+body{
   padding-bottom: 70px;
 }
 </style>
@@ -81,9 +81,9 @@ body {
     <button class="menu-toggle" id="menuToggle">
       <i data-lucide="chevron-up" class="nav-icon"></i>
       <span class="line line-a" onclick="home()"><i data-lucide="home" class="nav-icon"></i></span>
-      <span class="line line-b" onclick="profile()"><i data-lucide="user" class="nav-icon"></i></span>
+      <span class="line line-b" onclick="profile()"><i data-lucide="info" class="nav-icon"></i></span>
       <span class="line line-c"><i data-lucide="history" class="nav-icon"></i></span>
-      <span class="line line-d"><i data-lucide="message-square-more" class="nav-icon"></i></span>
+      <span class="line line-d"><i data-lucide="message-square-text" class="nav-icon"></i></span>
     </button>
   </div>
 </div>
@@ -118,7 +118,10 @@ body {
     <img src="logo.png" class="sidebar-logo">
     <h2>Qris-Tian</h2>
   </div>-->
-  <label>Sidebar Menu</label>
+  <div class="sidebar-top">
+    <label>Sidebar Menu</label>
+    <button id="btnRight"><i data-lucide="arrow-right" class="btn-right"></i></button>
+  </div>
 
   <!-- SEARCH BAR -->
   <!--<div class="sidebar-search">
@@ -134,96 +137,107 @@ body {
 
   <nav class="sidebar-menu">
     <a href="index.html" class="active">
-      <i data-lucide="layout-dashboard" class="icons"></i>
+      <img src="icons/dashboard.png" class="icons">
       <span>Dashboard</span>
     </a>
 
     <a href="jadwal.html">
-      <i data-lucide="calendar" class="icons"></i>
+      <img src="icons/calendar.png" class="icons">
       <span>Jadwal</span>
     </a>
 
     <a href="file-transfer.html">
-      <i data-lucide="folder-open" class="icons"></i>
+      <img src="icons/data-transfer.png" class="icons">
       <span>File Transfer</span>
     </a>
     
     <a href="subnet.html">
-      <i data-lucide="server" class="icons"></i>
+      <img src="icons/wifi-router.png" class="icons">
       <span>Subnetting</span>
     </a>
 
     <a href="qr-code.html">
-      <i data-lucide="qr-code" class="icons"></i>
+      <img src="icons/qr-code.png" class="icons">
       <span>QR Code</span>
     </a>
     
     <a href="percent.html">
-      <i data-lucide="square-percent" class="icons"></i>
+      <img src="icons/pie-chart1.png" class="icons">
       <span>Persentase</span>
     </a>
+    
     <a href="rumus.html">
-      <i data-lucide="function-square" class="icons"></i>
+      <img src="icons/math.png" class="icons">
       <span>Rumus</span>
     </a>
     
+    <a href="rumus.html">
+      <img src="icons/layout.png" class="icons">
+      <span>FPB & KPK</span>
+    </a>
+    
+    <a href="rata-rata.html">
+      <img src="icons/profit.png" class="icons">
+      <span>Rata-rata</span>
+    </a>
+    
     <a href="jawa.html">
-      <i data-lucide="scroll-text" class="icons"></i>
+      <img src="icons/jawa.png" class="icons">
       <span>Aksara Jawa</span>
     </a>
 
     <a href="mata-uang.html">
-      <i data-lucide="circle-dollar-sign" class="icons"></i>
+      <img src="icons/currency-exchange.png" class="icons">
       <span>Mata Uang</span>
     </a>
 
     <a href="morse.html">
-      <i data-lucide="chart-no-axes-gantt" class="icons"></i>
+      <img src="icons/morse-code.png" class="icons">
       <span>Morse</span>
     </a>
 
     <a href="romawi.html">
-      <i data-lucide="landmark" class="icons"></i>
+      <img src="icons/roman-numerals.png" class="icons">
       <span>Romawi</span>
     </a>
 
     <a href="number.html">
-      <i data-lucide="binary" class="icons"></i>
+      <img src="icons/binary.png" class="icons">
       <span>Numeric</span>
     </a>
   
     <a href="panjang.html">
-      <i data-lucide="ruler" class="icons"></i>
+      <img src="icons/measuring-tape.png" class="icons">
       <span>Panjang</span>
     </a>
   
     <a href="berat.html">
-      <i data-lucide="Weight" class="icons"></i>
+      <img src="icons/weighing-machine.png" class="icons">
       <span>Berat</span>
     </a>
   
     <a href="volume.html">
-      <i data-lucide="glass-water" class="icons"></i>
+      <img src="icons/water-bucket.png" class="icons">
       <span>Volume</span>
     </a>
   
     <a href="suhu.html">
-      <i data-lucide="thermometer-sun" class="icons"></i>
+      <img src="icons/hot.png" class="icons">
       <span>Suhu</span>
     </a>
   
     <a href="data.html">
-      <i data-lucide="save" class="icons"></i>
+      <img src="icons/floppy-disk.png" class="icons">
       <span>Data</span>
     </a>
   
     <a href="waktu.html">
-      <i data-lucide="alarm-clock" class="icons"></i>
+      <img src="icons/clock.png" class="icons">
       <span>Waktu</span>
     </a>
   
     <a href="masakan.html">
-      <i data-lucide="cooking-pot" class="icons"></i>
+      <img src="icons/cooking.png" class="icons">
       <span>Masakan</span>
     </a>
 
@@ -244,6 +258,44 @@ body {
       btn.classList.add("active");
     }
   });
+</script>
+<script>
+const btnRight = document.getElementById("btnRight");
+const sidebarS = document.querySelector(".sidebar");
+const sidebarA = document.querySelectorAll(".sidebar a");
+
+let status = "normal";
+
+function function1() {
+  sidebarS.classList.remove("right");
+
+  sidebarA.forEach(menu => {
+    menu.classList.remove("right");
+  });
+
+  status = "normal";
+}
+
+function function2() {
+  sidebarS.classList.add("right");
+
+  sidebarA.forEach(menu => {
+    menu.classList.add("right");
+  });
+
+  status = "right";
+}
+
+// Kondisi awal
+function1();
+
+btnRight.addEventListener("click", function () {
+  if (status === "normal") {
+    function2();
+  } else {
+    function1();
+  }
+});
 </script>
 <script>
   lucide.createIcons();
