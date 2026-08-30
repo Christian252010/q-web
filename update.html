@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="template.css">
+  <title>Romanwi Translator</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body data-title="Romawi">
+<div id="fetch-container"></div>
+
+<!-- <div class="card">
+  <div class="top">
+    <span class="title">V 26.2</span>
+    <span class="date">28-8-2026</span>
+  </div>
+  <div class="info">
+    <ul>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+  </div>
+</div>-->
+
+<div class="card">
+  <div class="top">
+    <span class="title">V 26.4</span>
+    <span class="date">30-8-2026</span>
+  </div>
+  <div class="info">
+    <ul>
+      <li>+ Menambahkan tombol untuk menampilkan Sidebar full</li>
+      <li>+ Menambahkan Footer berisi attribute penggunaan icon Flaticon</li>
+      <li>= Mengubah sedikit tampilan pada sidebar</li>
+      <li>= Memperbaiki bug keyboard pada page [jawa2=Aksara Jawa]</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <span class="title">V 26.3</span>
+    <span class="date">29-8-2026</span>
+  </div>
+  <div class="info">
+    <ul>
+      <li>+ Menambahkan tombol untuk mengganti mode tampilan [dashboard=Dashboard] dari Flex ke Grid</li>
+      <li>= Mengubah icon dari page pada [dashboard=Dashboard] dari Lucide ke Flaticon</li>
+      <li>= Mengubah icon pada Sidebar</li>
+      <li>= Mengubah pada [dashboard=Dashboard]</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <span class="title">V 26.2</span>
+    <span class="date">28-8-2026</span>
+  </div>
+  <div class="info">
+    <ul>
+      <li>+ Menambahkan page [calendar=Jadwal]</li>
+      <li>+ Menambahkan page [profit=Rata-rata]</li>
+      <li>+ Menambahkan search pada dropdown menu di page [currency-exchange=Mata Uang]</li>
+      <li>= Memperbaiki tampilan pada page [pie-chart1=Percent]</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="top">
+    <span class="title">V 26.1</span>
+    <span class="date">25-8-2026</span>
+  </div>
+  <div class="info">
+    <ul>
+      <li>+ Menambahkan update page</li>
+      <li>+ Menambahkan keyboard custom pada page [jawa2=Aksara Jawa]</li>
+      <li>= Memperbaiki beberapa tampilan</li>
+    </ul>
+  </div>
+</div>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans&display=swap');
+
+body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  padding: 20px;
+  padding-top: 64px;
+}
+
+.card {
+  background: var(--card);
+  width: 90%;
+  max-width: 600px;
+  padding: 10px 16px;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow:0 4px 8px rgba(0,0,0,0.2);
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--bdr2);
+  padding-bottom: 6px;
+}
+
+.title {
+  font-family: "minecraft";
+  color: var(--accent);
+  font-size: 24px;
+}
+
+.date {
+  font-family: Arial, "Sans-Serif";
+  color: var(--ph);
+}
+
+.info {
+  color: var(--text2);
+  font-family: Arial, "Sans-Serif";
+  font-size: 16px;
+  line-height: 22px;
+}
+
+.info ul {
+  margin-left: -40px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info li {
+  border-bottom: 1.5px solid var(--bdr2);
+  padding-bottom: 6px;
+  opacity: 80%;
+  list-style-type: none;
+}
+
+.info img {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+page {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  white-space: nowrap;
+  background: var(--sp);
+  padding: 1px 6px;
+  font-size: 12px;
+  border-radius: 4px;
+  color: var(--text);
+}
+
+.change {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content !important;
+  padding: 4px 8px;
+  margin-right: 2px;
+  border-radius: 4px;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Menambahkan */
+.add {
+  color: #15803d;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+/* Memperbaiki */
+.fix {
+  color: #a16207;
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+}
+
+/* Menghapus */
+.remove {
+  color: #dc2626;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.page-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0px 7px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+
+  background: var(--sp);
+  color: var(--text);
+
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  margin: 2px;
+}
+
+.page-badge img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+</style>
+
+<script src="fetch.js"></script>
+<script>
+document.querySelectorAll('.info li').forEach(li => {
+  const text = li.textContent.trim();
+
+  if (text.startsWith('+ Menambahkan')) {
+    buatBadge(li, '+ Menambahkan', 'add');
+  } 
+  else if (text.startsWith('= Memperbaiki')) {
+    buatBadge(li, '= Memperbaiki', 'fix');
+  } 
+  else if (text.startsWith('= Mengubah')) {
+    buatBadge(li, '= Mengubah', 'fix');
+  } 
+  else if (text.startsWith('- Menghapus')) {
+    buatBadge(li, '- Menghapus', 'remove');
+  }
+});
+
+function buatBadge(li, text, className) {
+  const html = li.innerHTML;
+
+  if (!html.includes(text)) return;
+
+  const badge = document.createElement('span');
+  badge.className = `change ${className}`;
+  badge.textContent = text;
+
+  // Mengganti teks pertama dengan badge
+  const walker = document.createTreeWalker(
+    li,
+    NodeFilter.SHOW_TEXT
+  );
+
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+
+    if (node.nodeValue.includes(text)) {
+      const before = node.nodeValue.split(text)[0];
+      const after = node.nodeValue.split(text)[1];
+
+      const fragment = document.createDocumentFragment();
+
+      if (before) {
+        fragment.appendChild(document.createTextNode(before));
+      }
+
+      fragment.appendChild(badge);
+
+      if (after) {
+        fragment.appendChild(document.createTextNode(after));
+      }
+
+      node.parentNode.replaceChild(fragment, node);
+      break;
+    }
+  }
+}
+
+async function loadPageData() {
+  const response = await fetch('newTemplate.html');
+  const html = await response.text();
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+
+  const pages = {};
+
+  doc.querySelectorAll('.page-item').forEach(item => {
+    const name = item.querySelector('span')?.textContent.trim();
+    const icon = item.querySelector('img')?.getAttribute('src');
+    const link = item.getAttribute('href');
+
+    if (name) {
+      pages[name.toLowerCase()] = {
+        name,
+        icon,
+        link
+      };
+    }
+  });
+
+  return pages;
+}
+
+function processPages() {
+  document.querySelectorAll('.info li').forEach(li => {
+
+    const walker = document.createTreeWalker(
+      li,
+      NodeFilter.SHOW_TEXT
+    );
+
+    const nodes = [];
+
+    while (walker.nextNode()) {
+      nodes.push(walker.currentNode);
+    }
+
+    nodes.forEach(node => {
+
+      const text = node.nodeValue;
+
+      // Format: [namaicon=Teks]
+      const regex = /\[([^=\]]+)=([^\]]+)\]/g;
+
+      if (!regex.test(text)) return;
+
+      regex.lastIndex = 0;
+
+      const fragment = document.createDocumentFragment();
+
+      let lastIndex = 0;
+      let match;
+
+      while ((match = regex.exec(text)) !== null) {
+
+        const iconName = match[1].trim();
+        const label = match[2].trim();
+
+        // Teks sebelum badge
+        fragment.appendChild(
+          document.createTextNode(
+            text.substring(lastIndex, match.index)
+          )
+        );
+
+        // Membuat badge
+        const badge = document.createElement('span');
+        badge.className = 'page-badge';
+
+        const img = document.createElement('img');
+        img.src = `icons/${iconName}.png`;
+        img.alt = '';
+
+        const textNode = document.createTextNode(label);
+
+        badge.appendChild(img);
+        badge.appendChild(textNode);
+
+        fragment.appendChild(badge);
+
+        lastIndex = regex.lastIndex;
+      }
+
+      // Teks setelah badge
+      fragment.appendChild(
+        document.createTextNode(
+          text.substring(lastIndex)
+        )
+      );
+
+      node.parentNode.replaceChild(fragment, node);
+    });
+
+  });
+}
+
+processPages();
+</script>
+</body>
+</html>
