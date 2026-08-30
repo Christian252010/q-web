@@ -405,14 +405,11 @@ fetch('template.html')
 ===================================== */
 
 function home() {
-
   window.location.href = 'index.html';
-
 }
-
-
 function profile() {
-
   window.location.href = 'profile.html';
-
+}
+function update() {
+  window.location.href = 'update.html';
 }
