@@ -8,7 +8,7 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 <style>
 body{
-  font-family:Arial,sans-serif;
+  font-family: Arial;
   background: var(--bg);
   padding:12px
 }
@@ -30,7 +30,7 @@ h1{
   color: var(--text);
   background: var(--card);
   padding:16px;
-  border-radius:14px;
+  border-radius: 8px;
   box-shadow:0 2px 12px rgba(0,0,0,0.3)
 }
 
@@ -49,7 +49,7 @@ h1{
   font-weight:bold;
   border:3px solid var(--accent);
   padding:14px;
-  border-radius:10px
+  border-radius:6px
 }
 
 .now-content{
@@ -94,7 +94,7 @@ h1{
 .spesial{
   background: var(--sp);
   padding:8px;
-  border-radius:8px
+  border-radius:6px
 }
 
 .day-item.spesial + .day-item.spesial {margin-top: 4px;border-top: none;}
@@ -117,32 +117,40 @@ h1{
   max-width:750px;
   padding:12px;
   background: var(--accent);
+  font-family: Poppins;
   color:#fff;
   border:none;
-  border-radius:10px;
+  border-radius: 8px;
   font-size: 18px;
   font-weight:bold;
-  box-shadow: 0 1px 0 rgba(255,255,255,.4),0 5px 0 var(--daccent);
+  box-shadow: 0 6px 0 var(--daccent) !important;
   margin-bottom:22px
 }
 
 .toggle-btn:active {
-  box-shadow: 0 1px 0 rgba(255,255,255,.4),0 2px 0 var(--daccent);
-  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--daccent) !important;
+  transform: translateY(4px);
 }
 
 .full{display:none}
 
 .day-box {
   border:2px solid var(--border);
-  border-radius:10px;
-  padding:10px;
+  border-radius:6px;
+  padding:10px 14px;
   margin-bottom:12px
+}
+
+.day-box:nth-child(1) {
+  background: var(--accent);
+  border: 2.5px solid var(--daccent);
+  font-family: Poppins;
+  padding: 8px 14px;
 }
 
 .judul-j {
   font-weight: bold;
-  color: var(--accent);
+  color: white;
   font-size:1.1em;
 }
 
@@ -392,7 +400,7 @@ h1 {
 }
 
 .popup-close:hover{
-  background:#006666;
+  background:#006060;
 }
 
 
@@ -489,6 +497,83 @@ body.dark .time {
   color:#ccc;
 }
 </style>-->
+<style>
+.jadwal-swipe {
+  max-width: 720px;
+  margin: 0 auto 16px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 8px;
+}
+
+.jadwal-card {
+  margin: 0;
+  touch-action: pan-y;
+  will-change: transform, opacity;
+}
+
+/* animasi keluar */
+.jadwal-card.swipe-left {
+  animation: swipeLeft .25s ease forwards;
+}
+
+.jadwal-card.swipe-right {
+  animation: swipeRight .25s ease forwards;
+}
+
+/* animasi masuk */
+.jadwal-card.from-right {
+  animation: fromRight .25s ease forwards;
+}
+
+.jadwal-card.from-left {
+  animation: fromLeft .25s ease forwards;
+}
+
+@keyframes swipeLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes swipeRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+</style>
 </head>
 
 <body data-title="Jadwal">
@@ -506,15 +591,15 @@ Jam: <input type="time" id="fakeTime"><br><br>
 <br>
 <div class="now card" id="nowInfo"></div>
 
-<div class="card">
-  <div id="weekInfo"></div>
-  <div id="dayInfo"></div>
-  <div id="jadwalMapel"></div>
-</div>
+<div class="jadwal-swipe" id="jadwalSwipe">
 
-<div class="card">
-  <div id="jadwalSpesial"></div>
-</div>
+  <div class="jadwal-card card" id="jadwalCard">
+    <div id="weekInfo"></div>
+    <div id="dayInfo"></div>
+    <div id="jadwalMapel"></div>
+    <div id="jadwalSpesial"></div>
+  </div>
+
 </div>
 <div class="tgl-b">
   <button class="toggle-btn" onclick="toggleFull()">Jadwal Full</button>
@@ -526,40 +611,95 @@ Jam: <input type="time" id="fakeTime"><br><br>
 
 <script src="fetch.js"></script>
 <script>
-/* ===== UTIL ===== */
-const hariNama=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+/* =====================================================
+   UTIL
+===================================================== */
+
+const hariNama = [
+  "Minggu",
+  "Senin",
+  "Selasa",
+  "Rabu",
+  "Kamis",
+  "Jumat",
+  "Sabtu"
+];
+
 const toMin = t => {
-  const [a,b] = t.replace(".",":").split(":").map(Number);
-  return a*60 + b;
+  const [a, b] = t.replace(".", ":").split(":").map(Number);
+  return a * 60 + b;
 };
 
-/* ===== ICON ===== */
-const mapelIcon={
-  "Matematika":"calculator","B.Indonesia":"notebook-pen","B.Inggris":"languages",
-  "Agama":"moon-star","Pemrograman Mobile":"monitor","Kejuruan":"server",
-  "KIK":"chart-no-axes-combined","Olahraga":"dumbbell","Sejarah":"scroll",
-  "PPKN":"landmark","B.Jawa":"feather","Koding":"code-xml","BK":"user"
-};
-const spesialIcon={
-  "Upacara":"flag","Istirahat":"coffee",
-  "Dzuhur":"moon","Sholat Jumat":"star","Ashar":"moon"
+
+/* =====================================================
+   ICON
+===================================================== */
+
+const mapelIcon = {
+  "Matematika": "calculator",
+  "B.Indonesia": "notebook-pen",
+  "B.Inggris": "languages",
+  "Agama": "moon-star",
+  "Pemrograman Mobile": "monitor",
+  "Kejuruan": "server",
+  "KIK": "chart-no-axes-combined",
+  "Olahraga": "dumbbell",
+  "Sejarah": "scroll",
+  "PPKN": "landmark",
+  "B.Jawa": "feather",
+  "Koding": "code-xml",
+  "BK": "user"
 };
 
-/* ===== SIMULASI ===== */
-function getNow(){
-  const d=localStorage.getItem("fakeDate");
-  const t=localStorage.getItem("fakeTime");
-  return (d&&t)?new Date(d+"T"+t):new Date();
+const spesialIcon = {
+  "Upacara": "flag",
+  "Istirahat": "coffee",
+  "Dzuhur": "moon",
+  "Sholat Jumat": "star",
+  "Ashar": "astroid"
+};
+
+
+/* =====================================================
+   SIMULASI
+===================================================== */
+
+function getNow() {
+
+  const d = localStorage.getItem("fakeDate");
+  const t = localStorage.getItem("fakeTime");
+
+  return (d && t)
+    ? new Date(d + "T" + t)
+    : new Date();
+
 }
-function applyFake(){
-  if(!fakeDate.value||!fakeTime.value) return alert("Isi tanggal & jam");
-  localStorage.setItem("fakeDate",fakeDate.value);
-  localStorage.setItem("fakeTime",fakeTime.value);
+
+function applyFake() {
+
+  if (!fakeDate.value || !fakeTime.value) {
+    return alert("Isi tanggal & jam");
+  }
+
+  localStorage.setItem("fakeDate", fakeDate.value);
+  localStorage.setItem("fakeTime", fakeTime.value);
+
   location.reload();
 }
-function clearFake(){localStorage.clear();location.reload()}
 
-/* ===== JADWAL ===== */
+function clearFake() {
+
+  localStorage.clear();
+
+  location.reload();
+
+}
+
+
+/* =====================================================
+   JADWAL
+===================================================== */
+
 const jadwalA={
 1:[{jam:"07.45-10.05",mapel:"Pemrograman Mobile"},{jam:"10.30-15.15",mapel:"Kejuruan"}],
 2:[{jam:"07.00-09.55",mapel:"Koding"},{jam:"10.15-11.25",mapel:"BK"},{jam:"11.25-15.15",mapel:"Kejuruan"}],
@@ -584,170 +724,825 @@ const spesial={
 5:[{jam:"09.55-10.10",nama:"Istirahat"},{jam:"11.30-12.45",nama:"Sholat Jumat"}]
 };
 
-/* ===== LOGIKA WAKTU FIX ===== */
-const now=getNow();
-const jamNow=now.getHours()*60+now.getMinutes();
-const isBesok = jamNow >= 1020; // 17.00+
 
-const tgl=new Date(now);
-if(isBesok) tgl.setDate(tgl.getDate()+1);
-const hari=tgl.getDay();
-const hariAsli = now.getDay(); // hari sebenarnya (untuk NOW)
+/* =====================================================
+   WAKTU SEKARANG
+===================================================== */
 
-const startA=new Date("2026-08-08");
-const isA=Math.floor((tgl-startA)/(1000*60*60*24*7))%2===0;
-const aktif=isA?jadwalA:jadwalB;
+const now = getNow();
 
-weekInfo.innerHTML=`<b>${isA?"Jadwal Ganjil":"Jadwal Genap"}</b>`;
-dayInfo.innerHTML=isBesok?`<div class="sub">Besok (${hariNama[hari]})</div>`:`<b class="sub2">${hariNama[hari]}</b>`;
+const jamNow =
+  now.getHours() * 60 +
+  now.getMinutes();
 
-/* ===== RENDER ===== */
-let nowText=null;
-let nowJam=null;
-let nowIcon="clock";
-jadwalMapel.innerHTML="";
-jadwalSpesial.innerHTML="";
+const hariAsli = now.getDay();
 
-if(hari===0||hari===6){
-  jadwalMapel.innerHTML=`<div class="libur">Libur</div>`;
-}else{
-  (aktif[hari]||[]).forEach(j=>{
-    const[a,b]=j.jam.split("-");
-    const on =
-      hari === hariAsli &&
-      jamNow >= toMin(a) &&
-      jamNow < toMin(b);
-    if(on){
-      nowText = j.mapel;
-      nowJam = j.jam;
-      nowIcon = mapelIcon[j.mapel] || "book";
-    }
-    jadwalMapel.innerHTML+=`
-    <div class="row ${on?"active":""}">
-      <div class="item">
-        <div class="left"><i data-lucide="${mapelIcon[j.mapel]||"book"}"></i><span class="mapel">${j.mapel}</span></div>
-        <span class="time">${j.jam}</span>
-      </div>
-    </div>`;
-  });
 
-  (spesial[hari]||[]).forEach(j=>{
-    const[a,b]=j.jam.split("-");
-    const on =
-      hari === hariAsli &&
-      jamNow >= toMin(a) &&
-      jamNow < toMin(b);
-    if(on){
-      nowText = j.nama;
-      nowJam = j.jam;
-      nowIcon = spesialIcon[j.nama] || "clock";
-    }
-    jadwalSpesial.innerHTML+=`
-    <div class="row spesial ${on?"active":""}">
-      <div class="item">
-        <div class="left">${spesialIcon[j.nama]?`<i data-lucide="${spesialIcon[j.nama]}"></i>`:""}<span class="mapel">${j.nama}</span></div>
-        <span class="time">${j.jam}</span>
-      </div>
-    </div>`;
-  });
+/* =====================================================
+   TENTUKAN JADWAL AKTIF
+===================================================== */
+
+const startA = new Date("2026-08-08");
+
+const tglAcuan = new Date(now);
+
+tglAcuan.setHours(0, 0, 0, 0);
+
+const isA =
+  Math.floor(
+    (tglAcuan - startA) /
+    (1000 * 60 * 60 * 24 * 7)
+  ) % 2 === 0;
+
+
+/* =====================================================
+   SWIPE
+===================================================== */
+
+/*
+  0  = hari ini
+  1  = besok
+  2  = lusa
+ -1  = kemarin
+*/
+
+let swipeOffset = 0;
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+let sedangSwipe = false;
+
+
+/* =====================================================
+   RENDER JADWAL
+===================================================== */
+
+function renderJadwal(offset) {
+
+  const tgl = new Date(now);
+
+  tgl.setHours(0, 0, 0, 0);
+
+  tgl.setDate(
+    tgl.getDate() + offset
+  );
+
+  const hari = tgl.getDay();
+
+
+  /* =========================
+     JADWAL GANJIL / GENAP
+  ========================= */
+
+  const mingguA =
+    Math.floor(
+      (tgl - startA) /
+      (1000 * 60 * 60 * 24 * 7)
+    ) % 2 === 0;
+
+  const aktif =
+    mingguA
+      ? jadwalA
+      : jadwalB;
+
+
+  /* =========================
+     JUDUL
+  ========================= */
+
+  weekInfo.innerHTML =
+    `<b>${mingguA ? "Jadwal Ganjil" : "Jadwal Genap"}` +
+    `</b>`;
+
+
+  if (offset === 0) {
+
+    dayInfo.innerHTML =
+      `<b class="sub2">${hariNama[hari]}</b>`;
+
+  } else if (offset === 1) {
+
+    dayInfo.innerHTML =
+      `<div class="sub">Besok (${hariNama[hari]})</div>`;
+
+  } else if (offset === -1) {
+
+    dayInfo.innerHTML =
+      `<div class="sub">Kemarin (${hariNama[hari]})</div>`;
+
+  } else {
+
+    dayInfo.innerHTML =
+      `<div class="sub">${hariNama[hari]}</div>`;
+
+  }
+
+
+  /* =========================
+     KOSONGKAN
+  ========================= */
+
+  jadwalMapel.innerHTML = "";
+  jadwalSpesial.innerHTML = "";
+
+
+  /* =========================
+     SABTU / MINGGU
+  ========================= */
+
+  if (hari === 0 || hari === 6) {
+
+    jadwalMapel.innerHTML =
+      `<div class="libur">Libur</div>`;
+
+  } else {
+
+
+    /* =========================
+       MAPEL
+    ========================= */
+
+    (aktif[hari] || []).forEach(j => {
+
+      const [a, b] =
+        j.jam.split("-");
+
+
+      /*
+       * ACTIVE hanya untuk
+       * hari yang sebenarnya.
+       */
+
+      const on =
+        offset === 0 &&
+        hari === hariAsli &&
+        jamNow >= toMin(a) &&
+        jamNow < toMin(b);
+
+
+      jadwalMapel.innerHTML += `
+
+        <div class="row ${on ? "active" : ""}">
+
+          <div class="item">
+
+            <div class="left">
+
+              <i
+                data-lucide="${
+                  mapelIcon[j.mapel] || "book"
+                }">
+              </i>
+
+              <span class="mapel">
+                ${j.mapel}
+              </span>
+
+            </div>
+
+            <span class="time">
+              ${j.jam}
+            </span>
+
+          </div>
+
+        </div>
+
+      `;
+
+    });
+
+
+    /* =========================
+       JADWAL SPESIAL
+    ========================= */
+
+    (spesial[hari] || []).forEach(j => {
+
+      const [a, b] =
+        j.jam.split("-");
+
+
+      const on =
+        offset === 0 &&
+        hari === hariAsli &&
+        jamNow >= toMin(a) &&
+        jamNow < toMin(b);
+
+
+      jadwalSpesial.innerHTML += `
+
+        <div class="row spesial ${on ? "active" : ""}">
+
+          <div class="item">
+
+            <div class="left">
+
+              ${
+                spesialIcon[j.nama]
+                  ? `
+                    <i
+                      data-lucide="${
+                        spesialIcon[j.nama]
+                      }">
+                    </i>
+                  `
+                  : ""
+              }
+
+              <span class="mapel">
+                ${j.nama}
+              </span>
+
+            </div>
+
+            <span class="time">
+              ${j.jam}
+            </span>
+
+          </div>
+
+        </div>
+
+      `;
+
+    });
+
+  }
+
+
+  /* =================================================
+     NOW
+  ================================================= */
+
+  /*
+   * NOW hanya dihitung
+   * untuk hari ini.
+   */
+
+  if (offset === 0) {
+
+    let nowText = null;
+    let nowJam = null;
+    let nowIcon = "clock";
+
+
+    /* =========================
+       MAPEL AKTIF
+    ========================= */
+
+    (aktif[hariAsli] || []).forEach(j => {
+
+      const [a, b] =
+        j.jam.split("-");
+
+
+      if (
+        jamNow >= toMin(a) &&
+        jamNow < toMin(b)
+      ) {
+
+        nowText = j.mapel;
+        nowJam = j.jam;
+
+        nowIcon =
+          mapelIcon[j.mapel] ||
+          "book";
+
+      }
+
+    });
+
+
+    /* =========================
+       SPESIAL AKTIF
+    ========================= */
+
+    (spesial[hariAsli] || []).forEach(j => {
+
+      const [a, b] =
+        j.jam.split("-");
+
+
+      if (
+        jamNow >= toMin(a) &&
+        jamNow < toMin(b)
+      ) {
+
+        nowText = j.nama;
+        nowJam = j.jam;
+
+        nowIcon =
+          spesialIcon[j.nama] ||
+          "clock";
+
+      }
+
+    });
+
+
+    /* =========================
+       RENDER NOW
+    ========================= */
+
+    nowInfo.innerHTML = nowText
+
+      ? `
+
+        <div class="now-content">
+
+          <div class="now-left">
+
+            <i
+              data-lucide="${nowIcon}">
+            </i>
+
+            <span>
+              ${nowText}
+            </span>
+
+          </div>
+
+          <span class="now-time">
+            ${nowJam}
+          </span>
+
+        </div>
+
+      `
+
+      : `
+
+        <i data-lucide="alarm-clock-off"></i>
+
+        Tidak ada jadwal
+
+      `;
+
+  }
+
+
+  /* =========================
+     ICON
+  ========================= */
+
+  lucide.createIcons();
+
 }
 
-nowInfo.innerHTML = nowText
-?`
-<div class="now-content">
-  <div class="now-left">
-    <i data-lucide="${nowIcon}"></i>
-    <span>${nowText}</span>
-  </div>
-  <span class="now-time">${nowJam}</span>
-</div>
-`
-:`<i data-lucide="alarm-clock-off"></i> Tidak ada jadwal`;
+
+/* =====================================================
+   FUNGSI SWIPE
+===================================================== */
+
+function geserJadwal(arah) {
+
+  /*
+   * Jangan jalankan animasi
+   * kalau masih sedang bergerak.
+   */
+
+  if (sedangSwipe) return;
+
+  sedangSwipe = true;
 
 
+  /* =========================
+     SWIPE KIRI
+     Hari berikutnya
+  ========================= */
 
-/* ===== FULL ===== */
-function toggleFull(){
-  const show = jadwalGanjil.style.display !== "block";
-  jadwalGanjil.style.display = show ? "block" : "none";
-  jadwalGenap.style.display  = show ? "block" : "none";
-}  
+  if (arah === 1) {
 
-function renderFull(title,data){
-  return `<div class="day-box">
-    <span class="judul-j switchable" onclick="swapJadwal()">${title}</span>
-  </div>`+
-  Object.entries(data).map(([d,v])=>`
-  <div class="day-box"><span class="judul-h">${hariNama[d]}</span>
+    jadwalCard.classList.remove(
+      "from-left",
+      "from-right"
+    );
 
-  ${v.map(m=>`
-    <div class="day-item">
-      <span>
-        <i class="icf" data-lucide="${mapelIcon[m.mapel] || "book"}"></i>
-        <span class="mapel">${m.mapel}</span>
+    jadwalCard.classList.add(
+      "swipe-left"
+    );
+
+
+    setTimeout(() => {
+
+      swipeOffset++;
+
+
+      jadwalCard.classList.remove(
+        "swipe-left"
+      );
+
+
+      renderJadwal(
+        swipeOffset
+      );
+
+
+      jadwalCard.classList.add(
+        "from-right"
+      );
+
+
+      setTimeout(() => {
+
+        jadwalCard.classList.remove(
+          "from-right"
+        );
+
+        sedangSwipe = false;
+
+      }, 250);
+
+    }, 250);
+
+  }
+
+
+  /* =========================
+     SWIPE KANAN
+     Hari sebelumnya
+  ========================= */
+
+  else if (arah === -1) {
+
+    jadwalCard.classList.remove(
+      "from-left",
+      "from-right"
+    );
+
+    jadwalCard.classList.add(
+      "swipe-right"
+    );
+
+
+    setTimeout(() => {
+
+      swipeOffset--;
+
+
+      jadwalCard.classList.remove(
+        "swipe-right"
+      );
+
+
+      renderJadwal(
+        swipeOffset
+      );
+
+
+      jadwalCard.classList.add(
+        "from-left"
+      );
+
+
+      setTimeout(() => {
+
+        jadwalCard.classList.remove(
+          "from-left"
+        );
+
+        sedangSwipe = false;
+
+      }, 250);
+
+    }, 250);
+
+  }
+
+}
+
+
+/* =====================================================
+   TOUCH START
+===================================================== */
+
+jadwalSwipe.addEventListener(
+  "touchstart",
+  e => {
+
+    touchStartX =
+      e.changedTouches[0].screenX;
+
+    touchStartY =
+      e.changedTouches[0].screenY;
+
+  },
+  {
+    passive: true
+  }
+);
+
+
+/* =====================================================
+   TOUCH END
+===================================================== */
+
+jadwalSwipe.addEventListener(
+  "touchend",
+  e => {
+
+    const touchEndX =
+      e.changedTouches[0].screenX;
+
+    const touchEndY =
+      e.changedTouches[0].screenY;
+
+
+    const deltaX =
+      touchEndX - touchStartX;
+
+    const deltaY =
+      touchEndY - touchStartY;
+
+
+    /*
+     * Kalau gerak vertikal lebih besar,
+     * jangan dianggap swipe jadwal.
+     */
+
+    if (
+      Math.abs(deltaY) >
+      Math.abs(deltaX)
+    ) {
+      return;
+    }
+
+
+    /*
+     * Minimal jarak swipe
+     */
+
+    if (
+      Math.abs(deltaX) < 60
+    ) {
+      return;
+    }
+
+
+    if (deltaX < 0) {
+
+      // kiri
+      geserJadwal(1);
+
+    } else {
+
+      // kanan
+      geserJadwal(-1);
+
+    }
+
+  },
+  {
+    passive: true
+  }
+);
+
+
+/* =====================================================
+   FULL JADWAL
+===================================================== */
+
+function toggleFull() {
+
+  const show =
+    jadwalGanjil.style.display !== "block";
+
+
+  jadwalGanjil.style.display =
+    show ? "block" : "none";
+
+  jadwalGenap.style.display =
+    show ? "block" : "none";
+
+}
+
+
+/* =====================================================
+   RENDER FULL
+===================================================== */
+
+function renderFull(title, data) {
+
+  return `
+
+    <div class="day-box">
+
+      <span
+        class="judul-j switchable"
+        onclick="swapJadwal()">
+
+        ${title}
+
       </span>
-      <span class="time">${m.jam}</span>
+
     </div>
-  `).join("")}
 
-  ${(spesial[d]||[]).map(s=>`
-    <!--<div class="day-item spesial">
-      <span><span class="mapel">${s.nama}</span></span>
-      <span class="time">${s.jam}</span>
-    </div>-->
-  `).join("")}
+  ` +
 
-  </div>`).join("");
+  Object.entries(data).map(
+    ([d, v]) => `
+
+      <div class="day-box">
+
+        <span class="judul-h">
+          ${hariNama[d]}
+        </span>
+
+
+        ${v.map(m => `
+
+          <div class="day-item">
+
+            <span>
+
+              <i
+                class="icf"
+                data-lucide="${
+                  mapelIcon[m.mapel] || "book"
+                }">
+              </i>
+
+              <span class="mapel">
+                ${m.mapel}
+              </span>
+
+            </span>
+
+            <span class="time">
+              ${m.jam}
+            </span>
+
+          </div>
+
+        `).join("")}
+
+
+        ${(spesial[d] || []).map(s => `
+
+          <!--
+
+          <div class="day-item spesial">
+
+            <span>
+              <span class="mapel">
+                ${s.nama}
+              </span>
+            </span>
+
+            <span class="time">
+              ${s.jam}
+            </span>
+
+          </div>
+
+          -->
+
+        `).join("")}
+
+      </div>
+
+    `
+  ).join("");
+
 }
 
-/* =========================
-   🔥 AUTO URUT
-========================= */
-function urutkanJadwal(){
-  const parent = jadwalGanjil.parentNode;
 
-  if(isA){
-    parent.insertBefore(jadwalGanjil, jadwalGenap);
-  }else{
-    parent.insertBefore(jadwalGenap, jadwalGanjil);
+/* =====================================================
+   AUTO URUT GANJIL / GENAP
+===================================================== */
+
+function urutkanJadwal() {
+
+  const parent =
+    jadwalGanjil.parentNode;
+
+
+  if (isA) {
+
+    parent.insertBefore(
+      jadwalGanjil,
+      jadwalGenap
+    );
+
+  } else {
+
+    parent.insertBefore(
+      jadwalGenap,
+      jadwalGanjil
+    );
+
   }
+
 }
 
-/* =========================
-   🔥 SWITCH MANUAL
-========================= */
-function swapJadwal(){
-  const parent = jadwalGanjil.parentNode;
 
-  if(jadwalGanjil.nextElementSibling === jadwalGenap){
-    parent.insertBefore(jadwalGenap, jadwalGanjil);
-  }else{
-    parent.insertBefore(jadwalGanjil, jadwalGenap);
+/* =====================================================
+   SWITCH MANUAL
+===================================================== */
+
+function swapJadwal() {
+
+  const parent =
+    jadwalGanjil.parentNode;
+
+
+  if (
+    jadwalGanjil.nextElementSibling ===
+    jadwalGenap
+  ) {
+
+    parent.insertBefore(
+      jadwalGenap,
+      jadwalGanjil
+    );
+
+  } else {
+
+    parent.insertBefore(
+      jadwalGanjil,
+      jadwalGenap
+    );
+
   }
+
 }
 
-function tandaiAktif(){
-  if(isA){
-    const el = jadwalGanjil.querySelector(".judul-j");
-    if(el && !el.innerHTML.includes("")){
-      el.innerHTML += " (Aktif)";
+
+/* =====================================================
+   TANDAI AKTIF
+===================================================== */
+
+function tandaiAktif() {
+
+  if (isA) {
+
+    const el =
+      jadwalGanjil.querySelector(
+        ".judul-j"
+      );
+
+    if (el) {
+
+      if (
+        !el.innerHTML.includes("(Aktif)")
+      ) {
+
+        el.innerHTML +=
+          " (Aktif)";
+
+      }
+
     }
-  }else{
-    const el = jadwalGenap.querySelector(".judul-j");
-    if(el && !el.innerHTML.includes("")){
-      el.innerHTML += "";
-    }
+
   }
+
 }
 
-jadwalGanjil.innerHTML = renderFull("Jadwal Ganjil", jadwalA);
-jadwalGenap.innerHTML  = renderFull("Jadwal Genap", jadwalB);
+
+/* =====================================================
+   RENDER FULL
+===================================================== */
+
+jadwalGanjil.innerHTML =
+  renderFull(
+    "Jadwal Ganjil",
+    jadwalA
+  );
+
+
+jadwalGenap.innerHTML =
+  renderFull(
+    "Jadwal Genap",
+    jadwalB
+  );
+
+
+/* =====================================================
+   URUTKAN
+===================================================== */
 
 urutkanJadwal();
+
+
+/* =====================================================
+   TANDAI AKTIF
+===================================================== */
+
 tandaiAktif();
 
-lucide.createIcons();
 
+/* =====================================================
+   RENDER JADWAL PERTAMA
+===================================================== */
+
+renderJadwal(0);
+
+
+/* =====================================================
+   ICON
+===================================================== */
 
 lucide.createIcons();
 </script>
