@@ -3,437 +3,373 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css">
-  <link rel="stylesheet" href="template.css">
+  <title>Qris-Tian Web</title>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <meta name="google-adsense-account" content="ca-pub-2311491136628334">
+  <link rel="stylesheet" href="template.css">
+<style>
+/* === DOCK DARK MODE ONLY === */
+
+.dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #1c1c1c;
+  border-top: 2.5px solid rgba(255,255,255,0.4);
+  padding: 4px 0;
+}
+
+.dock a {
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 6px 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+}
+
+.icon-box svg {
+  width: 26px;
+  height: 26px;
+  stroke: white;
+  transition: 0.2s;
+}
+
+.dock a.active .icon-box {
+  background: #008080;
+}
+
+.dock a.active .icon-box svg {
+  stroke: black;
+}
+
+/* Tambahan agar konten tidak tertutup dock */
+body{
+  padding-bottom: 70px;
+}
+</style>
 </head>
-<body data-title="Dashboard">
+<body>
+  
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="menu-btn" id="menuBtn">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <h2 id="pageTitle">Loading...</h2>
+  
+  <!--<div class="live-clock" id="liveClock"></div>-->
+  <div class="btns">
+    <button class="btn24" id="toggle">️
+      <i id="icon" data-lucide="sun"></i>
+    </button>
+    <button class="menu-toggle" id="menuToggle">
+      <i data-lucide="chevron-up" class="nav-icon"></i>
+      <span class="line line-a" onclick="home()"><i data-lucide="home" class="nav-icon"></i></span>
+      <span class="line line-b" onclick="profile()"><i data-lucide="info" class="nav-icon"></i></span>
+      <span class="line line-c"><i data-lucide="history" class="nav-icon"></i></span>
+      <span class="line line-d"><i data-lucide="message-square-text" class="nav-icon"></i></span>
+    </button>
+  </div>
+</div>
+
+<!-- DOCK -->
+<!--<div class="dock">
+  <a href="jadwal.html">
+    <div class="icon-box"><i data-lucide="calendar"></i></div>
+  </a>
+
+  <a href="cooming-soon.html">
+    <div class="icon-box"><i data-lucide="alarm-clock"></i></div>
+  </a>
+
+  <a href="index.html">
+    <div class="icon-box"><i data-lucide="layout-dashboard"></i></div>
+  </a>
+
+  <a href="tugas.html">
+    <div class="icon-box"><i data-lucide="clipboard-list"></i></div>
+  </a>
+
+  <a href="cooming-soon.html">
+    <div class="icon-box"><i data-lucide="book-open-text"></i></div>
+  </a>
+</div>-->
 
 <!-- SIDEBAR -->
-<div id="fetch-container"></div>
+<div class="sidebar" id="sidebar">
 
-<!-- KONTEN -->
-<!--<h1>Dashboard</h1>-->
-
-<div class="container"></div>
-
-<!-- SEARCH BAR -->
-<div class="menu-search">
-  <div class="search-box">
-    <img src="text-search.png" class="search-icon">
-    <input type="text" id="menuSearch" placeholder="Cari menu...">
-  </div>
-  <button id="gridBtn">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      id="gridIcon"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path id="lineA" d="M15 3v18" />
-      <path id="lineB"d="M21 15H3" />
-      <path id="lineC" d="M21 9H3" />
-      <rect x="3" y="3" width="18" height="18" rx="2" />
-    </svg>
-  </button>
-</div>
-
-<!-- MENU GRID -->
-<div class="grid-container">
-  <div class="menu-box" onclick="bukaMenu('jadwal.html')">
-    <img src="icons/calendar.png" class="menu-icon">
-    <div class="menu-label">Jadwal</div>
+  <!--<div class="sidebar-header">
+    <img src="logo.png" class="sidebar-logo">
+    <h2>Qris-Tian</h2>
+  </div>-->
+  <div class="sidebar-top">
+    <label>Sidebar Menu</label>
+    <button id="btnRight"><i data-lucide="arrow-right" class="btn-right"></i></button>
   </div>
 
-  <div class="menu-box" onclick="bukaMenu('file-transfer.html')">
-    <img src="icons/data-transfer.png" class="menu-icon">
-    <div class="menu-label">File Transfer</div>
-  </div>
-
-  <div class="menu-box" onclick="bukaMenu('subnet.html')">
-    <img src="icons/wifi-router.png" class="menu-icon">
-    <div class="menu-label">Subnetting</div>
-  </div>
-
-  <div class="menu-box" onclick="bukaMenu('qr-code.html')">
-    <img src="icons/qr-code.png" class="menu-icon">
-    <div class="menu-label">QR Code</div>
-  </div>
+  <!-- SEARCH BAR -->
+  <!--<div class="sidebar-search">
+    <input type="text" id="sidebarSearch" placeholder="Cari menu...">
+  </div>-->
   
-  <div class="menu-box" onclick="bukaMenu('pecahan3.html')">
-    <img src="icons/half.png" class="menu-icon">
-    <div class="menu-label">Pecahan</div>
-  </div>
-  
-  <div class="menu-box" onclick="bukaMenu('percent.html')">
-    <img src="icons/pie-chart1.png" class="menu-icon">
-    <div class="menu-label">Persentase</div>
-  </div>
-  
-  <div class="menu-box" onclick="bukaMenu('rumus.html')">
-    <img src="icons/math.png" class="menu-icon">
-    <div class="menu-label">Rumus</div>
-  </div>
-  
-  <div class="menu-box" onclick="bukaMenu('fpb-kpk.html')">
-    <img src="icons/layout.png" class="menu-icon">
-    <div class="menu-label">FPB & KPK</div>
-  </div>
- 
-  <div class="menu-box" onclick="bukaMenu('rata-rata.html')">
-    <img src="icons/profit.png" class="menu-icon">
-    <div class="menu-label">Rata-rata</div>
+  <div class="sidebarr-search">
+    <div class="search-barr">
+      <img src="text-search.png" class="search-icon">
+      <input type="text" id="sidebarrSearch" placeholder="Cari menu...">
+    </div>
   </div>
 
-  <div class="menu-box" onclick="bukaMenu('jawa.html')">
-    <img src="icons/jawa2.png" class="menu-icon">
-    <div class="menu-label">Aksara Jawa</div>
-  </div>
-
-  <div class="menu-box" onclick="bukaMenu('mata-uang.html')">
-    <img src="icons/currency-exchange.png" class="menu-icon">
-    <div class="menu-label">Mata Uang</div>
-  </div>
-
-  <div class="menu-box" onclick="bukaMenu('morse.html')">
-    <img src="icons/morse-code.png" class="menu-icon">
-    <div class="menu-label">Morse</div>
-  </div>
-  
-  <div class="menu-box" onclick="bukaMenu('romawi.html')">
-    <img src="icons/roman-numerals.png" class="menu-icon">
-    <div class="menu-label">Romawi</div>
-  </div>
-
-  <div class="menu-box" onclick="bukaMenu('number.html')">
-    <img src="icons/binary.png" class="menu-icon"></i>
-    <div class="menu-label">Numeric</div>
-  </div>
-  
-  <div class="menu-box" onclick="bukaMenu('panjang.html')">
-    <img src="icons/measuring-tape.png" class="menu-icon">
-    <div class="menu-label">Panjang</div>
-  </div>
-
-  <div class="menu-box" onclick="bukaMenu('berat.html')">
-    <img src="icons/weighing-machine.png" class="menu-icon"></i>
-    <div class="menu-label">Berat</div>
-  </div>
-
-  <div class="menu-box" onclick="bukaMenu('volume.html')">
-    <img src="icons/water-bucket.png" class="menu-icon">
-    <div class="menu-label">Volume</div>
-  </div>
-
-  <div class="menu-box" onclick="bukaMenu('suhu.html')">
-    <img src="icons/hot.png" class="menu-icon">
-    <div class="menu-label">Suhu</div>
-  </div>
-
-  <div class="menu-box" onclick="bukaMenu('data.html')">
-    <img src="icons/floppy-disk.png" class="menu-icon">
-    <div class="menu-label">Data</div>
-  </div>
-
-  <div class="menu-box" onclick="bukaMenu('waktu.html')">
-    <img src="icons/clock.png" class="menu-icon">
-    <div class="menu-label">Waktu</div>
-  </div>
-
-  <div class="menu-box" onclick="bukaMenu('masakan.html')">
-    <img src="icons/cooking.png" class="menu-icon">
-    <div class="menu-label">Masakan</div>
-  </div>
-  
-
-</div>
-
-<footer class="flaticon-footer">
-
-  <div class="flaticon-title">
-    Icon Attribution
-  </div>
-
-  <div class="flaticon-credits">
-
-    <a href="https://www.flaticon.com/free-icons/dashboard"
-       title="dashboard icons"
-       target="_blank"
-       rel="noopener">
-      Dashboard icons created by Pixel perfect - Flaticon
+  <nav class="sidebar-menu">
+    <a href="index.html" class="active">
+      <img src="icons/dashboard.png" class="icons">
+      <span>Dashboard</span>
     </a>
 
-    <a href="https://www.flaticon.com/free-icons/calendar"
-       title="calendar icons"
-       target="_blank"
-       rel="noopener">
-      Calendar icons created by pojok d - Flaticon
+    <a href="jadwal.html">
+      <img src="icons/calendar.png" class="icons">
+      <span>Jadwal</span>
     </a>
 
-    <a href="https://www.flaticon.com/free-icons/transfer"
-       title="transfer icons"
-       target="_blank"
-       rel="noopener">
-      Transfer icons created by juicy_fish - Flaticon
-    </a>
-
-    <a href="https://www.flaticon.com/free-icons/wireless-router"
-       title="wireless router icons"
-       target="_blank"
-       rel="noopener">
-      Wireless router icons created by Magnific - Flaticon
-    </a>
-
-    <a href="https://www.flaticon.com/free-icons/qr-code"
-       title="qr code icons"
-       target="_blank"
-       rel="noopener">
-      Qr code icons created by redempticon - Flaticon
+    <a href="file-transfer.html">
+      <img src="icons/data-transfer.png" class="icons">
+      <span>File Transfer</span>
     </a>
     
-    <a href="https://www.flaticon.com/free-icons/fraction"
-       title="fraction icons"
-       target="_blank"
-       rel="noopener">
-      Fraction icons created by Magnific - Flaticon
+    <a href="subnet.html">
+      <img src="icons/wifi-router.png" class="icons">
+      <span>Subnetting</span>
     </a>
 
-    <a href="https://www.flaticon.com/free-icons/percentage"
-       title="percentage icons"
-       target="_blank"
-       rel="noopener">
-      Percentage icons created by pojok d - Flaticon
+    <a href="qr-code.html">
+      <img src="icons/qr-code.png" class="icons">
+      <span>QR Code</span>
+    </a>
+    
+    <a href="pecahan.html">
+      <img src="icons/half.png" class="icons">
+      <span>Pecahan</span>
+    </a>
+    
+    <a href="percent.html">
+      <img src="icons/pie-chart1.png" class="icons">
+      <span>Persentase</span>
+    </a>
+    
+    <a href="rumus.html">
+      <img src="icons/math.png" class="icons">
+      <span>Rumus</span>
+    </a>
+    
+    <a href="rumus.html">
+      <img src="icons/layout.png" class="icons">
+      <span>FPB & KPK</span>
+    </a>
+    
+    <a href="rata-rata.html">
+      <img src="icons/profit.png" class="icons">
+      <span>Rata-rata</span>
+    </a>
+    
+    <a href="jawa.html">
+      <img src="icons/jawa2.png" class="icons">
+      <span>Aksara Jawa</span>
     </a>
 
-    <a href="https://www.flaticon.com/free-icons/math"
-       title="math icons"
-       target="_blank"
-       rel="noopener">
-      Math icons created by Magnific - Flaticon
+    <a href="mata-uang.html">
+      <img src="icons/currency-exchange.png" class="icons">
+      <span>Mata Uang</span>
     </a>
 
-    <a href="https://www.flaticon.com/free-icons/ui"
-       title="ui icons"
-       target="_blank"
-       rel="noopener">
-      Ui icons created by Muammark - Flaticon
+    <a href="morse.html">
+      <img src="icons/morse-code.png" class="icons">
+      <span>Morse</span>
     </a>
 
-    <a href="https://www.flaticon.com/free-icons/bar-chart"
-       title="bar chart icons"
-       target="_blank"
-       rel="noopener">
-      Bar chart icons created by Magnific - Flaticon
+    <a href="romawi.html">
+      <img src="icons/roman-numerals.png" class="icons">
+      <span>Romawi</span>
     </a>
 
-    <a href="https://www.flaticon.com/free-icons/javanese"
-       title="javanese icons"
-       target="_blank"
-       rel="noopener">
-      Javanese icons created by Soni Sokell - Flaticon
+    <a href="number.html">
+      <img src="icons/binary.png" class="icons">
+      <span>Numeric</span>
+    </a>
+  
+    <a href="panjang.html">
+      <img src="icons/measuring-tape.png" class="icons">
+      <span>Panjang</span>
+    </a>
+  
+    <a href="berat.html">
+      <img src="icons/weighing-machine.png" class="icons">
+      <span>Berat</span>
+    </a>
+  
+    <a href="volume.html">
+      <img src="icons/water-bucket.png" class="icons">
+      <span>Volume</span>
+    </a>
+  
+    <a href="suhu.html">
+      <img src="icons/hot.png" class="icons">
+      <span>Suhu</span>
+    </a>
+  
+    <a href="data.html">
+      <img src="icons/floppy-disk.png" class="icons">
+      <span>Data</span>
+    </a>
+  
+    <a href="waktu.html">
+      <img src="icons/clock.png" class="icons">
+      <span>Waktu</span>
+    </a>
+  
+    <a href="masakan.html">
+      <img src="icons/cooking.png" class="icons">
+      <span>Masakan</span>
     </a>
 
-    <a href="https://www.flaticon.com/free-icons/currency-exchange"
-       title="currency exchange icons"
-       target="_blank"
-       rel="noopener">
-      Currency exchange icons created by Magnific - Flaticon
-    </a>
+  </nav>
 
-    <a href="https://www.flaticon.com/free-icons/morse-code"
-       title="morse code icons"
-       target="_blank"
-       rel="noopener">
-      Morse code icons created by kerismaker - Flaticon
-    </a>
+  <!--<div class="sidebar-footer">
+    <p>© 2026 Qris-Tian</p>
+  </div>-->
+</div>
 
-    <a href="https://www.flaticon.com/free-icons/roman-numerals"
-       title="roman numerals icons"
-       target="_blank"
-       rel="noopener">
-      Roman numerals icons created by Magnific - Flaticon
-    </a>
-
-    <a href="https://www.flaticon.com/free-icons/programming-language"
-       title="programming language icons"
-       target="_blank"
-       rel="noopener">
-      Programming language icons created by Magnific - Flaticon
-    </a>
-
-    <a href="https://www.flaticon.com/free-icons/ruler"
-       title="ruler icons"
-       target="_blank"
-       rel="noopener">
-      Ruler icons created by nawicon - Flaticon
-    </a>
-
-    <a href="https://www.flaticon.com/free-icons/weighing-scale"
-       title="weighing scale icons"
-       target="_blank"
-       rel="noopener">
-      Weighing scale icons created by Good Ware - Flaticon
-    </a>
-
-    <a href="https://www.flaticon.com/free-icons/water-bucket"
-       title="water bucket icons"
-       target="_blank"
-       rel="noopener">
-      Water bucket icons created by Magnific - Flaticon
-    </a>
-
-    <a href="https://www.flaticon.com/free-icons/hot"
-       title="hot icons"
-       target="_blank"
-       rel="noopener">
-      Hot icons created by Magnific - Flaticon
-    </a>
-
-    <a href="https://www.flaticon.com/free-icons/floppy-disk"
-       title="floppy disk icons"
-       target="_blank"
-       rel="noopener">
-      Floppy disk icons created by piksart - Flaticon
-    </a>
-
-    <a href="https://www.flaticon.com/free-icons/clock"
-       title="clock icons"
-       target="_blank"
-       rel="noopener">
-      Clock icons created by Magnific - Flaticon
-    </a>
-
-    <a href="https://www.flaticon.com/free-icons/cooking"
-       title="cooking icons"
-       target="_blank"
-       rel="noopener">
-      Cooking icons created by Magnific - Flaticon
-    </a>
-
-  </div>
-
-
-  <div class="flaticon-notice">
-    If you are an icon creator and I am using your icon without
-    proper attribution, please contact me at
-    <a href="mailto:EMAIL_KAMU">christianjuniadi@gmail.com</a>.
-    I will be happy to add or correct the credit.
-  </div>
-
-</footer>
-
+<script src="template.js"></script>
 <script>
   lucide.createIcons();
-</script>
-<script src="fetch.js"></script>
-<script>
-const gridIcon = document.getElementById("gridIcon");
-const lineA = document.getElementById("lineA");
-const lineB = document.getElementById("lineB");
-const lineC = document.getElementById("lineC");
-
-let iconMoved = false;
-
-gridIcon.addEventListener("click", () => {
-  iconMoved = !iconMoved;
-
-  if (iconMoved) {
-    lineA.style.transform = "translateX(-3px)";
-    lineB.style.transform = "translateY(-3px)";
-    lineC.style.transform = "translateY(3px)";
-  } else {
-    lineA.style.transform = "translateX(-6px)";
-    lineB.style.transform = "translateY(0px)";
-    lineC.style.transform = "translateY(0px)";
-  }
-});
+  
+  const current = location.pathname.split("/").pop();
+  document.querySelectorAll(".dock a").forEach(btn => {
+    if (btn.getAttribute("href") === current) {
+      btn.classList.add("active");
+    }
+  });
 </script>
 <script>
-  const button = document.getElementById("gridBtn");
-  const container = document.querySelector(".grid-container");
-  const menuBoxes = document.querySelectorAll(".menu-box");
-  const menuIcon = document.querySelectorAll(".menu-icon");
+const btnRight = document.getElementById("btnRight");
+const sidebarS = document.querySelector(".sidebar");
+const sidebarA = document.querySelectorAll(".sidebar a");
 
-  // Ambil status terakhir
-  let status = localStorage.getItem("gridStatus") || "normal";
+let status = "normal";
 
+function function1() {
+  sidebarS.classList.remove("right");
 
-  function function1() {
-    // Kembali ke CSS normal
-    container.classList.remove("grid");
-    menuBoxes.forEach(menu => {
-      menu.classList.remove("grid");
-    });
-  }
+  sidebarA.forEach(menu => {
+    menu.classList.remove("right");
+  });
 
+  status = "normal";
+}
 
-  function function2() {
-    // Aktifkan CSS grid
-    container.classList.add("grid");
-    menuBoxes.forEach(menu => {
-      menu.classList.add("grid");
-    });
-  }
+function function2() {
+  sidebarS.classList.add("right");
 
+  sidebarA.forEach(menu => {
+    menu.classList.add("right");
+  });
 
-  // Terapkan status saat halaman pertama kali dibuka
-  if (status === "grid") {
+  status = "right";
+}
+
+// Kondisi awal
+function1();
+
+btnRight.addEventListener("click", function () {
+  if (status === "normal") {
     function2();
   } else {
     function1();
   }
+});
+</script>
+<script>
+  lucide.createIcons();
 
+  const btn24 = document.getElementById("toggle");
+  let isOn = true;
 
-  button.addEventListener("click", function () {
+  btn24.addEventListener("click", () => {
+    isOn = !isOn;
 
-    if (status === "normal") {
+    // Ganti icon
+    btn.innerHTML = `<i data-lucide="${isOn ? 'sun' : 'moon'}"></i>`;
 
-      // Function 1 → Function 2
-      function2();
-      status = "grid";
-
-    } else {
-
-      // Function 2 → Function 1
-      function1();
-      status = "normal";
-    }
-
-    // Simpan ke localStorage
-    localStorage.setItem("gridStatus", status);
+    // Render ulang icon lucide
+    lucide.createIcons();
   });
 </script>
 <script>
-/* =====================================
-   MENU NAVIGASI
-===================================== */
-function bukaMenu(file) {
-  window.location.href = file;
+const btn = document.getElementById("toggle");
+const icon = document.getElementById("icon");
+
+// Update UI (theme + icon)
+function updateUI() {
+  const isDark = document.body.classList.contains("dark");
+
+  // HAPUS ICON LAMA (WAJIB)
+  icon.innerHTML = "";
+
+  if (isDark) {
+    icon.setAttribute("data-lucide", "moon");
+    localStorage.setItem("theme", "dark");
+  } else {
+    icon.setAttribute("data-lucide", "sun");
+    localStorage.setItem("theme", "light");
+  }
+
+  // Render ulang icon (sekali)
+  lucide.createIcons();
 }
 
-/* =====================================
-   SEARCH FILTER MENU
-===================================== */
-const searchInput = document.getElementById("menuSearch");
+// Load awal dari localStorage
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+}
+
+// Set tampilan awal
+updateUI();
+
+// Event toggle
+btn.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  updateUI();
+});
+  
+const searchInput = document.getElementById("sidebarrSearch");
+const menuBoxes = document.querySelectorAll(".sidebar-menu a");
 
 searchInput.addEventListener("keyup", function() {
   const filter = this.value.toLowerCase();
 
   menuBoxes.forEach(box => {
-    const label = box.querySelector(".menu-label").innerText.toLowerCase();
+    const label = box.querySelector("span").innerText.toLowerCase();
     box.style.display = label.includes(filter) ? "flex" : "none";
   });
 });
+
+function home() {
+  window.location.href = 'index.html';
+}
 </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2311491136628334"
-     crossorigin="anonymous"></script>
 </body>
 </html>
