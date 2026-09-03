@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="template.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body data-title="Pecahan">
+<style>
+
+.d-btn {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px;
+  text-align: center;
+  margin-top: 65px;
+  background: var(--accent);
+  color: white;
+  font-weight: bold;
+  padding: 14px 18px;
+  border-radius: 8px;
+  box-shadow: 0 6px 0 0 var(--daccent), 0 6px 8px 2px #00000050;
+  transition: 0.05s linear;
+}
+
+.d-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 0 var(--daccent), 0 6px 8px 2px #00000050;
+}
+
+.card {
+  display: flex;
+  padding: 10px 0 20px 0;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px;
+  margin-top: 20px;
+  background: var(--card);
+  border-radius: 8px;
+}
+
+.card input {
+  width: 100px;
+  height: 48px;
+  padding: 0 14px;
+  border: none;
+  background: var(--sp);
+  color: var(--text);
+  border-radius: 6px;
+  font-size: 20px;
+  text-align: right;
+}
+
+.card input:focus {
+  outline: none;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+}
+
+.f-line {
+  background: var(--bdr2);
+  margin: 8px 0;
+  height: 2px;
+  border-radius: 2px;
+}
+
+.reverse {
+  margin-top: 24px;
+  color: var(--text2);
+}
+
+label {
+  color: var(--text);
+}
+
+.operator-card input {
+  width: 50px;
+  text-align: center;
+}
+
+.decimal-card,
+.simplify-card,
+.operator-card {
+  display: none;
+}
+
+.decimal-card.active,
+.simplify-card.active,
+.operator-card.active {
+  display: flex;
+}
+
+.nm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+#switchCardText {
+  margin-top: 2.5px;
+}
+
+#switchCardIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.operator-card {
+  gap: 6px;
+}
+</style>
+
+<div id="fetch-container"></div>
+
+<div class="d-btn" id="switchCard">
+  <div class="nm">
+    <span id="switchCardIcon">
+      <i data-lucide="divide-square"></i>
+    </span>
+    <span id="switchCardText">Desimal, Pecahan</span>
+  </div>
+  <i data-lucide="chevrons-up-down"></i>
+</div>
+
+<div class="card decimal-card">
+  <div class="side decimal-side">
+    <label>Desimal</label>
+    <input
+      placeholder="A"
+      type="number"
+    >
+  </div>
+  
+  <span data-lucide="move-horizontal" class="reverse"></span>
+
+  <div class="side fraction-side">
+    <label>Pecahan</label>
+
+    <input
+      placeholder="X"
+      type="number"
+    >
+
+    <span class="f-line"></span>
+
+    <input
+      placeholder="Y"
+      type="number"
+    >
+  </div>
+</div>
+
+<div class="card simplify-card">
+  <div class="side simplify-side">
+    <label>Pecahan</label>
+
+    <input
+      placeholder="A"
+      type="number"
+    >
+
+    <span class="f-line"></span>
+
+    <input
+      placeholder="B"
+      type="number"
+    >
+  </div>
+  
+  <span data-lucide="move-horizontal" class="reverse"></span>
+
+  <div class="side result-side">
+    <label>Hasil</label>
+
+    <input
+      placeholder="X"
+      type="number"
+    >
+
+    <span class="f-line"></span>
+
+    <input
+      placeholder="Y"
+      type="number"
+    >
+  </div>
+</div>
+
+<div class="card operator-card">
+
+  <div class="side operator-side">
+    <label>Nilai</label>
+
+    <input
+      class="operator-a"
+      placeholder="A"
+      type="number"
+    >
+
+    <span class="f-line"></span>
+
+    <input
+      class="operator-b"
+      placeholder="B"
+      type="number"
+    >
+  </div>
+
+
+  <span
+    data-lucide="plus"
+    class="reverse operator-symbol"
+  ></span>
+
+
+  <div class="side operator-side">
+    <label>Nilai</label>
+
+    <input
+      class="operator-c"
+      placeholder="X"
+      type="number"
+    >
+
+    <span class="f-line"></span>
+
+    <input
+      class="operator-d"
+      placeholder="Y"
+      type="number"
+    >
+  </div>
+
+
+  <span
+    data-lucide="equal"
+    class="reverse operator-equal"
+  ></span>
+
+
+  <div class="side operator-result">
+    <label>Hasil</label>
+
+    <input
+      class="operator-result-a"
+      placeholder="X"
+      type="number"
+      readonly
+    >
+
+    <span class="f-line"></span>
+
+    <input
+      class="operator-result-b"
+      placeholder="Y"
+      type="number"
+      readonly
+    >
+  </div>
+
+</div>
+
+<script src="fetch.js"></script>
+<script>
+// ============================================================
+// FUNGSI UMUM
+// ============================================================
+
+function gcd(a, b) {
+
+  a = Math.abs(a);
+  b = Math.abs(b);
+
+  while (b !== 0) {
+
+    const temp = b;
+    b = a % b;
+    a = temp;
+
+  }
+
+  return a;
+}
+
+
+// ============================================================
+// CARD 1
+// DESIMAL ↔ PECAHAN
+// ============================================================
+
+const decimalCard =
+  document.querySelector('.decimal-card');
+
+const decimalInput =
+  decimalCard.querySelector('.decimal-side input');
+
+const decimalFractionInputs =
+  decimalCard.querySelectorAll('.fraction-side input');
+
+const decimalNumerator =
+  decimalFractionInputs[0];
+
+const decimalDenominator =
+  decimalFractionInputs[1];
+
+
+// ============================================================
+// DESIMAL → PECAHAN
+// ============================================================
+
+function decimalToFraction(decimal) {
+
+  if (!Number.isFinite(decimal)) {
+    return ['', ''];
+  }
+
+
+  // Bilangan bulat
+  if (Number.isInteger(decimal)) {
+
+    return [
+      String(decimal),
+      '1'
+    ];
+
+  }
+
+
+  const text =
+    String(decimal);
+
+  const decimalPart =
+    text.split('.')[1] || '';
+
+  const decimalPlaces =
+    decimalPart.length;
+
+
+  const denominator =
+    Math.pow(10, decimalPlaces);
+
+
+  let numerator =
+    Math.round(decimal * denominator);
+
+
+  const pembagi =
+    gcd(numerator, denominator);
+
+
+  numerator =
+    numerator / pembagi;
+
+
+  const finalDenominator =
+    denominator / pembagi;
+
+
+  return [
+    String(numerator),
+    String(finalDenominator)
+  ];
+}
+
+
+// ============================================================
+// PECAHAN → DESIMAL
+// ============================================================
+
+function fractionToDecimal() {
+
+  if (
+    decimalNumerator.value === '' ||
+    decimalDenominator.value === ''
+  ) {
+    return;
+  }
+
+
+  const numerator =
+    Number(decimalNumerator.value);
+
+  const denominator =
+    Number(decimalDenominator.value);
+
+
+  if (
+    !Number.isFinite(numerator) ||
+    !Number.isFinite(denominator) ||
+    denominator === 0
+  ) {
+    return;
+  }
+
+
+  decimalInput.value =
+    numerator / denominator;
+}
+
+
+// ============================================================
+// INPUT DESIMAL
+// ============================================================
+
+decimalInput.addEventListener(
+  'input',
+  function () {
+
+    if (this.value === '') {
+
+      decimalNumerator.value = '';
+      decimalDenominator.value = '';
+
+      return;
+    }
+
+
+    const decimal =
+      Number(this.value);
+
+
+    if (!Number.isFinite(decimal)) {
+      return;
+    }
+
+
+    const hasil =
+      decimalToFraction(decimal);
+
+
+    decimalNumerator.value =
+      hasil[0];
+
+    decimalDenominator.value =
+      hasil[1];
+
+  }
+);
+
+
+// ============================================================
+// INPUT PEMBILANG
+// ============================================================
+
+decimalNumerator.addEventListener(
+  'input',
+  function () {
+
+    fractionToDecimal();
+
+  }
+);
+
+
+// ============================================================
+// INPUT PENYEBUT
+// ============================================================
+
+decimalDenominator.addEventListener(
+  'input',
+  function () {
+
+    fractionToDecimal();
+
+  }
+);
+
+
+
+// ============================================================
+// CARD 2
+// PECAHAN EQUIVALEN
+// ============================================================
+
+const simplifyCard =
+  document.querySelector('.simplify-card');
+
+const simplifyInputs =
+  simplifyCard.querySelectorAll('.simplify-side input');
+
+const resultInputs =
+  simplifyCard.querySelectorAll('.result-side input');
+
+
+const simplifyNumerator =
+  simplifyInputs[0];
+
+const simplifyDenominator =
+  simplifyInputs[1];
+
+
+const resultNumerator =
+  resultInputs[0];
+
+const resultDenominator =
+  resultInputs[1];
+
+
+// ============================================================
+// FLAG
+// Untuk mengetahui apakah hasil kanan
+// sudah pernah dibuat dari pecahan kiri
+// ============================================================
+
+let simplifyReady = false;
+
+
+// ============================================================
+// PECAHAN KIRI → HASIL KANAN
+// ============================================================
+
+function simplifyFraction() {
+
+  if (
+    simplifyNumerator.value === '' ||
+    simplifyDenominator.value === ''
+  ) {
+    return;
+  }
+
+
+  const numerator =
+    Number(simplifyNumerator.value);
+
+  const denominator =
+    Number(simplifyDenominator.value);
+
+
+  if (
+    !Number.isFinite(numerator) ||
+    !Number.isFinite(denominator) ||
+    denominator === 0
+  ) {
+    return;
+  }
+
+
+  // Cari FPB
+  const pembagi =
+    gcd(numerator, denominator);
+
+
+  let hasilNumerator =
+    numerator / pembagi;
+
+  let hasilDenominator =
+    denominator / pembagi;
+
+
+  // Penyebut negatif
+  if (hasilDenominator < 0) {
+
+    hasilNumerator *= -1;
+    hasilDenominator *= -1;
+
+  }
+
+
+  resultNumerator.value =
+    hasilNumerator;
+
+  resultDenominator.value =
+    hasilDenominator;
+
+
+  simplifyReady = true;
+}
+
+
+// ============================================================
+// KIRI ATAS DIUBAH
+// → KANAN ATAS BERUBAH
+// ============================================================
+
+simplifyNumerator.addEventListener(
+  'input',
+  function () {
+
+    const a =
+      Number(simplifyNumerator.value);
+
+    const b =
+      Number(simplifyDenominator.value);
+
+
+    if (
+      !Number.isFinite(a) ||
+      !Number.isFinite(b) ||
+      b === 0
+    ) {
+      return;
+    }
+
+
+    // Jika hasil belum ada,
+    // buat hasil sederhana terlebih dahulu
+    if (
+      resultNumerator.value === '' ||
+      resultDenominator.value === ''
+    ) {
+
+      simplifyFraction();
+
+      return;
+    }
+
+
+    const oldA =
+      Number(simplifyNumerator.value);
+
+    const oldB =
+      Number(simplifyDenominator.value);
+
+
+    const rightB =
+      Number(resultDenominator.value);
+
+
+    if (
+      !Number.isFinite(rightB) ||
+      oldB === 0
+    ) {
+      return;
+    }
+
+
+    resultNumerator.value =
+      a * rightB / b;
+
+  }
+);
+
+
+// ============================================================
+// KIRI BAWAH DIUBAH
+// → KANAN BAWAH BERUBAH
+// ============================================================
+
+simplifyDenominator.addEventListener(
+  'input',
+  function () {
+
+    const a =
+      Number(simplifyNumerator.value);
+
+    const b =
+      Number(simplifyDenominator.value);
+
+
+    if (
+      !Number.isFinite(a) ||
+      !Number.isFinite(b) ||
+      b === 0
+    ) {
+      return;
+    }
+
+
+    // Jika hasil belum ada
+    if (
+      resultNumerator.value === '' ||
+      resultDenominator.value === ''
+    ) {
+
+      simplifyFraction();
+
+      return;
+    }
+
+
+    const rightA =
+      Number(resultNumerator.value);
+
+
+    if (
+      !Number.isFinite(rightA) ||
+      a === 0
+    ) {
+      return;
+    }
+
+
+    resultDenominator.value =
+      b * rightA / a;
+
+  }
+);
+
+
+// ============================================================
+// KANAN ATAS DIUBAH
+// → KANAN BAWAH BERUBAH
+//
+// Contoh:
+// 8/2 = 4/1
+//
+// 4 → 16
+//
+// menjadi:
+// 8/2 = 16/4
+// ============================================================
+
+resultNumerator.addEventListener(
+  'input',
+  function () {
+
+    const x =
+      Number(resultNumerator.value);
+
+    const y =
+      Number(resultDenominator.value);
+
+
+    if (
+      !Number.isFinite(x) ||
+      !Number.isFinite(y)
+    ) {
+      return;
+    }
+
+
+    const a =
+      Number(simplifyNumerator.value);
+
+    const b =
+      Number(simplifyDenominator.value);
+
+
+    if (
+      !Number.isFinite(a) ||
+      !Number.isFinite(b) ||
+      a === 0
+    ) {
+      return;
+    }
+
+
+    resultDenominator.value =
+      x * b / a;
+
+  }
+);
+
+
+// ============================================================
+// KANAN BAWAH DIUBAH
+// → KANAN ATAS BERUBAH
+//
+// Contoh:
+// 8/2 = 4/1
+//
+// 1 → 8
+//
+// menjadi:
+// 8/2 = 32/8
+// ============================================================
+
+resultDenominator.addEventListener(
+  'input',
+  function () {
+
+    const y =
+      Number(resultDenominator.value);
+
+
+    if (!Number.isFinite(y)) {
+      return;
+    }
+
+
+    const a =
+      Number(simplifyNumerator.value);
+
+    const b =
+      Number(simplifyDenominator.value);
+
+
+    if (
+      !Number.isFinite(a) ||
+      !Number.isFinite(b) ||
+      b === 0
+    ) {
+      return;
+    }
+
+
+    resultNumerator.value =
+      y * a / b;
+
+  }
+);
+
+// ============================================================
+// OPERATOR PECAHAN
+// ============================================================
+
+const operatorCard =
+  document.querySelector('.operator-card');
+
+
+// ------------------------------------------------------------
+// INPUT
+// ------------------------------------------------------------
+
+const operatorA =
+  operatorCard.querySelector('.operator-a');
+
+const operatorB =
+  operatorCard.querySelector('.operator-b');
+
+const operatorC =
+  operatorCard.querySelector('.operator-c');
+
+const operatorD =
+  operatorCard.querySelector('.operator-d');
+
+
+// ------------------------------------------------------------
+// HASIL
+// ------------------------------------------------------------
+
+const operatorResultA =
+  operatorCard.querySelector('.operator-result-a');
+
+const operatorResultB =
+  operatorCard.querySelector('.operator-result-b');
+
+
+// ------------------------------------------------------------
+// OPERATOR
+// ------------------------------------------------------------
+
+const operatorSymbol =
+  operatorCard.querySelector('.operator-symbol');
+
+
+// Urutan operator
+const operators = [
+  '+',
+  '-',
+  '×',
+  '÷'
+];
+
+let currentOperator = 0;
+
+
+// ============================================================
+// HITUNG PECAHAN
+// ============================================================
+
+function calculateFraction() {
+
+  const a = Number(operatorA.value);
+  const b = Number(operatorB.value);
+
+  const c = Number(operatorC.value);
+  const d = Number(operatorD.value);
+
+
+  // Belum lengkap
+  if (
+    operatorA.value === '' ||
+    operatorB.value === '' ||
+    operatorC.value === '' ||
+    operatorD.value === ''
+  ) {
+
+    operatorResultA.value = '';
+    operatorResultB.value = '';
+
+    return;
+  }
+
+
+  // Nilai tidak valid
+  if (
+    !Number.isFinite(a) ||
+    !Number.isFinite(b) ||
+    !Number.isFinite(c) ||
+    !Number.isFinite(d)
+  ) {
+
+    operatorResultA.value = '';
+    operatorResultB.value = '';
+
+    return;
+  }
+
+
+  // Penyebut tidak boleh 0
+  if (b === 0 || d === 0) {
+
+    operatorResultA.value = '';
+    operatorResultB.value = '';
+
+    return;
+  }
+
+
+  let numerator;
+  let denominator;
+
+
+  // ==========================================================
+  // +
+  // ==========================================================
+
+  if (currentOperator === 0) {
+
+    numerator =
+      a * d + c * b;
+
+    denominator =
+      b * d;
+
+  }
+
+
+  // ==========================================================
+  // -
+  // ==========================================================
+
+  else if (currentOperator === 1) {
+
+    numerator =
+      a * d - c * b;
+
+    denominator =
+      b * d;
+
+  }
+
+
+  // ==========================================================
+  // ×
+  // ==========================================================
+
+  else if (currentOperator === 2) {
+
+    numerator =
+      a * c;
+
+    denominator =
+      b * d;
+
+  }
+
+
+  // ==========================================================
+  // ÷
+  // ==========================================================
+
+  else if (currentOperator === 3) {
+
+    // Tidak boleh membagi dengan 0
+    if (c === 0) {
+
+      operatorResultA.value = '';
+      operatorResultB.value = '';
+
+      return;
+    }
+
+
+    numerator =
+      a * d;
+
+    denominator =
+      b * c;
+
+  }
+
+
+  // ==========================================================
+  // NORMALISASI TANDA
+  // ==========================================================
+
+  if (denominator < 0) {
+
+    numerator *= -1;
+    denominator *= -1;
+
+  }
+
+
+  // ==========================================================
+  // SEDERHANAKAN
+  // ==========================================================
+
+  const pembagi =
+    gcd(numerator, denominator);
+
+
+  numerator =
+    numerator / pembagi;
+
+  denominator =
+    denominator / pembagi;
+
+
+  // ==========================================================
+  // HASIL
+  // ==========================================================
+
+  operatorResultA.value =
+    numerator;
+
+  operatorResultB.value =
+    denominator;
+}
+
+
+// ============================================================
+// GANTI OPERATOR
+// ============================================================
+
+operatorCard.addEventListener('click', function (event) {
+
+  const button = event.target.closest('.operator-symbol');
+
+  if (!button) {
+    return;
+  }
+
+
+  // Operator berikutnya
+  currentOperator++;
+
+  if (currentOperator >= operators.length) {
+    currentOperator = 0;
+  }
+
+
+  const symbol =
+    operators[currentOperator];
+
+
+  // Nama icon Lucide
+  let iconName;
+
+  if (symbol === '+') {
+    iconName = 'plus';
+  }
+
+  else if (symbol === '-') {
+    iconName = 'minus';
+  }
+
+  else if (symbol === '×') {
+    iconName = 'x';
+  }
+
+  else {
+    iconName = 'divide';
+  }
+
+
+  // Ganti icon
+  button.setAttribute(
+    'data-lucide',
+    iconName
+  );
+
+
+  // Hapus SVG lama
+  button.innerHTML = '';
+
+
+  // Render icon
+  if (window.lucide) {
+    lucide.createIcons({
+      nodes: [button]
+    });
+  }
+
+
+  // Hitung ulang
+  calculateFraction();
+
+});
+
+
+// ============================================================
+// INPUT BERUBAH
+// ============================================================
+
+operatorA.addEventListener(
+  'input',
+  calculateFraction
+);
+
+operatorB.addEventListener(
+  'input',
+  calculateFraction
+);
+
+operatorC.addEventListener(
+  'input',
+  calculateFraction
+);
+
+operatorD.addEventListener(
+  'input',
+  calculateFraction
+);
+
+
+// ============================================================
+// SWITCH CARD
+// ============================================================
+
+const switchCard =
+  document.getElementById('switchCard');
+
+const switchCardText =
+  document.getElementById('switchCardText');
+
+const switchCardIcon =
+  document.getElementById('switchCardIcon');
+
+
+// ------------------------------------------------------------
+// DAFTAR CARD
+// ------------------------------------------------------------
+
+const cards = [
+  {
+    element: document.querySelector('.decimal-card'),
+    name: 'Desimal, Pecahan',
+    icon: 'divide-square'
+  },
+
+  {
+    element: document.querySelector('.simplify-card'),
+    name: 'Sederhanakan Pecahan',
+    icon: 'arrow-down-0-1'
+  },
+
+  {
+    element: document.querySelector('.operator-card'),
+    name: 'Perhitungan Pecahan',
+    icon: 'calculator'
+  }
+];
+
+
+// ------------------------------------------------------------
+// CARD YANG AKTIF
+// ------------------------------------------------------------
+
+let currentCard =
+  Number(localStorage.getItem('selectedCard')) || 0;
+
+
+// ------------------------------------------------------------
+// TAMPILKAN CARD
+// ------------------------------------------------------------
+
+function showCard(index) {
+
+  // Tampilkan card yang dipilih
+  cards.forEach(function (card, i) {
+
+    card.element.classList.toggle(
+      'active',
+      i === index
+    );
+
+  });
+
+
+  // Ganti nama
+  switchCardText.textContent =
+    cards[index].name;
+
+
+  // ----------------------------------------------------------
+  // GANTI ICON
+  // ----------------------------------------------------------
+
+  switchCardIcon.innerHTML = `
+    <i data-lucide="${cards[index].icon}"></i>
+  `;
+
+
+  // Render icon baru
+  if (window.lucide) {
+
+    lucide.createIcons({
+      nodes: [
+        switchCardIcon.querySelector('i')
+      ]
+    });
+
+  }
+
+
+  // ----------------------------------------------------------
+  // SIMPAN KE LOCALSTORAGE
+  // ----------------------------------------------------------
+
+  localStorage.setItem(
+    'selectedCard',
+    index
+  );
+
+}
+
+
+// ------------------------------------------------------------
+// KLIK SWITCH
+// ------------------------------------------------------------
+
+switchCard.addEventListener(
+  'click',
+  function () {
+
+    // Kosongkan semua input di semua card
+    cards.forEach(function (card) {
+
+      const inputs =
+        card.element.querySelectorAll('input');
+
+      inputs.forEach(function (input) {
+        input.value = '';
+      });
+
+    });
+
+
+    // Pindah ke card berikutnya
+    currentCard++;
+
+    if (currentCard >= cards.length) {
+      currentCard = 0;
+    }
+
+
+    showCard(currentCard);
+
+  }
+);
+
+
+// ------------------------------------------------------------
+// TAMPILKAN CARD TERAKHIR
+// ------------------------------------------------------------
+
+showCard(currentCard);
+</script>
+</body>
+</html>
