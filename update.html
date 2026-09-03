@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="template.css">
-  <title>Update info</title>
+  <title>Romanwi Translator</title>
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body data-title="Update">
+<body data-title="Romawi">
 <div id="fetch-container"></div>
 
 <!-- <div class="card">
@@ -23,6 +23,22 @@
     </ul>
   </div>
 </div>-->
+
+<div class="card">
+  <div class="top">
+    <span class="title">V 26.5</span>
+    <span class="date">3-9-2026</span>
+  </div>
+  <div class="info">
+    <ul>
+      <li>+ Menambahkan page [half=Pecahan]</li>
+      <li>+ Menambahkan fitur swipe pada page [calendar=Jadwal]</li>
+      <li>= Mengubah tampilan [calendar=Jadwal]</li>
+      <li>= Memperbaiki warna badge pada page [Update]</li>
+      <li>= Memperbaiki beberapa bug tampilan</li>
+    </ul>
+  </div>
+</div>
 
 <div class="card">
   <div class="top">
@@ -61,7 +77,6 @@
   </div>
   <div class="info">
     <ul>
-      <li>+ Menambahkan page [layout=FPB & KPK]</li>
       <li>+ Menambahkan page [profit=Rata-rata]</li>
       <li>+ Menambahkan search pada dropdown menu di page [currency-exchange=Mata Uang]</li>
       <li>= Memperbaiki tampilan pada page [pie-chart1=Percent]</li>
@@ -76,7 +91,7 @@
   </div>
   <div class="info">
     <ul>
-      <li>+ Menambahkan update page</li>
+      <li>+ Menambahkan page [update]</li>
       <li>+ Menambahkan keyboard custom pada page [jawa2=Aksara Jawa]</li>
       <li>= Memperbaiki beberapa tampilan</li>
     </ul>
@@ -92,7 +107,7 @@ body {
   gap: 20px;
   align-items: center;
   padding: 20px;
-  padding-top: 64px;
+  padding-top: 52px;
 }
 
 .card {
@@ -179,24 +194,55 @@ page {
 }
 
 /* Menambahkan */
+/* Light Mode */
+:root {
+  --color-add: #15803d;
+  --color-add-bg: rgba(34, 197, 94, 0.15);
+  --color-add-border: rgba(34, 197, 94, 0.25);
+
+  --color-fix: #a16207;
+  --color-fix-bg: rgba(234, 179, 8, 0.15);
+  --color-fix-border: rgba(234, 179, 8, 0.25);
+
+  --color-remove: #dc2626;
+  --color-remove-bg: rgba(239, 68, 68, 0.15);
+  --color-remove-border: rgba(239, 68, 68, 0.25);
+}
+
+/* Dark Mode */
+.dark {
+  --color-add: #4ade80;
+  --color-add-bg: rgba(74, 222, 128, 0.15);
+  --color-add-border: rgba(74, 222, 128, 0.25);
+
+  --color-fix: #facc15;
+  --color-fix-bg: rgba(250, 204, 21, 0.15);
+  --color-fix-border: rgba(250, 204, 21, 0.25);
+
+  --color-remove: #f87171;
+  --color-remove-bg: rgba(248, 113, 113, 0.15);
+  --color-remove-border: rgba(248, 113, 113, 0.25);
+}
+
+/* Menambahkan */
 .add {
-  color: #15803d;
-  background: rgba(34, 197, 94, 0.15);
-  border: 1px solid rgba(34, 197, 94, 0.25);
+  color: var(--color-add);
+  background: var(--color-add-bg);
+  border: 1px solid var(--color-add-border);
 }
 
 /* Memperbaiki */
 .fix {
-  color: #a16207;
-  background: rgba(234, 179, 8, 0.15);
-  border: 1px solid rgba(234, 179, 8, 0.25);
+  color: var(--color-fix);
+  background: var(--color-fix-bg);
+  border: 1px solid var(--color-fix-border);
 }
 
 /* Menghapus */
 .remove {
-  color: #dc2626;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: var(--color-remove);
+  background: var(--color-remove-bg);
+  border: 1px solid var(--color-remove-border);
 }
 
 .page-badge {
