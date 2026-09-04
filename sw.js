@@ -1,63 +1,41 @@
-const CACHE_NAME = "q-web-v2";
+const CACHE_NAME = "q-web-v3";
 
-const FILES_TO_CACHE = [
+// Hanya file inti yang selalu dibutuhkan
+const CORE_FILES = [
   "/",
   "/index.html",
+  "/template.html",
 
-  // CSS
   "/template.css",
   "/dashboard.css",
 
-  // JS utama
   "/fetch.js",
   "/app.js",
 
-  // Template
-  "/template.html",
-
-  // Semua halaman yang bisa dibuka offline
-  "/jadwal.html",
-  "/file-transfer.html",
-  "/subnet.html",
-  "/qr-code.html",
-  "/pecahan.html",
-  "/percent.html",
-  "/rumus.html",
-  "/fpb-kpk.html",
-  "/rata-rata.html",
-  "/jawa.html",
-  "/mata-uang.html",
-  "/morse.html",
-  "/romawi.html",
-  "/number.html",
-  "/panjang.html",
-  "/berat.html",
-  "/volume.html",
-  "/suhu.html",
-  "/data.html",
-  "/waktu.html",
-  "/masakan.html",
-
-  // Library lokal
-  "/lib/lucide.min.js"
+  // Library yang dibutuhkan agar icon/QR tetap bisa offline
+  "/lib/lucide.min.js",
+  "/lib/html5-qrcode.min.js",
+  "/lib/qrcode.min.js"
 ];
 
 
-// ===============================
+// ========================================
 // INSTALL
-// ===============================
+// ========================================
+
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(FILES_TO_CACHE))
+      .then(cache => cache.addAll(CORE_FILES))
       .then(() => self.skipWaiting())
   );
 });
 
 
-// ===============================
+// ========================================
 // ACTIVATE
-// ===============================
+// ========================================
+
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys => {
@@ -66,59 +44,133 @@ self.addEventListener("activate", event => {
           .filter(key => key !== CACHE_NAME)
           .map(key => caches.delete(key))
       );
-    }).then(() => self.clients.claim())
+    })
+    .then(() => self.clients.claim())
   );
 });
 
 
-// ===============================
+// ========================================
 // FETCH
-// ===============================
+// ========================================
+
 self.addEventListener("fetch", event => {
 
-  // Hanya request GET
-  if (event.request.method !== "GET") {
+  const request = event.request;
+
+  // Hanya menangani GET
+  if (request.method !== "GET") {
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request)
-      .then(cachedResponse => {
+  const url = new URL(request.url);
 
-        // Kalau ada di cache → gunakan cache
-        if (cachedResponse) {
-          return cachedResponse;
-        }
+  // Jangan cache request ke domain lain
+  if (url.origin !== self.location.origin) {
+    return;
+  }
 
-        // Kalau belum ada → ambil dari internet
-        return fetch(event.request)
-          .then(networkResponse => {
 
-            // Simpan response untuk penggunaan berikutnya
-            const responseClone = networkResponse.clone();
+  // ======================================
+  // HTML
+  // Network First
+  // ======================================
+
+  if (
+    request.destination === "document" ||
+    request.headers.get("accept")?.includes("text/html")
+  ) {
+
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+
+          // Simpan HTML yang berhasil diambil
+          if (response.ok) {
+            const clone = response.clone();
 
             caches.open(CACHE_NAME)
               .then(cache => {
-                cache.put(event.request, responseClone);
+                cache.put(request, clone);
               });
-
-            return networkResponse;
-          });
-
-      })
-      .catch(() => {
-
-        // Kalau offline dan tidak ada cache
-        return new Response(
-          "Halaman tidak tersedia secara offline.",
-          {
-            status: 503,
-            headers: {
-              "Content-Type": "text/plain; charset=utf-8"
-            }
           }
-        );
 
-      })
+          return response;
+        })
+        .catch(() => {
+
+          // Offline → gunakan cache
+          return caches.match(request)
+            .then(cached => {
+
+              if (cached) {
+                return cached;
+              }
+
+              // Kalau tidak ada cache,
+              // gunakan index sebagai fallback
+              return caches.match("/index.html");
+            });
+
+        })
+    );
+
+    return;
+  }
+
+
+  // ======================================
+  // JS / CSS / FONT / IMAGE
+  // Cache First
+  // ======================================
+
+  if (
+    request.destination === "script" ||
+    request.destination === "style" ||
+    request.destination === "font" ||
+    request.destination === "image"
+  ) {
+
+    event.respondWith(
+      caches.match(request)
+        .then(cached => {
+
+          if (cached) {
+            return cached;
+          }
+
+          return fetch(request)
+            .then(response => {
+
+              if (response.ok) {
+
+                const clone = response.clone();
+
+                caches.open(CACHE_NAME)
+                  .then(cache => {
+                    cache.put(request, clone);
+                  });
+
+              }
+
+              return response;
+            });
+
+        })
+    );
+
+    return;
+  }
+
+
+  // ======================================
+  // Request lainnya
+  // Network First
+  // ======================================
+
+  event.respondWith(
+    fetch(request)
+      .catch(() => caches.match(request))
   );
+
 });
