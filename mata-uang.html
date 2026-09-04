@@ -542,17 +542,48 @@ function parseID(str) {
 }
 
 async function loadRates() {
-  let res = await fetch("https://open.er-api.com/v6/latest/USD");
-  let data = await res.json();
+  try {
+    const res = await fetch(
+      "https://open.er-api.com/v6/latest/USD"
+    );
 
-  rates = data.rates;
+    if (!res.ok) {
+      throw new Error("Gagal mengambil kurs");
+    }
 
-  currencies = Object.keys(rates).sort((a,b)=>
-    getName(a).localeCompare(getName(b), "id")
+    const data = await res.json();
+
+    rates = data.rates;
+
+    // Simpan kurs terakhir
+    localStorage.setItem(
+      "currencyRates",
+      JSON.stringify(rates)
+    );
+
+  } catch (error) {
+
+    // Gunakan kurs terakhir ketika offline
+    const saved =
+      localStorage.getItem("currencyRates");
+
+    if (!saved) {
+      alert(
+        "Kurs belum tersedia. Buka halaman ini sekali saat online."
+      );
+      return;
+    }
+
+    rates = JSON.parse(saved);
+  }
+
+  currencies = Object.keys(rates).sort(
+    (a, b) =>
+      getName(a).localeCompare(getName(b), "id")
   );
 
-  initDropdown("fromDropdown","USD");
-  initDropdown("toDropdown","IDR");
+  initDropdown("fromDropdown", "USD");
+  initDropdown("toDropdown", "IDR");
 }
 
 function initDropdown(id, defaultVal) {
