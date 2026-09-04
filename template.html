@@ -82,7 +82,7 @@ body{
       <i data-lucide="chevron-up" class="nav-icon"></i>
       <span class="line line-a" onclick="home()"><i data-lucide="home" class="nav-icon"></i></span>
       <span class="line line-b" onclick="profile()"><i data-lucide="info" class="nav-icon"></i></span>
-      <span class="line line-c" onclick="update()"><i data-lucide="history" class="nav-icon"></i></span>
+      <span class="line line-c"><i data-lucide="history" class="nav-icon"></i></span>
       <span class="line line-d"><i data-lucide="message-square-text" class="nav-icon"></i></span>
     </button>
   </div>
@@ -120,7 +120,12 @@ body{
   </div>-->
   <div class="sidebar-top">
     <label>Sidebar Menu</label>
-    <button id="btnRight"><i data-lucide="arrow-right" class="btn-right"></i></button>
+  
+    <div class="right-btn" id="btnRight">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
   </div>
 
   <!-- SEARCH BAR -->
@@ -278,6 +283,8 @@ function function1() {
     menu.classList.remove("right");
   });
 
+  btnRight.classList.remove("active");
+
   status = "normal";
 }
 
@@ -287,6 +294,8 @@ function function2() {
   sidebarA.forEach(menu => {
     menu.classList.add("right");
   });
+
+  btnRight.classList.add("active");
 
   status = "right";
 }
