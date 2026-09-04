@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="template.css">
-  <title>Romawi Translator</title>
+  <title>Romanwi Translator</title>
 
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body data-title="Romawi Translator">
+<body data-title="Romawi">
 
 <style>
   *{
@@ -28,6 +28,8 @@
     display:flex;
     justify-content:center;
     padding:20px;
+    flex-wrap:wrap;
+    align-content:flex-start;
   }
 
   .container{
@@ -109,12 +111,12 @@
   .topbar{
     display:flex;
     justify-content:flex-end;
-    margin-right: 2px;
-    margin-bottom: -4px;
+    margin-right:2px;
+    margin-bottom:-4px;
   }
   
   #resetBtn{
-    position: absolute;
+    position:absolute;
     width:18px;
     height:18px;
     border:none;
@@ -127,13 +129,13 @@
     justify-content:center;
     opacity:.7;
     transition:.2s;
-    z-index: 6;
+    z-index:6;
     -webkit-tap-highlight-color:transparent;
   }
 
-#resetBtn:active{
-  transform:scale(.96);
-}
+  #resetBtn:active{
+    transform:scale(.96);
+  }
 
   #error{
     min-height:20px;
@@ -141,6 +143,114 @@
     margin-left:4px;
     font-size:14px;
     color:#ff5b5b;
+  }
+
+
+  /* =========================
+     INFO ANGKA ROMAWI
+     ========================= */
+
+  .roman-info{
+    margin-top:15px;
+    width:100%;
+    max-width:700px;
+    background:var(--card);
+    border-radius:10px;
+    padding:20px;
+    box-shadow:0 4px 18px rgba(0,0,0,0.4);
+  }
+
+  .roman-info-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:16px;
+  }
+
+  .roman-info-title i{
+    width:20px;
+    height:20px;
+    opacity:.8;
+  }
+
+  .roman-info-title span{
+    font-size:17px;
+    font-weight:bold;
+  }
+
+  .roman-info-subtitle{
+    font-size:13px;
+    opacity:.6;
+    margin-top:3px;
+  }
+
+  .roman-table{
+    width:100%;
+    overflow:hidden;
+    border-radius:8px;
+    background:var(--sp);
+  }
+
+  .roman-row{
+    display:grid;
+    grid-template-columns:70px 30px 1fr;
+    align-items:center;
+    min-height:43px;
+    padding:0 14px;
+  }
+
+  .roman-row:not(:last-child){
+    border-bottom:1px solid rgba(128,128,128,.15);
+  }
+
+  .roman-symbol{
+    font-family:"Times New Roman", Georgia, serif;
+    font-size:21px;
+    font-weight:bold;
+  }
+
+  .roman-colon{
+    text-align:center;
+    font-size:17px;
+    opacity:.7;
+  }
+
+  .roman-value{
+    font-size:16px;
+  }
+
+  .roman-header{
+    display:grid;
+    grid-template-columns:70px 30px 1fr;
+    align-items:center;
+    min-height:38px;
+    padding:0 14px;
+    font-size:12px;
+    font-weight:bold;
+    opacity:.55;
+    border-bottom:1px solid rgba(128,128,128,.2);
+  }
+
+  .roman-header span:nth-child(2){
+    text-align:center;
+  }
+
+  @media(max-width:500px){
+
+    .roman-info{
+      padding:16px;
+    }
+
+    .roman-row{
+      grid-template-columns:55px 25px 1fr;
+      padding:0 12px;
+    }
+
+    .roman-header{
+      grid-template-columns:55px 25px 1fr;
+      padding:0 12px;
+    }
+
   }
 </style>
 
@@ -187,6 +297,79 @@
   </button>
 
 </div>
+
+
+<!-- =========================
+     INFO ANGKA ROMAWI
+     ========================= -->
+
+<div class="roman-info">
+
+  <div class="roman-info-title">
+    <i data-lucide="info"></i>
+
+    <div>
+      <span>Nilai Angka Romawi</span>
+      <div class="roman-info-subtitle">
+        Setiap simbol memiliki nilai tertentu
+      </div>
+    </div>
+  </div>
+
+  <div class="roman-table">
+
+    <div class="roman-header">
+      <span>Simbol</span>
+      <span>:</span>
+      <span>Nilai</span>
+    </div>
+
+    <div class="roman-row">
+      <span class="roman-symbol">I</span>
+      <span class="roman-colon">:</span>
+      <span class="roman-value">1</span>
+    </div>
+
+    <div class="roman-row">
+      <span class="roman-symbol">V</span>
+      <span class="roman-colon">:</span>
+      <span class="roman-value">5</span>
+    </div>
+
+    <div class="roman-row">
+      <span class="roman-symbol">X</span>
+      <span class="roman-colon">:</span>
+      <span class="roman-value">10</span>
+    </div>
+
+    <div class="roman-row">
+      <span class="roman-symbol">L</span>
+      <span class="roman-colon">:</span>
+      <span class="roman-value">50</span>
+    </div>
+
+    <div class="roman-row">
+      <span class="roman-symbol">C</span>
+      <span class="roman-colon">:</span>
+      <span class="roman-value">100</span>
+    </div>
+
+    <div class="roman-row">
+      <span class="roman-symbol">D</span>
+      <span class="roman-colon">:</span>
+      <span class="roman-value">500</span>
+    </div>
+
+    <div class="roman-row">
+      <span class="roman-symbol">M</span>
+      <span class="roman-colon">:</span>
+      <span class="roman-value">1000</span>
+    </div>
+
+  </div>
+
+</div>
+
 
 <script src="fetch.js"></script>
 
