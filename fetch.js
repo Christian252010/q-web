@@ -159,70 +159,44 @@ fetch('template.html')
     ===================================== */
 
     const btnRight = document.getElementById("btnRight");
-
+    const sidebarS = document.querySelector(".sidebar");
+    const sidebarA = document.querySelectorAll(".sidebar a");
+    
     let status = "normal";
-
-
-    // ============================
-    // MODE NORMAL
-    // ============================
-
+    
     function function1() {
-
-      sidebar.classList.remove("right");
-
-      document
-        .querySelectorAll(".sidebar a")
-        .forEach(menu => {
-          menu.classList.remove("right");
-        });
-
+      sidebarS.classList.remove("right");
+    
+      sidebarA.forEach(menu => {
+        menu.classList.remove("right");
+      });
+    
+      btnRight.classList.remove("active");
+    
       status = "normal";
-
     }
-
-
-    // ============================
-    // MODE RIGHT
-    // ============================
-
+    
     function function2() {
-
-      sidebar.classList.add("right");
-
-      document
-        .querySelectorAll(".sidebar a")
-        .forEach(menu => {
-          menu.classList.add("right");
-        });
-
+      sidebarS.classList.add("right");
+    
+      sidebarA.forEach(menu => {
+        menu.classList.add("right");
+      });
+    
+      btnRight.classList.add("active");
+    
       status = "right";
-
     }
-
-
+    
     // Kondisi awal
     function1();
-
-
-    // ============================
-    // TOMBOL RIGHT
-    // ============================
-
-    btnRight.addEventListener("click", function(e) {
-
-      e.stopPropagation();
-
+    
+    btnRight.addEventListener("click", function () {
       if (status === "normal") {
-
         function2();
-
       } else {
-
         function1();
-
       }
-
     });
 
 
@@ -282,6 +256,8 @@ fetch('template.html')
     menuBtn.addEventListener('click', (e) => {
 
       e.stopPropagation();
+      
+      function1()
 
       if (sidebar.classList.contains('active')) {
 
@@ -405,11 +381,14 @@ fetch('template.html')
 ===================================== */
 
 function home() {
+
   window.location.href = 'index.html';
+
 }
+
+
 function profile() {
+
   window.location.href = 'profile.html';
-}
-function update() {
-  window.location.href = 'update.html';
+
 }
