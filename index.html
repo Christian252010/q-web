@@ -433,6 +433,11 @@ searchInput.addEventListener("keyup", function() {
   });
 });
 </script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js");
+}
+</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2311491136628334"
      crossorigin="anonymous"></script>
 </body>
