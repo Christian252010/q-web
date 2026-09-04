@@ -17,11 +17,26 @@ const FILES_TO_CACHE = [
 
   // Semua halaman yang bisa dibuka offline
   "/jadwal.html",
-  "/morse.html",
-  "/romawi.html",
+  "/file-transfer.html",
   "/subnet.html",
   "/qr-code.html",
+  "/pecahan.html",
+  "/percent.html",
   "/rumus.html",
+  "/fpb-kpk.html",
+  "/rata-rata.html",
+  "/jawa.html",
+  "/mata-uang.html",
+  "/morse.html",
+  "/romawi.html",
+  "/number.html",
+  "/panjang.html",
+  "/berat.html",
+  "/volume.html",
+  "/suhu.html",
+  "/data.html",
+  "/waktu.html",
+  "/masakan.html",
 
   // Library lokal
   "/lib/lucide.min.js"
