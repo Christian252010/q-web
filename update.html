@@ -26,6 +26,23 @@
 
 <div class="card">
   <div class="top">
+    <span class="title">V 26.2</span>
+    <span class="date">28-8-2026</span>
+  </div>
+  <div class="info">
+    <ul>
+      <li>+ Menambahkan animasi pada tombol sidebar full</li>
+      <li>+ Menambahkan animasi geser pada sidebar full</li>
+      <li>+ Membuat website agar tetap bisa di gunakan setelah di buka walaupun sedang offline</li>
+      <li>+ Menambahkan info pada page [roman-numerals=Romawi] dan [morse-code=Morse]</li>
+      <li>= Memperbaiki page [qr-code=QR Code] dan [currency-exchange=Mata Uang] tetap agar bisa di gunakan ketika offline</li>
+      <li>= Memperbaiki beberapa tampilan</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <div class="top">
     <span class="title">V 26.5</span>
     <span class="date">3-9-2026</span>
   </div>
@@ -277,6 +294,9 @@ document.querySelectorAll('.info li').forEach(li => {
 
   if (text.startsWith('+ Menambahkan')) {
     buatBadge(li, '+ Menambahkan', 'add');
+  } 
+  else if (text.startsWith('+ Membuat')) {
+    buatBadge(li, '= Membuat', 'add');
   } 
   else if (text.startsWith('= Memperbaiki')) {
     buatBadge(li, '= Memperbaiki', 'fix');
