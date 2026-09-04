@@ -1,4 +1,4 @@
-const CACHE_NAME = "q-web-v1";
+const CACHE_NAME = "q-web-v2";
 
 const FILES_TO_CACHE = [
   "/",
