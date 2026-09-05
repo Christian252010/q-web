@@ -412,3 +412,19 @@ offlineBtn.addEventListener("click", async () => {
 
   lucide.createIcons();
 });
+
+navigator.serviceWorker.addEventListener("message", event => {
+
+  if (event.data?.type === "OFFLINE_READY") {
+
+    offlineBtn.disabled = false;
+
+    offlineBtn.innerHTML = `
+      <i data-lucide="check"></i>
+      Offline Siap
+    `;
+
+    lucide.createIcons();
+  }
+
+});
