@@ -389,3 +389,26 @@ function profile() {
 function update() {
   window.location.href = 'update.html';
 }
+
+const offlineBtn = document.getElementById("offlineBtn");
+
+offlineBtn.addEventListener("click", async () => {
+  if (!("serviceWorker" in navigator)) {
+    alert("Browser tidak mendukung offline mode.");
+    return;
+  }
+
+  const registration = await navigator.serviceWorker.ready;
+
+  registration.active.postMessage({
+    type: "DOWNLOAD_OFFLINE"
+  });
+
+  offlineBtn.disabled = true;
+  offlineBtn.innerHTML = `
+    <i data-lucide="loader"></i>
+    Menyiapkan...
+  `;
+
+  lucide.createIcons();
+});
