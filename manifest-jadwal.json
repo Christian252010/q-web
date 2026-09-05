@@ -1,0 +1,13 @@
+{
+  "name": "Q-Web Jadwal",
+  "short_name": "Q-Web Jadwal",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "icon-jadwal-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}
