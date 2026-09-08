@@ -3,1760 +3,3098 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jadwal Pelajaran</title>
-<link rel="manifest" href="/manifest-jadwal.json">
+
+<title>Kalkulator Rumus</title>
+
 <link rel="stylesheet" href="template.css">
-<script src="/lib/lucide.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <style>
-body{
-  font-family: Arial;
-  background: var(--bg);
-  padding:12px
+* {
+  box-sizing: border-box;
 }
 
-h1{
-  color: mediumseagreen;
-  font-family: minecraft;
-  text-align: center;
-  font-size: 3em;
-  margin-bottom: 20px;
-  margin-top: 40px;
-  text-shadow: 0 1px 0 rgba(255,255,255,.4),0 5px 0 seagreen;
-  letter-spacing: 2px;
-}
-
-.card{
-  max-width:720px;
-  margin:0 auto 16px;
-  color: var(--text);
-  background: var(--card);
-  padding:16px;
-  border-radius: 8px;
-  box-shadow:0 2px 12px rgba(0,0,0,0.3)
-}
-
-.sub,.sub2{font-size:.8em;color:#888}
-
-.day-item.spesial {
-  display: flex;
-  justify-content: space-between;
-  text-align: center;
-}
-
-.now{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  font-weight:bold;
-  border:3px solid var(--accent);
-  padding:14px;
-  border-radius:6px
-}
-
-.now-content{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  width:100%;
-}
-
-.now-left{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-
-.now-time{
-  font-size:0.9em;
-  color:#999;
-  white-space:nowrap;
-}
-
-.row{padding:8px 0}
-.row+.row{border-top:1px solid #ccc}
-
-.item{
-  display:flex;
-  justify-content:space-between;
-  align-items:center
-  padding: 8px;
-}
-
-.left{display:flex;gap:8px;align-items:center}
-.time{color:#999;font-size:.85em;margin-top:3px;}
-
-/*.active{
-  background:rgba(0,0,0,0.1);
-  padding: 8px;
-  border-radius:8px
-  border-top: none;
-}*/
-
-.spesial{
-  background: var(--sp);
-  padding:8px;
-  border-radius:6px
-}
-
-.day-item.spesial + .day-item.spesial {margin-top: 4px;border-top: none;}
-.row.spesial + .row.spesial {margin-top: 5px;border-top: none;}
-
-.libur{
-  color:#d9534f;
-  font-weight:bold;
-  text-align:center;
-  font-size:1.1em
-}
-
-.tgl-b {
-  display: flex;
-  justify-content: center;
-}
-
-.toggle-btn {
-  width:100%;
-  max-width:750px;
-  padding:12px;
-  background: var(--accent);
-  font-family: Poppins;
-  color:#fff;
-  border:none;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight:bold;
-  box-shadow: 0 6px 0 var(--daccent) !important;
-  margin-bottom:22px
-}
-
-.toggle-btn:active {
-  box-shadow: 0 2px 0 var(--daccent) !important;
-  transform: translateY(4px);
-}
-
-.full{display:none}
-
-.day-box {
-  border:2px solid var(--border);
-  border-radius:6px;
-  padding:10px 14px;
-  margin-bottom:12px
-}
-
-.day-box:nth-child(1) {
-  background: var(--accent);
-  border: 2.5px solid var(--daccent);
-  font-family: Poppins;
-  padding: 8px 14px;
-}
-
-.judul-j {
-  font-weight: bold;
-  color: white;
-  font-size:1.1em;
-}
-
-.judul-h{
-  font-size:1.2em;
-  margin-bottom: 6px;
-}
-
-/* Judul hari di Jadwal Full rata tengah */
-.day-box > span{
-  display:block;
-  text-align:center;
-}
-
-.day-box:nth-child(7) {
-  margin-top: 40px;
-}
-
-.day-item{
-  display:flex;
-  justify-content:space-between;
-  padding:6px 12px;
-  border-top:2px solid var(--border);
-}
-.day-item:first-child{border-top:none}
-</style>
-<!--<style>
-.card {
-  box-shadow:0 2px 12px rgba(0,0,0,0.3)
+:root {
+  --bg: #f6f7f9;
+  --card: #fff;
+  --text: #171a21;
+  --muted: #747b88;
+  --border: #e5e7eb;
+  --primary: #4f46e5;
+  --primary-light: #eef2ff;
+  --success: #15803d;
+  --success-light: #ecfdf5;
+  --danger: #dc2626;
+  --danger-light: #fef2f2;
+  --warning: #b45309;
+  --warning-light: #fff7ed;
 }
 
 body {
-  background: #1f1f1f !important;
-  color: white;
-}
-
-h1 {
-  color: teal;
-  text-shadow: 0 1px 0 rgba(255,255,255,.4), 0 1px 0 teal,0 5px 0 #005050;
-}
-
-.now {
-  border:3px solid teal;
-}
-
-.toggle-btn {
-  background: teal;
-  box-shadow: 0 1px 0 rgba(255,255,255,.4),0 5px 0 #005050;
-}
-
-.toggle-btn:active {
-  box-shadow: 0 1px 0 rgba(255,255,255,.4),0 2px 0 #005050;
-}
-
-.judul-j {
-  color: teal;
-}
-
-.card {
-  background: #2b2b2b;
-}
-
-.spesial {
-  background: #444;
-  border-top: none !important;
-}
-
-/*.active {
-  background: rgba(255,255,255,0.1);
-}*/
-
-.row+.row {
-  border-top:2px solid #444;
-}
-
-.day-item {
-  border-top:2px solid #444;
-}
-
-.day-box {
-  border: 2px solid #444;
-}
-
-.day-item.spesial + .day-item.spesial {margin-top: 4px;border-top: none;}
-.row.spesial + .row.spesial {margin-top: 5px;border-top: none;}
-.time {
-  color:#ccc;
-}
-</style>-->
-<style>
-  /* =========================
-   LABEL TUGAS
-========================= */
-
-.label-tugas{
-  display:inline-block;
-  background:#e53935;
-  color:white;
-  padding:2px 6px;
-  margin-left:6px;
-  border-radius:6px;
-  font-size:10px;
-  font-weight:bold;
-  cursor:pointer;
-  user-select:none;
-  transition:all .2s ease;
-}
-
-.label-tugas:hover{
-  background:#c62828;
-  transform:scale(1.05);
-}
-
-.label-tugas:active{
-  transform:scale(0.95);
-}
-
-
-/* DARK MODE LABEL */
-
-.label-tugas{
-  background:#ff5252;
-  color:white;
-}
-
-.label-tugas:hover{
-  background:#ff1744;
-}
-
-
-
-/* =========================
-   POPUP BACKGROUND
-========================= */
-
-.popup-bg{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  background:rgba(0,0,0,0.45);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-  animation:popupFadeIn .2s ease;
-}
-
-
-/* =========================
-   POPUP BOX
-========================= */
-
-.popup-box{
-  background:white;
-  padding:20px;
-  border-radius:14px;
-  width:90%;
-  max-width:320px;
-  box-shadow:0 6px 24px rgba(0,0,0,0.3);
-  animation:popupScale .2s ease;
-}
-
-
-/* DARK MODE POPUP BOX */
-
-.popup-box{
-  background:#2b2b2b;
-  color:white;
-  box-shadow:0 6px 24px rgba(0,0,0,0.6);
-}
-
-
-/* =========================
-   POPUP TITLE
-========================= */
-
-.popup-title{
-  font-size:18px;
-  font-weight:bold;
-  margin-bottom:8px;
-  color:mediumseagreen;
-}
-
-.popup-title{
-  color:teal;
-}
-
-
-/* =========================
-   POPUP KETERANGAN
-========================= */
-
-.popup-ket{
-  font-size:14px;
-  margin-bottom:10px;
-}
-
-
-/* =========================
-   POPUP TANGGAL
-========================= */
-
-.popup-date{
-  color:#e53935;
-  font-weight:bold;
-  font-size: 14px;
-  margin-bottom:12px;
-  text-align: right;
-}
-
-.popup-date{
-  color:#ff5252;
-}
-
-
-/* =========================
-   POPUP BUTTON
-========================= */
-
-.popup-close{
-  width:100%;
-  padding:10px;
-  border:none;
-  border-radius:8px;
-  background:mediumseagreen;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-  transition:all .2s ease;
-}
-
-.popup-close:hover{
-  background:seagreen;
-}
-
-.popup-close:active{
-  transform:scale(0.97);
-}
-
-
-/* DARK MODE BUTTON */
-
-.popup-close{
-  background:teal;
-}
-
-.popup-close:hover{
-  background:#006060;
-}
-
-
-
-/* =========================
-   ANIMATIONS
-========================= */
-
-@keyframes popupScale{
-  from{
-    transform:scale(.85);
-    opacity:0;
-  }
-  to{
-    transform:scale(1);
-    opacity:1;
-  }
-}
-
-@keyframes popupFadeIn{
-  from{
-    opacity:0;
-  }
-  to{
-    opacity:1;
-  }
-}
-
-.icf {
-  margin-bottom: -5px;
-  padding-right: 5px;
-}
-</style>
-<!--<style>
-body.dark .card {
-  box-shadow:0 2px 12px rgba(0,0,0,0.3)
-}
-
-body.dark {
-  background: #1f1f1f;
-  color: white;
-}
-
-body.dark h1 {
-  color: teal;
-  text-shadow: 0 1px 0 rgba(255,255,255,.4),0 5px 0 #005050;
-}
-
-body.dark .now {
-  border:3px solid teal;
-}
-
-body.dark .toggle-btn {
-  background: teal;
-  box-shadow: 0 1px 0 rgba(255,255,255,.4),0 5px 0 #005050;
-}
-
-body.dark .toggle-btn:active {
-  box-shadow: 0 1px 0 rgba(255,255,255,.4),0 2px 0 #005050;
-}
-
-body.dark .judul-j {
-  color: teal;
-}
-
-body.dark .card {
-  background: #2b2b2b;
-}
-
-body.dark .spesial {
-  background: #444;
-  border-top: none !important;
-}
-
-/*body.dark .active {
-  background: rgba(255,255,255,0.1);
-}*/
-
-body.dark .row+.row {
-  border-top:2px solid #444;
-}
-
-body.dark .day-item {
-  border-top:2px solid #444;
-}
-
-body.dark .day-box {
-  border: 2px solid #444;
-}
-
-body.dark .day-item.spesial + .day-item.spesial {margin-top: 4px;border-top: none;}
-body.dark .row.spesial + .row.spesial {margin-top: 5px;border-top: none;}
-body.dark .time {
-  color:#ccc;
-}
-</style>-->
-<style>
-.jadwal-swipe {
-  max-width: 720px;
-  margin: 0 auto 16px;
-  overflow: hidden;
-  position: relative;
-  border-radius: 8px;
-}
-
-.jadwal-card {
   margin: 0;
-  touch-action: pan-y;
-  will-change: transform, opacity;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
-/* animasi keluar */
-.jadwal-card.swipe-left {
-  animation: swipeLeft .25s ease forwards;
+button,
+input,
+textarea {
+  font: inherit;
 }
 
-.jadwal-card.swipe-right {
-  animation: swipeRight .25s ease forwards;
+button {
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* animasi masuk */
-.jadwal-card.from-right {
-  animation: fromRight .25s ease forwards;
+#fetch-container {
+  min-height: 100vh;
 }
 
-.jadwal-card.from-left {
-  animation: fromLeft .25s ease forwards;
+.app {
+  width: min(850px, calc(100% - 24px));
+  margin: auto;
+  padding: 20px 0 40px;
 }
 
-@keyframes swipeLeft {
-  from {
-    transform: translateX(0);
-    opacity: 1;
+/* =========================
+   HEADER
+========================= */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: var(--primary);
+  color: white;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.brand p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  color: #555b66;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  color: var(--primary);
+  border-color: #c7d2fe;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.card,
+.result-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 17px;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.section-title svg {
+  color: var(--primary);
+}
+
+.section-title h2 {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* =========================
+   FORMULA
+========================= */
+
+textarea {
+  width: 100%;
+  min-height: 110px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 12px;
+  outline: none;
+  background: #fafafa;
+  color: var(--text);
+  line-height: 1.55;
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    monospace;
+  font-size: 13px;
+}
+
+textarea:focus {
+  background: white;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, .08);
+}
+
+.formula-help {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+code {
+  background: #f1f3f5;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.examples {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.example-btn {
+  border: 1px solid var(--border);
+  background: white;
+  color: #555d6b;
+  border-radius: 8px;
+  padding: 6px 9px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.example-btn:hover {
+  color: var(--primary);
+  background: var(--primary-light);
+  border-color: #c7d2fe;
+}
+
+/* =========================
+   VARIABLES
+========================= */
+
+.variables-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 11px;
+}
+
+.variables-count {
+  color: var(--muted);
+  background: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+}
+
+.inputs {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fill, minmax(145px, 1fr));
+  gap: 8px;
+}
+
+.variable-card {
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 10px;
+  background: #fafafa;
+}
+
+.variable-card:focus-within {
+  background: white;
+  border-color: #c7d2fe;
+}
+
+.variable-card.auto-solve {
+  background: var(--warning-light);
+  border-color: #fed7aa;
+}
+
+.variable-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.variable-name {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.variable-status {
+  font-size: 9px;
+  padding: 3px 5px;
+  border-radius: 999px;
+  background: #eef0f3;
+  color: #737b88;
+}
+
+.variable-status.known {
+  color: var(--success);
+  background: var(--success-light);
+}
+
+.variable-status.solve {
+  color: var(--warning);
+  background: #ffedd5;
+}
+
+.variable-input {
+  width: 100%;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 9px;
+  outline: none;
+  background: white;
+  color: var(--text);
+}
+
+.variable-input:focus {
+  border-color: var(--primary);
+}
+
+.variable-input.solve-input {
+  background: #fffaf5;
+  border-color: #fed7aa;
+  cursor: not-allowed;
+}
+
+.solve-note {
+  margin-top: 5px;
+  color: var(--warning);
+  font-size: 9px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.btn {
+  min-height: 40px;
+  border: 0;
+  border-radius: 9px;
+  padding: 0 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.btn-primary {
+  flex: 1;
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  filter: brightness(.96);
+}
+
+.btn-secondary {
+  background: #f1f2f4;
+  color: #555d69;
+}
+
+.btn-secondary:hover {
+  background: #e7e9ed;
+}
+
+/* =========================
+   RESULT
+========================= */
+
+.result-card.success {
+  border-color: #bbf7d0;
+  background: var(--success-light);
+}
+
+.result-card.error {
+  border-color: #fecaca;
+  background: var(--danger-light);
+}
+
+.result-label {
+  color: var(--muted);
+  font-size: 10px;
+  margin-bottom: 5px;
+}
+
+.result-main {
+  font-size: 22px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.result-detail {
+  margin-top: 5px;
+  color: #68707d;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.result-actions {
+  margin-top: 9px;
+}
+
+.result-actions button {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 8px;
+  padding: 6px 9px;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 8px 0;
+  font-size: 12px;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background: rgba(15, 23, 42, .4);
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-box {
+  width: min(520px, 100%);
+  max-height: 85vh;
+  overflow: auto;
+  background: white;
+  border-radius: 15px;
+  padding: 17px;
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-head h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.modal-box p,
+.modal-box li {
+  color: #606875;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.modal-box ul {
+  padding-left: 20px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 520px) {
+  .app {
+    width: calc(100% - 16px);
+    padding-top: 10px;
   }
-  to {
-    transform: translateX(-100%);
-    opacity: 0;
+
+  .card,
+  .result-card {
+    padding: 13px;
+    border-radius: 13px;
+  }
+
+  .brand p {
+    display: none;
+  }
+
+  .inputs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@keyframes swipeRight {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-}
-
-@keyframes fromRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes fromLeft {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
+@media (max-width: 340px) {
+  .inputs {
+    grid-template-columns: 1fr;
   }
 }
 </style>
 </head>
 
-<body data-title="Jadwal">
+<body>
 
-<div id="fetch-container"></div>
+<div id="fetch-container">
 
-<!--<div class="card">
-<b>Mode Simulasi</b><br><br>
-Tanggal: <input type="date" id="fakeDate">
-Jam: <input type="time" id="fakeTime"><br><br>
-<button onclick="applyFake()">Aktifkan</button>
-<button onclick="clearFake()">Matikan</button>
-</div>-->
-<br>
-<br>
-<div class="now card" id="nowInfo"></div>
+<main class="app">
 
-<div class="jadwal-swipe" id="jadwalSwipe">
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">
+      <i data-lucide="calculator" size="19"></i>
+    </div>
 
-  <div class="jadwal-card card" id="jadwalCard">
-    <div id="weekInfo"></div>
-    <div id="dayInfo"></div>
-    <div id="jadwalMapel"></div>
-    <div id="jadwalSpesial"></div>
+    <div>
+      <h1>Kalkulator Rumus</h1>
+      <p>Hitung rumus dan persamaan dengan mudah</p>
+    </div>
+  </div>
+
+  <button
+    class="icon-btn"
+    id="infoBtn"
+    title="Informasi"
+    type="button"
+  >
+    <i data-lucide="info" size="17"></i>
+  </button>
+</header>
+
+
+<!-- =========================
+     FORMULA
+========================= -->
+
+<section class="card">
+
+  <div class="section-title">
+    <i data-lucide="sigma" size="17"></i>
+    <h2>Rumus</h2>
+  </div>
+
+  <textarea
+    id="formula"
+    spellcheck="false"
+    placeholder="Contoh:
+Luas = p * l
+
+F = m * a
+
+c = sqrt(a**2 + b**2)"
+  ></textarea>
+
+  <div class="formula-help">
+    Operator: <code>+</code> <code>-</code> <code>*</code>
+    <code>/</code> <code>//</code> <code>%</code>
+    <code>**</code>.
+    Persamaan menggunakan <code>=</code>.
+    Perkalian seperti <code>2x</code> juga didukung.
+  </div>
+
+  <div class="examples">
+
+    <button
+      class="example-btn"
+      data-formula="Luas = p * l"
+      type="button"
+    >
+      Luas
+    </button>
+
+    <button
+      class="example-btn"
+      data-formula="F = m * a"
+      type="button"
+    >
+      Gaya
+    </button>
+
+    <button
+      class="example-btn"
+      data-formula="v = s / t"
+      type="button"
+    >
+      Kecepatan
+    </button>
+
+    <button
+      class="example-btn"
+      data-formula="c = sqrt(a**2 + b**2)"
+      type="button"
+    >
+      Pythagoras
+    </button>
+
+    <button
+      class="example-btn"
+      data-formula="V = pi * r**2 * t"
+      type="button"
+    >
+      Volume
+    </button>
+
+    <button
+      class="example-btn"
+      data-formula="y = 2*x**3 - 4*x + 7"
+      type="button"
+    >
+      Kubik
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     VARIABLES
+========================= -->
+
+<section class="card">
+
+  <div class="variables-header">
+
+    <div class="section-title" style="margin:0;">
+      <i data-lucide="sliders-horizontal" size="17"></i>
+      <h2>Variabel</h2>
+    </div>
+
+    <span
+      id="variablesCount"
+      class="variables-count"
+    >
+      0 variabel
+    </span>
+
+  </div>
+
+  <div id="inputs" class="inputs">
+
+    <div class="empty">
+      Masukkan rumus terlebih dahulu.
+    </div>
+
+  </div>
+
+  <div class="actions">
+
+    <button
+      class="btn btn-primary"
+      id="calculateBtn"
+      type="button"
+    >
+      <i data-lucide="equal" size="15"></i>
+      Hitung
+    </button>
+
+    <button
+      class="btn btn-secondary"
+      id="resetBtn"
+      type="button"
+    >
+      <i data-lucide="rotate-ccw" size="15"></i>
+      Reset
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     RESULT
+========================= -->
+
+<section
+  id="result"
+  class="result-card"
+>
+
+  <div class="result-label">
+    Hasil
+  </div>
+
+  <div class="result-main">
+    —
+  </div>
+
+  <div class="result-detail">
+    Masukkan rumus dan nilai variabel.
+  </div>
+
+</section>
+
+</main>
+
+
+<!-- =========================
+     MODAL
+========================= -->
+
+<div
+  class="modal"
+  id="infoModal"
+>
+
+  <div class="modal-box">
+
+    <div class="modal-head">
+
+      <h2>Cara menggunakan</h2>
+
+      <button
+        class="icon-btn"
+        id="closeModal"
+        type="button"
+      >
+        <i data-lucide="x" size="17"></i>
+      </button>
+
+    </div>
+
+    <p>
+      Masukkan ekspresi matematika atau persamaan.
+    </p>
+
+    <ul>
+      <li><code>+</code> penjumlahan</li>
+      <li><code>-</code> pengurangan</li>
+      <li><code>*</code> perkalian</li>
+      <li><code>/</code> pembagian</li>
+      <li><code>//</code> pembagian bulat</li>
+      <li><code>%</code> modulus</li>
+      <li><code>**</code> pangkat</li>
+      <li><code>2x</code> perkalian implisit</li>
+      <li><code>sqrt(x)</code> akar</li>
+      <li><code>sin(x)</code>, <code>cos(x)</code>, <code>tan(x)</code></li>
+      <li><code>asin(x)</code>, <code>acos(x)</code>, <code>atan(x)</code></li>
+      <li><code>log(x)</code>, <code>log10(x)</code></li>
+      <li><code>abs(x)</code></li>
+      <li><code>floor(x)</code>, <code>ceil(x)</code>, <code>round(x)</code></li>
+      <li><code>min(a,b)</code>, <code>max(a,b)</code></li>
+      <li><code>pi</code> dan <code>e</code></li>
+    </ul>
+
+    <p>
+      Untuk mencari suatu variabel, gunakan persamaan
+      dan kosongkan tepat satu variabel.
+    </p>
+
   </div>
 
 </div>
-<div class="tgl-b">
-  <button class="toggle-btn" onclick="toggleFull()">Jadwal Full</button>
+
 </div>
-<div class="card full" id="jadwalGanjil"></div>
-<div class="card full" id="jadwalGenap"></div>
 
-<div id="popupContainer" style="display:none;"></div>
 
-<script src="fetch.js"></script>
 <script>
-/* =====================================================
-   UTIL
-===================================================== */
+"use strict";
 
-const hariNama = [
-  "Minggu",
-  "Senin",
-  "Selasa",
-  "Rabu",
-  "Kamis",
-  "Jumat",
-  "Sabtu"
-];
+/* =========================================================
+   TOKENIZER
+========================================================= */
 
-const toMin = t => {
-  const [a, b] = t.replace(".", ":").split(":").map(Number);
-  return a * 60 + b;
-};
+function tokenize(input) {
 
+  const tokens = [];
+  let i = 0;
 
-/* =====================================================
-   ICON
-===================================================== */
+  while (i < input.length) {
 
-const mapelIcon = {
-  "Matematika": "calculator",
-  "B.Indonesia": "notebook-pen",
-  "B.Inggris": "languages",
-  "Agama": "moon-star",
-  "Pemrograman Mobile": "monitor",
-  "Kejuruan": "server",
-  "KIK": "chart-no-axes-combined",
-  "Olahraga": "dumbbell",
-  "Sejarah": "scroll",
-  "PPKN": "landmark",
-  "B.Jawa": "feather",
-  "Koding": "code-xml",
-  "BK": "user"
-};
+    const char = input[i];
 
-const spesialIcon = {
-  "Upacara": "flag",
-  "Istirahat": "coffee",
-  "Dzuhur": "moon",
-  "Sholat Jumat": "star",
-  "Ashar": "astroid"
-};
+    /* whitespace */
+    if (/\s/.test(char)) {
+      i++;
+      continue;
+    }
 
 
-/* =====================================================
-   SIMULASI
-===================================================== */
+    /* number */
 
-function getNow() {
+    if (
+      /[0-9.]/.test(char)
+    ) {
 
-  const d = localStorage.getItem("fakeDate");
-  const t = localStorage.getItem("fakeTime");
+      const start = i;
 
-  return (d && t)
-    ? new Date(d + "T" + t)
-    : new Date();
+      let hasDigits = false;
+      let hasDot = false;
 
-}
+      while (i < input.length) {
 
-function applyFake() {
+        const c = input[i];
 
-  if (!fakeDate.value || !fakeTime.value) {
-    return alert("Isi tanggal & jam");
+        if (/[0-9]/.test(c)) {
+          hasDigits = true;
+          i++;
+          continue;
+        }
+
+        if (c === "." && !hasDot) {
+          hasDot = true;
+          i++;
+          continue;
+        }
+
+        break;
+      }
+
+      /* scientific notation */
+
+      if (
+        i < input.length &&
+        /[eE]/.test(input[i])
+      ) {
+
+        i++;
+
+        if (
+          i < input.length &&
+          /[+-]/.test(input[i])
+        ) {
+          i++;
+        }
+
+        const exponentStart = i;
+
+        while (
+          i < input.length &&
+          /[0-9]/.test(input[i])
+        ) {
+          i++;
+        }
+
+        if (exponentStart === i) {
+          throw new Error(
+            "Eksponen angka tidak valid."
+          );
+        }
+      }
+
+      const raw =
+        input.slice(start, i);
+
+      if (!hasDigits) {
+        throw new Error(
+          `Angka tidak valid: ${raw}`
+        );
+      }
+
+      const value = Number(raw);
+
+      if (!Number.isFinite(value)) {
+        throw new Error(
+          `Angka tidak valid: ${raw}`
+        );
+      }
+
+      tokens.push({
+        type: "number",
+        value
+      });
+
+      continue;
+    }
+
+
+    /* identifier */
+
+    if (
+      /[A-Za-z_]/.test(char)
+    ) {
+
+      const start = i;
+
+      i++;
+
+      while (
+        i < input.length &&
+        /[A-Za-z0-9_]/.test(input[i])
+      ) {
+        i++;
+      }
+
+      tokens.push({
+        type: "identifier",
+        value: input.slice(start, i)
+      });
+
+      continue;
+    }
+
+
+    /* operators */
+
+    if (
+      input.slice(i, i + 2) === "**"
+    ) {
+
+      tokens.push({
+        type: "operator",
+        value: "**"
+      });
+
+      i += 2;
+      continue;
+    }
+
+
+    if (
+      input.slice(i, i + 2) === "//"
+    ) {
+
+      tokens.push({
+        type: "operator",
+        value: "//"
+      });
+
+      i += 2;
+      continue;
+    }
+
+
+    if (
+      "+-*/%".includes(char)
+    ) {
+
+      tokens.push({
+        type: "operator",
+        value: char
+      });
+
+      i++;
+      continue;
+    }
+
+
+    /* EQUALITY */
+
+    if (char === "=") {
+
+      tokens.push({
+        type: "equals",
+        value: "="
+      });
+
+      i++;
+      continue;
+    }
+
+
+    /* comma */
+
+    if (char === ",") {
+
+      tokens.push({
+        type: "comma",
+        value: ","
+      });
+
+      i++;
+      continue;
+    }
+
+
+    /* parentheses */
+
+    if (
+      char === "(" ||
+      char === ")"
+    ) {
+
+      tokens.push({
+        type: "paren",
+        value: char
+      });
+
+      i++;
+      continue;
+    }
+
+
+    throw new Error(
+      `Karakter tidak dikenali: "${char}"`
+    );
   }
 
-  localStorage.setItem("fakeDate", fakeDate.value);
-  localStorage.setItem("fakeTime", fakeTime.value);
 
-  location.reload();
-}
+  tokens.push({
+    type: "eof",
+    value: null
+  });
 
-function clearFake() {
-
-  localStorage.clear();
-
-  location.reload();
-
+  return tokens;
 }
 
 
-/* =====================================================
-   JADWAL
-===================================================== */
+/* =========================================================
+   PARSER
+========================================================= */
 
-const jadwalA={
-1:[{jam:"07.45-10.05",mapel:"Pemrograman Mobile"},{jam:"10.30-15.15",mapel:"Kejuruan"}],
-2:[{jam:"07.00-09.55",mapel:"Koding"},{jam:"10.15-11.25",mapel:"BK"},{jam:"11.25-15.15",mapel:"Kejuruan"}],
-3:[{jam:"07.00-12.00",mapel:"Kejuruan"},{jam:"13.00-15.15",mapel:"Pemrograman Mobile"}],
-4:[{jam:"07.00-14.30",mapel:"Kejuruan"},{jam:"14.30-15.15",mapel:"BK"}],
-5:[{jam:"07.15-14.05",mapel:"Kejuruan"}]
-};
+class Parser {
 
-const jadwalB={
-1:[{jam:"07.45-10.05",mapel:"B.Inggris"},{jam:"10.30-11.30",mapel:"Olahraga"},{jam:"11.30-14.05",mapel:"Matematika"},{jam:"14.05-15.15",mapel:"B.Indonesia"}],
-2:[{jam:"07.00-09.15",mapel:"Agama"},{jam:"09.15-10.50",mapel:"Sejarah"},{jam:"10.50-14.05",mapel:"B.Indonesia"},{jam:"14.05-15.15",mapel:"PPKN"}],
-3:[{jam:"07.00-08.35",mapel:"PPKN"},{jam:"08.35-09.55",mapel:"B.Jawa"},{jam:"10.15-12.00",mapel:"Matematika"},{jam:"13.00-15.15",mapel:"B.Inggris"}],
-4:[{jam:"07.00-08.35",mapel:"Olahraga"},{jam:"08.35-12.00",mapel:"KIK"},{jam:"13.00-14.30",mapel:"Sejarah"},{jam:"14.30-15.15",mapel:"B.Jawa"}],
-5:[{jam:"07.15-09.15",mapel:"Agama"},{jam:"09.15-14.05",mapel:"KIK"}]
-};
+  constructor(
+    tokens,
+    variables = {}
+  ) {
 
-const spesial={
-1:[{jam:"07.00-07.45",nama:"Upacara"},{jam:"10.05-10.30",nama:"Istirahat"},{jam:"12.00-12.55",nama:"Dzuhur"},{jam:"15.15-15.30",nama:"Ashar"}],
-2:[{jam:"09.55-10.15",nama:"Istirahat"},{jam:"12.00-12.55",nama:"Dzuhur"},{jam:"15.15-15.30",nama:"Ashar"}],
-3:[{jam:"09.55-10.15",nama:"Istirahat"},{jam:"12.00-13.00",nama:"Dzuhur"},{jam:"15.15-15.30",nama:"Ashar"}],
-4:[{jam:"09.55-10.15",nama:"Istirahat"},{jam:"12.00-13.00",nama:"Dzuhur"},{jam:"15.15-15.30",nama:"Ashar"}],
-5:[{jam:"09.55-10.10",nama:"Istirahat"},{jam:"11.30-12.45",nama:"Sholat Jumat"}]
-};
-
-
-/* =====================================================
-   WAKTU SEKARANG
-===================================================== */
-
-const now = getNow();
-
-const jamNow =
-  now.getHours() * 60 +
-  now.getMinutes();
-
-const hariAsli = now.getDay();
-
-
-/* =====================================================
-   TENTUKAN JADWAL AKTIF
-===================================================== */
-
-const startA = new Date("2026-08-08");
-
-const tglAcuan = new Date(now);
-
-tglAcuan.setHours(0, 0, 0, 0);
-
-const isA =
-  Math.floor(
-    (tglAcuan - startA) /
-    (1000 * 60 * 60 * 24 * 7)
-  ) % 2 === 0;
-
-
-/* =====================================================
-   SWIPE
-===================================================== */
-
-/*
-  0  = hari ini
-  1  = besok
-  2  = lusa
- -1  = kemarin
-*/
-
-let swipeOffset = 0;
-
-let touchStartX = 0;
-let touchStartY = 0;
-
-let sedangSwipe = false;
-
-
-/* =====================================================
-   RENDER JADWAL
-===================================================== */
-
-function renderJadwal(offset) {
-
-  const tgl = new Date(now);
-
-  tgl.setHours(0, 0, 0, 0);
-
-  tgl.setDate(
-    tgl.getDate() + offset
-  );
-
-  const hari = tgl.getDay();
-
-
-  /* =========================
-     JADWAL GANJIL / GENAP
-  ========================= */
-
-  const mingguA =
-    Math.floor(
-      (tgl - startA) /
-      (1000 * 60 * 60 * 24 * 7)
-    ) % 2 === 0;
-
-  const aktif =
-    mingguA
-      ? jadwalA
-      : jadwalB;
-
-
-  /* =========================
-     JUDUL
-  ========================= */
-
-  weekInfo.innerHTML =
-    `<b>${mingguA ? "Jadwal Ganjil" : "Jadwal Genap"}` +
-    `</b>`;
-
-
-  if (offset === 0) {
-
-    dayInfo.innerHTML =
-      `<b class="sub2">${hariNama[hari]}</b>`;
-
-  } else if (offset === 1) {
-
-    dayInfo.innerHTML =
-      `<div class="sub">Besok (${hariNama[hari]})</div>`;
-
-  } else if (offset === -1) {
-
-    dayInfo.innerHTML =
-      `<div class="sub">Kemarin (${hariNama[hari]})</div>`;
-
-  } else {
-
-    dayInfo.innerHTML =
-      `<div class="sub">${hariNama[hari]}</div>`;
-
+    this.tokens = tokens;
+    this.index = 0;
+    this.variables = variables;
   }
 
 
-  /* =========================
-     KOSONGKAN
-  ========================= */
-
-  jadwalMapel.innerHTML = "";
-  jadwalSpesial.innerHTML = "";
+  current() {
+    return this.tokens[this.index];
+  }
 
 
-  /* =========================
-     SABTU / MINGGU
-  ========================= */
+  eat(value = null) {
 
-  if (hari === 0 || hari === 6) {
+    const token =
+      this.current();
 
-    jadwalMapel.innerHTML =
-      `<div class="libur">Libur</div>`;
+    if (
+      value !== null &&
+      token.value !== value
+    ) {
 
-  } else {
+      throw new Error(
+        `Diharapkan "${value}".`
+      );
+    }
+
+    this.index++;
+
+    return token;
+  }
 
 
-    /* =========================
-       MAPEL
-    ========================= */
+  parse() {
 
-    (aktif[hari] || []).forEach(j => {
+    const value =
+      this.expression();
 
-      const [a, b] =
-        j.jam.split("-");
+    if (
+      this.current().type !== "eof"
+    ) {
+
+      throw new Error(
+        `Sintaks tidak valid di "${this.current().value}".`
+      );
+    }
+
+    return value;
+  }
+
+
+  expression() {
+
+    let value =
+      this.term();
+
+    while (
+      this.current().value === "+" ||
+      this.current().value === "-"
+    ) {
+
+      const op =
+        this.eat().value;
+
+      const right =
+        this.term();
+
+      if (op === "+") {
+        value += right;
+      } else {
+        value -= right;
+      }
+    }
+
+    return value;
+  }
+
+
+  term() {
+
+    let value =
+      this.power();
+
+    while (true) {
+
+      const token =
+        this.current();
+
+      /* normal multiplication */
+
+      if (
+        ["*", "/", "//", "%"]
+          .includes(token.value)
+      ) {
+
+        const op =
+          this.eat().value;
+
+        const right =
+          this.power();
+
+        if (op === "*") {
+
+          value *= right;
+
+        } else if (op === "/") {
+
+          if (right === 0) {
+            throw new Error(
+              "Tidak bisa membagi dengan nol."
+            );
+          }
+
+          value /= right;
+
+        } else if (op === "//") {
+
+          if (right === 0) {
+            throw new Error(
+              "Tidak bisa membagi dengan nol."
+            );
+          }
+
+          value =
+            Math.floor(value / right);
+
+        } else {
+
+          if (right === 0) {
+            throw new Error(
+              "Modulus dengan nol tidak diperbolehkan."
+            );
+          }
+
+          value %= right;
+        }
+
+        continue;
+      }
 
 
       /*
-       * ACTIVE hanya untuk
-       * hari yang sebenarnya.
-       */
+        PERKALIAN IMPLISIT
 
-      const on =
-        offset === 0 &&
-        hari === hariAsli &&
-        jamNow >= toMin(a) &&
-        jamNow < toMin(b);
+        2x
+        2(x+1)
+        (a+b)(c+d)
+        x sqrt(y)
+      */
 
+      if (
+        token.type === "number" ||
+        token.type === "identifier" ||
+        token.value === "("
+      ) {
 
-      jadwalMapel.innerHTML += `
+        const right =
+          this.power();
 
-        <div class="row ${on ? "active" : ""}">
+        value *= right;
 
-          <div class="item">
+        continue;
+      }
 
-            <div class="left">
+      break;
+    }
 
-              <i
-                data-lucide="${
-                  mapelIcon[j.mapel] || "book"
-                }">
-              </i>
-
-              <span class="mapel">
-                ${j.mapel}
-              </span>
-
-            </div>
-
-            <span class="time">
-              ${j.jam}
-            </span>
-
-          </div>
-
-        </div>
-
-      `;
-
-    });
-
-
-    /* =========================
-       JADWAL SPESIAL
-    ========================= */
-
-    (spesial[hari] || []).forEach(j => {
-
-      const [a, b] =
-        j.jam.split("-");
-
-
-      const on =
-        offset === 0 &&
-        hari === hariAsli &&
-        jamNow >= toMin(a) &&
-        jamNow < toMin(b);
-
-
-      jadwalSpesial.innerHTML += `
-
-        <div class="row spesial ${on ? "active" : ""}">
-
-          <div class="item">
-
-            <div class="left">
-
-              ${
-                spesialIcon[j.nama]
-                  ? `
-                    <i
-                      data-lucide="${
-                        spesialIcon[j.nama]
-                      }">
-                    </i>
-                  `
-                  : ""
-              }
-
-              <span class="mapel">
-                ${j.nama}
-              </span>
-
-            </div>
-
-            <span class="time">
-              ${j.jam}
-            </span>
-
-          </div>
-
-        </div>
-
-      `;
-
-    });
-
+    return value;
   }
 
 
-  /* =================================================
-     NOW
-  ================================================= */
-
   /*
-   * NOW hanya dihitung
-   * untuk hari ini.
-   */
+    Pangkat dibuat right-associative:
 
-  if (offset === 0) {
+    2**3**2
+    = 2**(3**2)
 
-    let nowText = null;
-    let nowJam = null;
-    let nowIcon = "clock";
+    Unary diproses setelah pangkat agar:
+
+    -2**2
+    = -(2**2)
+    = -4
+  */
+
+  power() {
+
+    let value;
+
+    if (
+      this.current().value === "+" ||
+      this.current().value === "-"
+    ) {
+
+      const sign =
+        this.eat().value;
+
+      value =
+        this.power();
+
+      return sign === "-"
+        ? -value
+        : value;
+    }
+
+    value =
+      this.primary();
+
+    if (
+      this.current().value === "**"
+    ) {
+
+      this.eat("**");
+
+      const exponent =
+        this.power();
+
+      value =
+        Math.pow(value, exponent);
+    }
+
+    return value;
+  }
 
 
-    /* =========================
-       MAPEL AKTIF
-    ========================= */
+  primary() {
 
-    (aktif[hariAsli] || []).forEach(j => {
+    const token =
+      this.current();
 
-      const [a, b] =
-        j.jam.split("-");
 
+    /* number */
+
+    if (
+      token.type === "number"
+    ) {
+
+      this.eat();
+
+      return token.value;
+    }
+
+
+    /* identifier */
+
+    if (
+      token.type === "identifier"
+    ) {
+
+      const name =
+        this.eat().value;
+
+
+      /* function */
 
       if (
-        jamNow >= toMin(a) &&
-        jamNow < toMin(b)
+        this.current().value === "("
       ) {
 
-        nowText = j.mapel;
-        nowJam = j.jam;
-
-        nowIcon =
-          mapelIcon[j.mapel] ||
-          "book";
-
+        return this.parseFunction(name);
       }
 
-    });
 
-
-    /* =========================
-       SPESIAL AKTIF
-    ========================= */
-
-    (spesial[hariAsli] || []).forEach(j => {
-
-      const [a, b] =
-        j.jam.split("-");
-
+      /* constants */
 
       if (
-        jamNow >= toMin(a) &&
-        jamNow < toMin(b)
+        name.toLowerCase() === "pi"
       ) {
-
-        nowText = j.nama;
-        nowJam = j.jam;
-
-        nowIcon =
-          spesialIcon[j.nama] ||
-          "clock";
-
+        return Math.PI;
       }
 
-    });
+      if (
+        name.toLowerCase() === "e"
+      ) {
+        return Math.E;
+      }
 
 
-    /* =========================
-       RENDER NOW
-    ========================= */
+      /* variable */
 
-    nowInfo.innerHTML = nowText
+      if (
+        !(name in this.variables)
+      ) {
 
-      ? `
+        throw new Error(
+          `Variabel "${name}" belum memiliki nilai.`
+        );
+      }
 
-        <div class="now-content">
+      const value =
+        Number(this.variables[name]);
 
-          <div class="now-left">
+      if (
+        !Number.isFinite(value)
+      ) {
 
-            <i
-              data-lucide="${nowIcon}">
-            </i>
+        throw new Error(
+          `Nilai variabel "${name}" tidak valid.`
+        );
+      }
 
-            <span>
-              ${nowText}
-            </span>
+      return value;
+    }
 
-          </div>
 
-          <span class="now-time">
-            ${nowJam}
+    /* parentheses */
+
+    if (
+      token.value === "("
+    ) {
+
+      this.eat("(");
+
+      const value =
+        this.expression();
+
+      this.eat(")");
+
+      return value;
+    }
+
+
+    throw new Error(
+      `Ekspresi tidak valid di "${token.value}".`
+    );
+  }
+
+
+  parseFunction(name) {
+
+    this.eat("(");
+
+    const args = [];
+
+    if (
+      this.current().value !== ")"
+    ) {
+
+      args.push(
+        this.expression()
+      );
+
+      while (
+        this.current().value === ","
+      ) {
+
+        this.eat(",");
+
+        args.push(
+          this.expression()
+        );
+      }
+    }
+
+    this.eat(")");
+
+    return callFunction(name, args);
+  }
+}
+
+
+/* =========================================================
+   FUNCTIONS
+========================================================= */
+
+function callFunction(
+  name,
+  args
+) {
+
+  const fn =
+    name.toLowerCase();
+
+
+  const oneArg = () => {
+
+    if (args.length !== 1) {
+
+      throw new Error(
+        `${name}() membutuhkan 1 argumen.`
+      );
+    }
+
+    return args[0];
+  };
+
+
+  switch (fn) {
+
+    case "sqrt": {
+
+      const x = oneArg();
+
+      if (x < 0) {
+        throw new Error(
+          "sqrt() tidak menerima bilangan negatif."
+        );
+      }
+
+      return Math.sqrt(x);
+    }
+
+
+    case "abs":
+      return Math.abs(oneArg());
+
+
+    case "sin":
+      return Math.sin(oneArg());
+
+
+    case "cos":
+      return Math.cos(oneArg());
+
+
+    case "tan":
+      return Math.tan(oneArg());
+
+
+    case "asin":
+      return Math.asin(oneArg());
+
+
+    case "acos":
+      return Math.acos(oneArg());
+
+
+    case "atan":
+      return Math.atan(oneArg());
+
+
+    case "log": {
+
+      const x = oneArg();
+
+      if (x <= 0) {
+        throw new Error(
+          "log() membutuhkan nilai > 0."
+        );
+      }
+
+      return Math.log(x);
+    }
+
+
+    case "log10": {
+
+      const x = oneArg();
+
+      if (x <= 0) {
+        throw new Error(
+          "log10() membutuhkan nilai > 0."
+        );
+      }
+
+      return Math.log10(x);
+    }
+
+
+    case "exp":
+      return Math.exp(oneArg());
+
+
+    case "floor":
+      return Math.floor(oneArg());
+
+
+    case "ceil":
+      return Math.ceil(oneArg());
+
+
+    case "round":
+      return Math.round(oneArg());
+
+
+    case "min":
+
+      if (args.length < 1) {
+        throw new Error(
+          "min() membutuhkan argumen."
+        );
+      }
+
+      return Math.min(...args);
+
+
+    case "max":
+
+      if (args.length < 1) {
+        throw new Error(
+          "max() membutuhkan argumen."
+        );
+      }
+
+      return Math.max(...args);
+
+
+    default:
+
+      throw new Error(
+        `Fungsi "${name}()" belum didukung.`
+      );
+  }
+}
+
+
+/* =========================================================
+   EQUATION
+========================================================= */
+
+function splitEquation(formula) {
+
+  const matches =
+    formula.match(/=/g) || [];
+
+  if (matches.length === 0) {
+    return null;
+  }
+
+  if (matches.length !== 1) {
+
+    throw new Error(
+      "Persamaan hanya boleh memiliki satu tanda '='."
+    );
+  }
+
+  const index =
+    formula.indexOf("=");
+
+  const left =
+    formula.slice(0, index).trim();
+
+  const right =
+    formula.slice(index + 1).trim();
+
+  if (!left || !right) {
+
+    throw new Error(
+      "Bagian kiri dan kanan persamaan tidak boleh kosong."
+    );
+  }
+
+  return {
+    left,
+    right
+  };
+}
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+const RESERVED =
+  new Set([
+    "sqrt",
+    "abs",
+    "sin",
+    "cos",
+    "tan",
+    "asin",
+    "acos",
+    "atan",
+    "log",
+    "log10",
+    "exp",
+    "floor",
+    "ceil",
+    "round",
+    "min",
+    "max",
+    "pi",
+    "e"
+  ]);
+
+
+function extractVariables(text) {
+
+  const tokens =
+    tokenize(text);
+
+  const vars =
+    new Set();
+
+  for (const token of tokens) {
+
+    if (
+      token.type === "identifier" &&
+      !RESERVED.has(
+        token.value.toLowerCase()
+      )
+    ) {
+
+      vars.add(token.value);
+    }
+  }
+
+  return [...vars];
+}
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let currentVariables = [];
+let currentEquation = null;
+
+
+/* =========================================================
+   GENERATE INPUTS
+========================================================= */
+
+function generateInputs() {
+
+  const formula =
+    document
+      .getElementById("formula")
+      .value
+      .trim();
+
+  const container =
+    document.getElementById("inputs");
+
+  const count =
+    document.getElementById(
+      "variablesCount"
+    );
+
+
+  if (!formula) {
+
+    currentVariables = [];
+    currentEquation = null;
+
+    container.innerHTML = `
+      <div class="empty">
+        Masukkan rumus terlebih dahulu.
+      </div>
+    `;
+
+    count.textContent =
+      "0 variabel";
+
+    return;
+  }
+
+
+  try {
+
+    const equation =
+      splitEquation(formula);
+
+    /*
+      Validasi kedua sisi secara terpisah.
+
+      Ini penting:
+      tokenizer sekarang memang mengenali "=",
+      tetapi kita tidak pernah mencoba
+      mengevaluasi "=" sebagai ekspresi.
+    */
+
+    if (equation) {
+
+      tokenize(equation.left);
+      tokenize(equation.right);
+
+    } else {
+
+      tokenize(formula);
+    }
+
+
+    currentEquation =
+      equation;
+
+
+    const variables =
+      extractVariables(formula);
+
+    currentVariables =
+      variables;
+
+
+    count.textContent =
+      `${variables.length} variabel`;
+
+
+    if (variables.length === 0) {
+
+      container.innerHTML = `
+        <div class="empty">
+          Tidak ada variabel yang ditemukan.
+        </div>
+      `;
+
+      return;
+    }
+
+
+    /*
+      Simpan nilai input sebelumnya.
+    */
+
+    const oldValues = {};
+
+    container
+      .querySelectorAll(".variable-input")
+      .forEach(input => {
+
+        oldValues[
+          input.dataset.variable
+        ] = input.value;
+      });
+
+
+    container.innerHTML = "";
+
+
+    variables.forEach(variable => {
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "variable-card";
+
+
+      card.innerHTML = `
+        <div class="variable-top">
+
+          <span class="variable-name">
+            ${escapeHTML(variable)}
+          </span>
+
+          <span
+            class="variable-status"
+            data-status="${escapeHTML(variable)}"
+          >
+            Kosong
           </span>
 
         </div>
 
-      `
+        <input
+          class="variable-input"
+          type="number"
+          step="any"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="Nilai"
+          data-variable="${escapeHTML(variable)}"
+        >
 
-      : `
-
-        <i data-lucide="alarm-clock-off"></i>
-
-        Tidak ada jadwal
-
+        <div
+          class="solve-note"
+          style="display:none"
+        >
+          Nilai dicari otomatis.
+        </div>
       `;
 
+
+      const input =
+        card.querySelector(
+          ".variable-input"
+        );
+
+
+      if (
+        oldValues[variable] !== undefined
+      ) {
+
+        input.value =
+          oldValues[variable];
+      }
+
+
+      input.addEventListener(
+        "input",
+        applyAutoSolveState
+      );
+
+
+      container.appendChild(card);
+    });
+
+
+    applyAutoSolveState();
+
+  } catch (error) {
+
+    currentVariables = [];
+    currentEquation = null;
+
+    count.textContent =
+      "Error";
+
+    container.innerHTML = `
+      <div
+        class="empty"
+        style="color:#dc2626"
+      >
+        ${escapeHTML(error.message)}
+      </div>
+    `;
   }
-
-
-  /* =========================
-     ICON
-  ========================= */
-
-  lucide.createIcons();
-
 }
 
 
-/* =====================================================
-   FUNGSI SWIPE
-===================================================== */
+/* =========================================================
+   AUTO SOLVE STATE
+========================================================= */
 
-function geserJadwal(arah) {
+function applyAutoSolveState() {
+
+  const inputs =
+    [
+      ...document.querySelectorAll(
+        ".variable-input"
+      )
+    ];
+
+
+  const formula =
+    document
+      .getElementById("formula")
+      .value
+      .trim();
+
+
+  let equation = null;
+
+  try {
+    equation =
+      splitEquation(formula);
+  } catch {
+    equation = null;
+  }
+
 
   /*
-   * Jangan jalankan animasi
-   * kalau masih sedang bergerak.
-   */
+    Reset.
+  */
 
-  if (sedangSwipe) return;
+  inputs.forEach(input => {
 
-  sedangSwipe = true;
+    input.readOnly = false;
 
-
-  /* =========================
-     SWIPE KIRI
-     Hari berikutnya
-  ========================= */
-
-  if (arah === 1) {
-
-    jadwalCard.classList.remove(
-      "from-left",
-      "from-right"
+    input.classList.remove(
+      "solve-input"
     );
 
-    jadwalCard.classList.add(
-      "swipe-left"
+    const card =
+      input.closest(
+        ".variable-card"
+      );
+
+    card.classList.remove(
+      "auto-solve"
+    );
+
+    const note =
+      card.querySelector(
+        ".solve-note"
+      );
+
+    note.style.display =
+      "none";
+  });
+
+
+  if (!equation) {
+
+    updateInputStatus();
+
+    return;
+  }
+
+
+  const emptyInputs =
+    inputs.filter(
+      input =>
+        input.value.trim() === ""
     );
 
 
-    setTimeout(() => {
+  /*
+    Tepat satu kosong:
+    jadikan target.
+  */
 
-      swipeOffset++;
+  if (
+    emptyInputs.length === 1
+  ) {
+
+    const target =
+      emptyInputs[0];
+
+    target.readOnly = true;
+
+    target.classList.add(
+      "solve-input"
+    );
 
 
-      jadwalCard.classList.remove(
-        "swipe-left"
+    const card =
+      target.closest(
+        ".variable-card"
       );
 
+    card.classList.add(
+      "auto-solve"
+    );
 
-      renderJadwal(
-        swipeOffset
+
+    const note =
+      card.querySelector(
+        ".solve-note"
       );
 
+    note.style.display =
+      "block";
+  }
 
-      jadwalCard.classList.add(
-        "from-right"
-      );
+
+  updateInputStatus();
+}
 
 
-      setTimeout(() => {
+/* =========================================================
+   STATUS INPUT
+========================================================= */
 
-        jadwalCard.classList.remove(
-          "from-right"
+function updateInputStatus() {
+
+  document
+    .querySelectorAll(
+      ".variable-input"
+    )
+    .forEach(input => {
+
+      const variable =
+        input.dataset.variable;
+
+      const status =
+        [...document.querySelectorAll(
+          ".variable-status"
+        )]
+        .find(
+          el =>
+            el.dataset.status === variable
         );
 
-        sedangSwipe = false;
 
-      }, 250);
-
-    }, 250);
-
-  }
+      if (!status) {
+        return;
+      }
 
 
-  /* =========================
-     SWIPE KANAN
-     Hari sebelumnya
-  ========================= */
+      if (input.readOnly) {
 
-  else if (arah === -1) {
+        status.textContent =
+          "Dicari";
 
-    jadwalCard.classList.remove(
-      "from-left",
-      "from-right"
-    );
+        status.className =
+          "variable-status solve";
 
-    jadwalCard.classList.add(
-      "swipe-right"
-    );
+      } else if (
+        input.value.trim() !== ""
+      ) {
 
+        status.textContent =
+          "Diketahui";
 
-    setTimeout(() => {
+        status.className =
+          "variable-status known";
 
-      swipeOffset--;
+      } else {
 
+        status.textContent =
+          "Kosong";
 
-      jadwalCard.classList.remove(
-        "swipe-right"
-      );
-
-
-      renderJadwal(
-        swipeOffset
-      );
+        status.className =
+          "variable-status";
+      }
+    });
+}
 
 
-      jadwalCard.classList.add(
-        "from-left"
-      );
+/* =========================================================
+   GET VALUES
+========================================================= */
+
+function getValues() {
+
+  const values = {};
+
+  document
+    .querySelectorAll(
+      ".variable-input"
+    )
+    .forEach(input => {
+
+      const raw =
+        input.value.trim();
 
 
-      setTimeout(() => {
+      if (raw === "") {
+        return;
+      }
 
-        jadwalCard.classList.remove(
-          "from-left"
+
+      const value =
+        Number(raw);
+
+
+      if (
+        !Number.isFinite(value)
+      ) {
+
+        throw new Error(
+          `Nilai "${input.dataset.variable}" tidak valid.`
         );
+      }
 
-        sedangSwipe = false;
 
-      }, 250);
+      values[
+        input.dataset.variable
+      ] = value;
+    });
 
-    }, 250);
 
-  }
-
+  return values;
 }
 
 
-/* =====================================================
-   TOUCH START
-===================================================== */
+/* =========================================================
+   EVALUATE
+========================================================= */
 
-jadwalSwipe.addEventListener(
-  "touchstart",
-  e => {
+function evaluateExpression(
+  expression,
+  values
+) {
 
-    touchStartX =
-      e.changedTouches[0].screenX;
+  /*
+    Jangan izinkan "=" berada di
+    dalam ekspresi biasa.
+  */
 
-    touchStartY =
-      e.changedTouches[0].screenY;
+  if (expression.includes("=")) {
 
-  },
-  {
-    passive: true
+    throw new Error(
+      "Tanda '=' hanya boleh digunakan sebagai pemisah persamaan."
+    );
   }
-);
 
 
-/* =====================================================
-   TOUCH END
-===================================================== */
+  const tokens =
+    tokenize(expression);
 
-jadwalSwipe.addEventListener(
-  "touchend",
-  e => {
 
-    const touchEndX =
-      e.changedTouches[0].screenX;
-
-    const touchEndY =
-      e.changedTouches[0].screenY;
-
-
-    const deltaX =
-      touchEndX - touchStartX;
-
-    const deltaY =
-      touchEndY - touchStartY;
-
-
-    /*
-     * Kalau gerak vertikal lebih besar,
-     * jangan dianggap swipe jadwal.
-     */
-
-    if (
-      Math.abs(deltaY) >
-      Math.abs(deltaX)
-    ) {
-      return;
-    }
-
-
-    /*
-     * Minimal jarak swipe
-     */
-
-    if (
-      Math.abs(deltaX) < 60
-    ) {
-      return;
-    }
-
-
-    if (deltaX < 0) {
-
-      // kiri
-      geserJadwal(1);
-
-    } else {
-
-      // kanan
-      geserJadwal(-1);
-
-    }
-
-  },
-  {
-    passive: true
-  }
-);
-
-
-/* =====================================================
-   FULL JADWAL
-===================================================== */
-
-function toggleFull() {
-
-  const show =
-    jadwalGanjil.style.display !== "block";
-
-
-  jadwalGanjil.style.display =
-    show ? "block" : "none";
-
-  jadwalGenap.style.display =
-    show ? "block" : "none";
-
-}
-
-
-/* =====================================================
-   RENDER FULL
-===================================================== */
-
-function renderFull(title, data) {
-
-  return `
-
-    <div class="day-box">
-
-      <span
-        class="judul-j switchable"
-        onclick="swapJadwal()">
-
-        ${title}
-
-      </span>
-
-    </div>
-
-  ` +
-
-  Object.entries(data).map(
-    ([d, v]) => `
-
-      <div class="day-box">
-
-        <span class="judul-h">
-          ${hariNama[d]}
-        </span>
-
-
-        ${v.map(m => `
-
-          <div class="day-item">
-
-            <span>
-
-              <i
-                class="icf"
-                data-lucide="${
-                  mapelIcon[m.mapel] || "book"
-                }">
-              </i>
-
-              <span class="mapel">
-                ${m.mapel}
-              </span>
-
-            </span>
-
-            <span class="time">
-              ${m.jam}
-            </span>
-
-          </div>
-
-        `).join("")}
-
-
-        ${(spesial[d] || []).map(s => `
-
-          <!--
-
-          <div class="day-item spesial">
-
-            <span>
-              <span class="mapel">
-                ${s.nama}
-              </span>
-            </span>
-
-            <span class="time">
-              ${s.jam}
-            </span>
-
-          </div>
-
-          -->
-
-        `).join("")}
-
-      </div>
-
-    `
-  ).join("");
-
-}
-
-
-/* =====================================================
-   AUTO URUT GANJIL / GENAP
-===================================================== */
-
-function urutkanJadwal() {
-
-  const parent =
-    jadwalGanjil.parentNode;
-
-
-  if (isA) {
-
-    parent.insertBefore(
-      jadwalGanjil,
-      jadwalGenap
+  const parser =
+    new Parser(
+      tokens,
+      values
     );
 
-  } else {
 
-    parent.insertBefore(
-      jadwalGenap,
-      jadwalGanjil
-    );
-
-  }
-
-}
-
-
-/* =====================================================
-   SWITCH MANUAL
-===================================================== */
-
-function swapJadwal() {
-
-  const parent =
-    jadwalGanjil.parentNode;
+  const result =
+    parser.parse();
 
 
   if (
-    jadwalGanjil.nextElementSibling ===
-    jadwalGenap
+    !Number.isFinite(result)
   ) {
 
-    parent.insertBefore(
-      jadwalGenap,
-      jadwalGanjil
+    throw new Error(
+      "Hasil perhitungan tidak valid."
     );
-
-  } else {
-
-    parent.insertBefore(
-      jadwalGanjil,
-      jadwalGenap
-    );
-
   }
 
+
+  return result;
 }
 
 
-/* =====================================================
-   TANDAI AKTIF
-===================================================== */
+/* =========================================================
+   EQUATION VALUE
+========================================================= */
 
-function tandaiAktif() {
+function equationValue(
+  equation,
+  values
+) {
 
-  if (isA) {
+  const left =
+    evaluateExpression(
+      equation.left,
+      values
+    );
 
-    const el =
-      jadwalGanjil.querySelector(
-        ".judul-j"
-      );
+  const right =
+    evaluateExpression(
+      equation.right,
+      values
+    );
 
-    if (el) {
 
-      if (
-        !el.innerHTML.includes("(Aktif)")
-      ) {
+  const result =
+    left - right;
 
-        el.innerHTML +=
-          " (Aktif)";
 
-      }
+  if (!Number.isFinite(result)) {
+    return null;
+  }
 
+
+  return result;
+}
+
+
+/* =========================================================
+   ROOT SOLVER
+========================================================= */
+
+function solveUnknown(
+  equation,
+  variable,
+  values
+) {
+
+  function f(x) {
+
+    if (
+      !Number.isFinite(x)
+    ) {
+      return null;
     }
 
+    try {
+
+      return equationValue(
+        equation,
+        {
+          ...values,
+          [variable]: x
+        }
+      );
+
+    } catch {
+
+      return null;
+    }
   }
 
-}
 
+  /*
+    Cek apakah x sudah merupakan akar.
+  */
 
-/* =====================================================
-   RENDER FULL
-===================================================== */
+  function isRoot(x) {
 
-jadwalGanjil.innerHTML =
-  renderFull(
-    "Jadwal Ganjil",
-    jadwalA
-  );
+    const y = f(x);
 
-
-jadwalGenap.innerHTML =
-  renderFull(
-    "Jadwal Genap",
-    jadwalB
-  );
-
-
-/* =====================================================
-   URUTKAN
-===================================================== */
-
-urutkanJadwal();
-
-
-/* =====================================================
-   TANDAI AKTIF
-===================================================== */
-
-tandaiAktif();
-
-
-/* =====================================================
-   RENDER JADWAL PERTAMA
-===================================================== */
-
-renderJadwal(0);
-
-
-/* =====================================================
-   ICON
-===================================================== */
-
-lucide.createIcons();
-</script>
-<!--<script>
-function setThemeByTime(){
-  const hour = new Date().getHours();
-  const themeMeta = document.getElementById("themeColor");
-
-  if(hour >= 6 && hour < 18){
-    // LIGHT MODE
-    document.body.classList.remove("dark");
-    themeMeta.setAttribute("content", "mediumseagreen"); // pastel light
-  }else{
-    // DARK MODE
-    document.body.classList.add("dark");
-    themeMeta.setAttribute("content", "teal"); // teal gelap
+    return (
+      y !== null &&
+      Math.abs(y) < 1e-8
+    );
   }
-}
-
-// jalankan saat load
-setThemeByTime();
-
-// update tiap 1 menit (biar pas jam 18.00 langsung ganti)
-setInterval(setThemeByTime, 60000);
-</script>-->
-<script type="module">
-
-/* =========================
-   IMPORT FIREBASE
-========================= */
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
-import {
-  getFirestore,
-  collection,
-  onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 
-/* =========================
-   KONFIGURASI FIREBASE
-========================= */
+  /*
+    1. Newton-Raphson
+  */
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD96vxdp5ICw7sL02z9JqgQfDjH4EmMNOU",
-  authDomain: "tugas-3b74e.firebaseapp.com",
-  projectId: "tugas-3b74e",
-  storageBucket: "tugas-3b74e.firebasestorage.app",
-  messagingSenderId: "888860423672",
-  appId: "1:888860423672:web:87e3db56511a082222520d"
-};
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-
-
-/* =========================
-   FORMAT TANGGAL
-========================= */
-
-function formatTanggalLengkap(tanggalString){
-
-  const hariNama = [
-    "Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"
+  const starts = [
+    0,
+    1,
+    -1,
+    2,
+    -2,
+    5,
+    -5,
+    10,
+    -10,
+    20,
+    -20,
+    50,
+    -50,
+    100,
+    -100,
+    0.1,
+    -0.1,
+    0.5,
+    -0.5
   ];
 
-  const t = new Date(tanggalString);
 
-  const hari = hariNama[t.getDay()];
+  for (
+    const start of starts
+  ) {
 
-  const tanggal = String(t.getDate()).padStart(2,"0");
+    let x = start;
 
-  const bulan = String(t.getMonth()+1).padStart(2,"0");
 
-  const tahun = t.getFullYear();
+    for (
+      let iteration = 0;
+      iteration < 100;
+      iteration++
+    ) {
 
-  return `${hari}, ${tanggal}-${bulan}-${tahun}`;
+      if (isRoot(x)) {
+        return cleanNumber(x);
+      }
+
+
+      const y =
+        f(x);
+
+
+      if (
+        y === null
+      ) {
+        break;
+      }
+
+
+      const h =
+        Math.max(
+          1e-5,
+          Math.abs(x) * 1e-5
+        );
+
+
+      const yPlus =
+        f(x + h);
+
+      const yMinus =
+        f(x - h);
+
+
+      if (
+        yPlus === null ||
+        yMinus === null
+      ) {
+        break;
+      }
+
+
+      const derivative =
+        (yPlus - yMinus)
+        / (2 * h);
+
+
+      if (
+        !Number.isFinite(
+          derivative
+        ) ||
+        Math.abs(derivative) < 1e-14
+      ) {
+        break;
+      }
+
+
+      let next =
+        x -
+        y / derivative;
+
+
+      /*
+        Hindari lompatan numerik
+        yang terlalu besar.
+      */
+
+      if (
+        !Number.isFinite(next) ||
+        Math.abs(next) > 1e12
+      ) {
+        break;
+      }
+
+
+      /*
+        Damping sederhana.
+      */
+
+      if (
+        Math.abs(next - x)
+        > Math.max(
+          100,
+          Math.abs(x) * 10
+        )
+      ) {
+
+        next =
+          x +
+          Math.sign(next - x)
+          *
+          Math.max(
+            100,
+            Math.abs(x)
+          );
+      }
+
+
+      if (
+        Math.abs(next - x)
+        < 1e-12
+      ) {
+
+        if (isRoot(next)) {
+          return cleanNumber(next);
+        }
+
+        break;
+      }
+
+
+      x = next;
+    }
+  }
+
+
+  /*
+    2. Pencarian interval.
+
+    Menggunakan skala logaritmik supaya
+    akar kecil maupun besar lebih mudah ditemukan.
+  */
+
+  const ranges = [
+    1,
+    10,
+    100,
+    1000,
+    10000,
+    100000,
+    1000000
+  ];
+
+
+  for (
+    const range of ranges
+  ) {
+
+    const points = [];
+
+
+    /*
+      Sertakan titik negatif,
+      nol, dan positif.
+    */
+
+    points.push(-range);
+    points.push(0);
+    points.push(range);
+
+
+    /*
+      Tambahkan titik-titik
+      antara secara geometris.
+    */
+
+    for (
+      let i = 1;
+      i <= 100;
+      i++
+    ) {
+
+      const ratio =
+        i / 100;
+
+      points.push(
+        -range * ratio
+      );
+
+      points.push(
+        range * ratio
+      );
+    }
+
+
+    points.sort(
+      (a, b) => a - b
+    );
+
+
+    let previousX =
+      points[0];
+
+    let previousY =
+      f(previousX);
+
+
+    for (
+      let i = 1;
+      i < points.length;
+      i++
+    ) {
+
+      const x =
+        points[i];
+
+      const y =
+        f(x);
+
+
+      if (
+        y !== null &&
+        Math.abs(y) < 1e-8
+      ) {
+
+        return cleanNumber(x);
+      }
+
+
+      /*
+        Jika tanda berubah,
+        akar berada di antara a dan b.
+      */
+
+      if (
+        previousY !== null &&
+        y !== null &&
+        previousY * y < 0
+      ) {
+
+        let a =
+          previousX;
+
+        let b =
+          x;
+
+        let fa =
+          previousY;
+
+
+        for (
+          let j = 0;
+          j < 150;
+          j++
+        ) {
+
+          const mid =
+            (a + b) / 2;
+
+          const fm =
+            f(mid);
+
+
+          if (
+            fm === null
+          ) {
+            break;
+          }
+
+
+          if (
+            Math.abs(fm) < 1e-10
+          ) {
+
+            return cleanNumber(mid);
+          }
+
+
+          if (
+            fa * fm <= 0
+          ) {
+
+            b = mid;
+
+          } else {
+
+            a = mid;
+            fa = fm;
+          }
+        }
+
+
+        const result =
+          (a + b) / 2;
+
+
+        if (
+          isRoot(result)
+        ) {
+
+          return cleanNumber(
+            result
+          );
+        }
+      }
+
+
+      previousX =
+        x;
+
+      previousY =
+        y;
+    }
+  }
+
+
+  throw new Error(
+    `Nilai "${variable}" tidak berhasil ditemukan.`
+  );
 }
 
-/* =========================
-   POPUP
-========================= */
 
-function showPopup(mapel, ket, tanggal){
+/* =========================================================
+   CALCULATE
+========================================================= */
 
-  const popup = document.createElement("div");
+function calculate() {
 
-  popup.className = "popup-bg";
+  const formula =
+    document
+      .getElementById("formula")
+      .value
+      .trim();
 
-  popup.innerHTML = `
-    <div class="popup-box">
 
-      <div class="popup-title">
-        ${mapel}
-      </div>
+  if (!formula) {
 
-      <div class="popup-ket">
-        ${ket}
-      </div>
+    showResult(
+      "Masukkan rumus.",
+      "",
+      "error"
+    );
 
-      <div class="popup-date">
-        ${formatTanggalLengkap(tanggal)}
-      </div>
+    return;
+  }
 
-      <button class="popup-close">
-        Tutup
-      </button>
 
+  try {
+
+    const equation =
+      splitEquation(formula);
+
+
+    const values =
+      getValues();
+
+
+    const inputs =
+      [
+        ...document.querySelectorAll(
+          ".variable-input"
+        )
+      ];
+
+
+    const emptyInputs =
+      inputs.filter(
+        input =>
+          input.value.trim() === ""
+      );
+
+
+    /* =========================
+       TANPA =
+    ========================= */
+
+    if (!equation) {
+
+      if (
+        emptyInputs.length > 0
+      ) {
+
+        throw new Error(
+          "Semua variabel harus diisi."
+        );
+      }
+
+
+      const answer =
+        evaluateExpression(
+          formula,
+          values
+        );
+
+
+      showResult(
+        formatNumber(answer),
+        "Hasil perhitungan.",
+        "success"
+      );
+
+
+      return;
+    }
+
+
+    /* =========================
+       LEBIH DARI 1 KOSONG
+    ========================= */
+
+    if (
+      emptyInputs.length > 1
+    ) {
+
+      showResult(
+        "Variabel masih kosong",
+        "Isi semua variabel kecuali satu variabel yang ingin dicari.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    /* =========================
+       1 KOSONG = CARI
+    ========================= */
+
+    if (
+      emptyInputs.length === 1
+    ) {
+
+      const unknown =
+        emptyInputs[0]
+          .dataset
+          .variable;
+
+
+      const answer =
+        solveUnknown(
+          equation,
+          unknown,
+          values
+        );
+
+
+      showResult(
+        `${unknown} = ${formatNumber(answer)}`,
+        `Nilai ${unknown} ditemukan dari persamaan.`,
+        "success"
+      );
+
+
+      return;
+    }
+
+
+    /* =========================
+       SEMUA TERISI
+    ========================= */
+
+    const left =
+      evaluateExpression(
+        equation.left,
+        values
+      );
+
+
+    const right =
+      evaluateExpression(
+        equation.right,
+        values
+      );
+
+
+    const difference =
+      Math.abs(
+        left - right
+      );
+
+
+    const tolerance =
+      1e-9 *
+      Math.max(
+        1,
+        Math.abs(left),
+        Math.abs(right)
+      );
+
+
+    if (
+      difference <= tolerance
+    ) {
+
+      showResult(
+        "Persamaan benar ✓",
+        `${formatNumber(left)} = ${formatNumber(right)}`,
+        "success"
+      );
+
+    } else {
+
+      showResult(
+        "Persamaan tidak terpenuhi",
+        `${formatNumber(left)} ≠ ${formatNumber(right)}`,
+        "error"
+      );
+    }
+
+
+  } catch (error) {
+
+    showResult(
+      "Terjadi kesalahan",
+      error.message,
+      "error"
+    );
+  }
+}
+
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+function showResult(
+  main,
+  detail,
+  type = ""
+) {
+
+  const result =
+    document.getElementById(
+      "result"
+    );
+
+
+  result.className =
+    `result-card ${type}`;
+
+
+  result.innerHTML = `
+    <div class="result-label">
+      Hasil
+    </div>
+
+    <div class="result-main">
+      ${escapeHTML(main)}
+    </div>
+
+    <div class="result-detail">
+      ${escapeHTML(detail)}
+    </div>
+
+    ${
+      main
+        ? `
+          <div class="result-actions">
+            <button
+              id="copyResult"
+              type="button"
+            >
+              <i data-lucide="copy" size="13"></i>
+              Salin
+            </button>
+          </div>
+        `
+        : ""
+    }
+  `;
+
+
+  lucide.createIcons();
+
+
+  const copyBtn =
+    document.getElementById(
+      "copyResult"
+    );
+
+
+  if (!copyBtn) {
+    return;
+  }
+
+
+  copyBtn.addEventListener(
+    "click",
+    async () => {
+
+      try {
+
+        await navigator.clipboard
+          .writeText(main);
+
+
+        copyBtn.innerHTML = `
+          <i data-lucide="check" size="13"></i>
+          Tersalin
+        `;
+
+
+        lucide.createIcons();
+
+      } catch {
+
+        alert(
+          "Gagal menyalin hasil."
+        );
+      }
+    }
+  );
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetCalculator() {
+
+  document.getElementById(
+    "formula"
+  ).value = "";
+
+
+  currentVariables = [];
+  currentEquation = null;
+
+
+  document.getElementById(
+    "inputs"
+  ).innerHTML = `
+    <div class="empty">
+      Masukkan rumus terlebih dahulu.
     </div>
   `;
 
-  document.body.appendChild(popup);
 
-  popup.querySelector(".popup-close").onclick = ()=>{
-    popup.remove();
-  };
+  document.getElementById(
+    "variablesCount"
+  ).textContent =
+    "0 variabel";
 
+
+  const result =
+    document.getElementById(
+      "result"
+    );
+
+
+  result.className =
+    "result-card";
+
+
+  result.innerHTML = `
+    <div class="result-label">
+      Hasil
+    </div>
+
+    <div class="result-main">
+      —
+    </div>
+
+    <div class="result-detail">
+      Masukkan rumus dan nilai variabel.
+    </div>
+  `;
 }
 
 
-/* =========================
-   TAMPILKAN LABEL
-========================= */
+/* =========================================================
+   HELPERS
+========================================================= */
 
-function tampilkanLabel(data){
+function cleanNumber(value) {
 
-  const today = new Date();
+  if (!Number.isFinite(value)) {
+    return value;
+  }
 
-  today.setHours(0,0,0,0);
+  /*
+    Hilangkan error floating-point kecil.
+    Contoh:
+    9.999999999999998 -> 10
+    10.000000000000002 -> 10
+  */
 
-  const deadline = new Date(data.tanggal);
+  const rounded =
+    Number(value.toPrecision(12));
 
-  deadline.setHours(0,0,0,0);
+  /*
+    Jika sangat dekat dengan bilangan bulat,
+    langsung jadikan integer.
+  */
 
-  if(deadline < today) return;
+  const nearestInteger =
+    Math.round(rounded);
+
+  if (
+    Math.abs(
+      rounded - nearestInteger
+    ) < 1e-10
+  ) {
+    return nearestInteger;
+  }
+
+  /*
+    Nilai sangat kecil dianggap 0.
+  */
+
+  if (
+    Math.abs(rounded) < 1e-12
+  ) {
+    return 0;
+  }
+
+  return rounded;
+}
 
 
-  const semuaMapel = document.querySelectorAll(".mapel");
+function formatNumber(value) {
 
-  semuaMapel.forEach(el=>{
+  if (!Number.isFinite(value)) {
+    return "Tidak terdefinisi";
+  }
 
-    const nama = el.textContent.trim().toLowerCase();
+  /*
+    Bersihkan error floating-point.
+  */
 
-    if(nama === data.mapel.toLowerCase()){
+  value =
+    cleanNumber(value);
 
-      if(el.querySelector(".label-tugas")) return;
+  /*
+    Jika integer, jangan tampilkan .000000
+  */
 
-      const label = document.createElement("span");
+  if (
+    Number.isInteger(value)
+  ) {
+    return String(value);
+  }
 
-      label.className = "label-tugas";
+  /*
+    Gunakan maksimal 12 digit signifikan,
+    lalu hapus nol di belakang secara alami.
+  */
 
-      label.innerText = " Tugas";
+  return Number(
+    value.toPrecision(12)
+  ).toString();
+}
 
-      label.style = `
-        background:red;
-        color:white;
-        padding:2px 6px;
-        margin-left:6px;
-        border-radius:6px;
-        font-size:10px;
-        cursor:pointer;
-      `;
 
-      label.onclick = ()=>{
-        showPopup(
-          data.mapel,
-          data.ket,
-          data.tanggal
-        );
-      };
+function escapeHTML(value) {
 
-      el.appendChild(label);
+  return String(value)
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+}
 
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+document
+  .getElementById("formula")
+  .addEventListener(
+    "input",
+    generateInputs
+  );
+
+
+document
+  .getElementById("calculateBtn")
+  .addEventListener(
+    "click",
+    calculate
+  );
+
+
+document
+  .getElementById("resetBtn")
+  .addEventListener(
+    "click",
+    resetCalculator
+  );
+
+
+document
+  .querySelectorAll(".example-btn")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        document.getElementById(
+          "formula"
+        ).value =
+          button.dataset.formula;
+
+        generateInputs();
+      }
+    );
+  });
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+const modal =
+  document.getElementById(
+    "infoModal"
+  );
+
+
+document
+  .getElementById("infoBtn")
+  .addEventListener(
+    "click",
+    () => {
+      modal.classList.add(
+        "show"
+      );
     }
-
-  });
-
-}
+  );
 
 
-/* =========================
-   LOAD DATA
-========================= */
-
-function loadTugas(){
-
-  const colRef = collection(db,"tugas");
-
-  onSnapshot(colRef,(snapshot)=>{
-
-    snapshot.forEach(doc=>{
-
-      tampilkanLabel(doc.data());
-
-    });
-
-  });
-
-}
+document
+  .getElementById("closeModal")
+  .addEventListener(
+    "click",
+    () => {
+      modal.classList.remove(
+        "show"
+      );
+    }
+  );
 
 
-/* =========================
-   JALANKAN SETELAH HTML READY
-========================= */
+modal.addEventListener(
+  "click",
+  event => {
 
-window.addEventListener("DOMContentLoaded", ()=>{
+    if (
+      event.target === modal
+    ) {
 
-  loadTugas();
+      modal.classList.remove(
+        "show"
+      );
+    }
+  }
+);
 
-});
+
+/* ESC */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.key === "Escape"
+    ) {
+
+      modal.classList.remove(
+        "show"
+      );
+    }
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+lucide.createIcons();
 
 </script>
+
 </body>
 </html>
