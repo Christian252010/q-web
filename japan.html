@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pipe</title>
+</head>
+
+<body>
+
+<audio id="pipe" src="pipe.mp3" autoplay></audio>
+
+<script>
+  const pipe = document.getElementById("pipe");
+
+  // Volume audio website 100%
+  pipe.volume = 1.0;
+
+  // Coba langsung play saat halaman selesai dimuat
+  pipe.play().catch(error => {
+    console.log("Autoplay diblokir oleh browser:", error);
+  });
+</script>
+
+</body>
+</html>
