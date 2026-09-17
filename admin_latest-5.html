@@ -1,0 +1,4029 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Buckshot Roulette — Admin</title>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #1f1f1f;
+  color: white;
+  overflow-x: hidden;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: #1a1a1a;
+  border-bottom: 2.6px solid #dc143ccb;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: crimson;
+  border-radius: 7px;
+}
+
+.admin-icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+.header-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.header-title strong {
+  font-size: 19px;
+}
+
+.header-title span {
+  color: #888;
+  font-size: 11px;
+}
+
+.connection {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  background: #2f2f2f;
+  border-radius: 6px;
+  color: #aaa;
+  font-size: 12px;
+}
+
+.connection-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #777;
+}
+
+.connection.online .connection-dot {
+  background: #36c76c;
+}
+
+.connection.error .connection-dot {
+  background: crimson;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.container {
+  width: 100%;
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 14px;
+}
+
+.page-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.page-title h1 {
+  margin: 0;
+  font-size: 25px;
+}
+
+.page-title p {
+  margin: 5px 0 0;
+  color: #888;
+  font-size: 13px;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px;
+  border: none;
+  background: #333;
+  color: white;
+  border-radius: 6px;
+}
+
+.refresh-btn:hover {
+  background: #444;
+}
+
+/* =========================
+   TABS
+========================= */
+
+.tabs {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  margin-bottom: 14px;
+  padding-bottom: 2px;
+}
+
+.tab {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 13px;
+  border: none;
+  background: #2b2b2b;
+  color: #aaa;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.tab svg {
+  width: 16px;
+  height: 16px;
+}
+
+.tab.active {
+  background: crimson;
+  color: white;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.panel {
+  background: #2f2f2f;
+  border-radius: 7px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.panel-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 14px;
+  border-bottom: 1px solid #4b4b4b;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.panel-title svg {
+  width: 18px;
+  height: 18px;
+  color: crimson;
+}
+
+.panel-body {
+  padding: 14px;
+}
+
+.message {
+  min-height: 20px;
+  margin-bottom: 10px;
+  color: #999;
+  font-size: 13px;
+}
+
+.message.success {
+  color: #65d38b;
+}
+
+.message.error {
+  color: #ff7777;
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.stat {
+  min-width: 0;
+  padding: 13px;
+  background: #242424;
+  border: 1px solid #414141;
+  border-radius: 6px;
+}
+
+.stat-label {
+  color: #777;
+  font-size: 11px;
+  margin-bottom: 7px;
+}
+
+.stat-value {
+  overflow: hidden;
+  color: white;
+  font-size: 19px;
+  font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stat-value.crimson {
+  color: crimson;
+}
+
+.stat-value.green {
+  color: #61ce85;
+}
+
+.stat-value.gray {
+  color: #999;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  color: #999;
+  font-size: 12px;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid #4c4c4c;
+  outline: none;
+  background: #1f1f1f;
+  color: white;
+  border-radius: 5px;
+}
+
+.form-input:focus,
+.form-select:focus {
+  border-color: crimson;
+}
+
+.form-help {
+  color: #666;
+  font-size: 10px;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 8px 13px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+}
+
+.btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-crimson {
+  background: crimson;
+}
+
+.btn-dark {
+  background: #444;
+}
+
+.btn-green {
+  background: #228b22;
+}
+
+.btn-purple {
+  background: mediumpurple;
+}
+
+.btn-danger {
+  background: #7d2020;
+}
+
+.btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+/* =========================
+   SETTINGS
+========================= */
+
+.settings-section {
+  margin-bottom: 18px;
+}
+
+.settings-section:last-child {
+  margin-bottom: 0;
+}
+
+.section-heading {
+  margin-bottom: 9px;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.toggle-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: #242424;
+  border: 1px solid #414141;
+  border-radius: 5px;
+}
+
+.toggle-info {
+  min-width: 0;
+}
+
+.toggle-name {
+  color: white;
+  font-size: 13px;
+}
+
+.toggle-description {
+  margin-top: 3px;
+  color: #666;
+  font-size: 10px;
+}
+
+.switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #555;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: .2s;
+}
+
+.switch input:checked + .slider {
+  background: crimson;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+/* =========================
+   RARITY
+========================= */
+
+.rarity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.rarity-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px;
+  background: #242424;
+  border: 1px solid #414141;
+  border-radius: 5px;
+}
+
+.rarity-icon {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  background: #333;
+  color: #bbb;
+  border-radius: 4px;
+}
+
+.rarity-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.rarity-name {
+  flex: 1;
+  min-width: 0;
+  color: #ddd;
+  font-size: 12px;
+}
+
+.rarity-select {
+  width: 105px;
+  height: 34px;
+  border: 1px solid #4c4c4c;
+  outline: none;
+  background: #1f1f1f;
+  color: white;
+  border-radius: 4px;
+}
+
+/* =========================
+   SHELLS
+========================= */
+
+.shell-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 13px;
+}
+
+.summary-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 9px;
+  background: #242424;
+  border-radius: 4px;
+  color: #aaa;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.summary-badge.live {
+  color: crimson;
+}
+
+.summary-badge.blank {
+  color: #888;
+}
+
+.shell-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.shell-card {
+  position: relative;
+  min-height: 105px;
+  padding: 10px;
+  background: #242424;
+  border: 1px solid #454545;
+  border-radius: 6px;
+}
+
+.shell-card.current {
+  border: 2px solid crimson;
+  background: #321d21;
+}
+
+.shell-number {
+  color: #777;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.shell-type {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.shell-type svg {
+  width: 20px;
+  height: 20px;
+  rotate: 180deg;
+}
+
+.shell-card.live .shell-type {
+  color: crimson;
+}
+
+.shell-card.blank .shell-type {
+  color: #999;
+}
+
+.shell-select {
+  width: 100%;
+  height: 32px;
+  margin-top: 10px;
+  border: 1px solid #4b4b4b;
+  outline: none;
+  background: #1f1f1f;
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+/* =========================
+   PLAYERS
+========================= */
+
+.player-card {
+  margin-bottom: 9px;
+  background: #242424;
+  border: 1px solid #444;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.player-card:last-child {
+  margin-bottom: 0;
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #3d3d3d;
+}
+
+.player-main {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.avatar {
+  display: flex;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  overflow: hidden;
+  color: white;
+  font-size: 18px;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.player-title {
+  min-width: 0;
+}
+
+.player-name-display {
+  overflow: hidden;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-meta {
+  margin-top: 3px;
+  color: #777;
+  font-size: 10px;
+}
+
+.current-badge {
+  padding: 4px 7px;
+  background: crimson;
+  border-radius: 4px;
+  color: white;
+  font-size: 9px;
+  font-weight: bold;
+}
+
+.player-body {
+  padding: 10px;
+}
+
+.player-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 100px 100px;
+  gap: 7px;
+}
+
+.player-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.player-field label {
+  color: #777;
+  font-size: 10px;
+}
+
+.player-input,
+.player-select {
+  width: 100%;
+  height: 35px;
+  padding: 0 8px;
+  border: 1px solid #444;
+  outline: none;
+  background: #1f1f1f;
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.player-input:focus,
+.player-select:focus {
+  border-color: crimson;
+}
+
+.status-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 9px;
+}
+
+.status-check {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  background: #303030;
+  border-radius: 4px;
+  color: #aaa;
+  font-size: 10px;
+}
+
+.status-check input {
+  accent-color: crimson;
+}
+
+/* =========================
+   INVENTORY
+========================= */
+
+.inventory-title {
+  margin-top: 12px;
+  margin-bottom: 7px;
+  color: #999;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.inventory-slot {
+  position: relative;
+  min-height: 76px;
+  padding: 7px;
+  background: #333;
+  border: 1px solid #454545;
+  border-radius: 4px;
+}
+
+.inventory-slot.empty {
+  opacity: .55;
+}
+
+.inventory-number {
+  color: #666;
+  font-size: 9px;
+}
+
+.inventory-content {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.inventory-content svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: #aaa;
+}
+
+.inventory-select {
+  width: 100%;
+  height: 29px;
+  margin-top: 5px;
+  border: 1px solid #454545;
+  outline: none;
+  background: #1f1f1f;
+  color: white;
+  border-radius: 3px;
+  font-size: 9px;
+}
+
+.inventory-clear {
+  position: absolute;
+  right: 5px;
+  top: 4px;
+  display: flex;
+  width: 18px;
+  height: 18px;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #777;
+}
+
+.inventory-clear:hover {
+  color: crimson;
+}
+
+.shell-grid { display:flex; flex-wrap:nowrap; gap:7px; overflow-x:auto; padding:2px 1px 8px; }
+.shell-card { min-width:82px; width:82px; min-height:86px; padding:8px; cursor:pointer; }
+.shell-card .shell-select { display:none; }
+.shell-card:active { transform:scale(.98); }
+
+/* =========================
+   REALTIME PLAYER EDITOR
+========================= */
+.turn-control {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px;
+  margin-bottom:10px;
+  background:#242424;
+  border:1px solid #414141;
+  border-radius:6px;
+}
+.turn-control-title { font-size:13px; font-weight:bold; }
+.turn-control-help, .order-help { margin-top:3px; color:#666; font-size:10px; }
+.turn-control .player-select { max-width:230px; }
+.player-card { margin-bottom:9px; }
+.player-edit-grid { grid-template-columns:1fr 100px; }
+.player-edit-grid .player-field:first-child { grid-column:1 / -1; }
+.player-body { padding:10px; }
+.status-list { margin-top:9px; }
+.inventory-title { margin-top:12px; }
+.inventory-grid { grid-template-columns:repeat(4,1fr); gap:6px; }
+.inventory-slot {
+  min-height:68px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:7px;
+  cursor:pointer;
+  transition:.15s;
+}
+.inventory-slot:hover { border-color:#777; background:#393939; }
+.inventory-slot.empty { opacity:1; }
+.inventory-number { position:absolute; left:7px; top:5px; }
+.inventory-content { margin:0; }
+.inventory-content svg { width:25px; height:25px; color:#ddd; }
+.inventory-content span { display:none; }
+.inventory-select { margin-top:6px; }
+.inventory-slot .inventory-select { display:none; }
+.inventory-slot.open .inventory-select { display:block; position:absolute; left:5px; right:5px; bottom:5px; width:calc(100% - 10px); }
+.inventory-slot.open { min-height:98px; }
+.inventory-slot.open .inventory-content { transform:translateY(-10px); }
+.order-panel { margin-top:14px; padding:12px; background:#242424; border:1px solid #414141; border-radius:6px; }
+.order-panel-title { display:flex; align-items:center; gap:7px; font-size:14px; font-weight:bold; }
+.order-panel-title svg { width:17px; height:17px; color:crimson; }
+.player-order-list { display:flex; flex-direction:column; gap:6px; margin-top:10px; }
+.order-player {
+  touch-action:none;
+  display:flex; align-items:center; gap:9px; min-height:48px; padding:7px 9px;
+  background:#303030; border:1px solid #444; border-radius:6px; cursor:grab; user-select:none;
+}
+.order-player:active { cursor:grabbing; }
+.order-player.dragging { opacity:.45; border-color:crimson; }
+.order-player.current { background:#3a1e24; border-color:crimson; }
+.order-grip { color:#777; }
+.order-number { width:22px; color:#777; font-size:11px; font-weight:bold; text-align:center; }
+.order-avatar { width:30px; height:30px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border-radius:50%; overflow:hidden; font-size:14px; }
+.order-avatar img { width:100%; height:100%; object-fit:cover; }
+.order-name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; font-weight:bold; }
+.account-count { color:#888; font-size:11px; }
+.account-card { display:flex; align-items:center; gap:11px; padding:11px; margin-bottom:7px; background:#242424; border:1px solid #414141; border-radius:6px; }
+.account-card:last-child { margin-bottom:0; }
+.account-info { flex:1; min-width:0; }
+.account-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:14px; font-weight:bold; }
+.account-id { margin-top:3px; overflow:hidden; color:#666; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+.account-profile { margin-top:3px; overflow:hidden; color:#777; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+.account-edit { flex-shrink:0; min-height:36px; }
+.account-modal .modal-card { max-width:480px; }
+.account-avatar { width:42px; height:42px; flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:50%; font-size:18px; }
+.account-avatar img { width:100%; height:100%; object-fit:cover; }
+.account-form { display:flex; flex-direction:column; gap:10px; }
+.account-actions { display:flex; justify-content:flex-end; gap:7px; margin-top:4px; }
+
+/* =========================
+   DATABASE PREVIEW
+========================= */
+
+.data-preview {
+  max-height: 500px;
+  overflow: auto;
+  padding: 12px;
+  background: #191919;
+  color: #aaa;
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  background: #000b;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 470px;
+  max-height: 90dvh;
+  overflow-y: auto;
+  background: #2f2f2f;
+  border: 1px solid #555;
+  border-radius: 7px;
+  box-shadow: 0 15px 50px #000;
+}
+
+.modal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px;
+  border-bottom: 1px solid #4b4b4b;
+}
+
+.modal-title {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.modal-close {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: #aaa;
+}
+
+.modal-body {
+  padding: 13px;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  z-index: 800;
+  transform: translateX(-50%) translateY(20px);
+  padding: 10px 14px;
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 5px;
+  color: white;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: .25s;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.toast.success {
+  border-color: #368a52;
+}
+
+.toast.error {
+  border-color: crimson;
+}
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty {
+  padding: 30px 10px;
+  text-align: center;
+  color: #666;
+  font-size: 13px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+  .header-title span {
+    display: none;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group.full {
+    grid-column: auto;
+  }
+
+  .toggle-list,
+  .rarity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shell-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .player-edit-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .player-edit-grid .player-field:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .inventory-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .turn-control {
+    align-items:stretch;
+    flex-direction:column;
+  }
+
+  .turn-control .player-select {
+    max-width:none;
+  }
+}
+
+@media (max-width: 420px) {
+  .container {
+    padding: 10px;
+  }
+
+  .page-title h1 {
+    font-size: 21px;
+  }
+
+  .shell-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .inventory-grid {
+    gap: 4px;
+  }
+
+  .inventory-slot {
+    min-height: 70px;
+    padding: 5px;
+  }
+}
+
+/* FINAL ADMIN REFINEMENTS */
+.shell-grid {
+  display:grid !important;
+  grid-template-columns:repeat(8,minmax(0,1fr)) !important;
+  gap:5px !important;
+  overflow:hidden !important;
+  padding:2px 0 !important;
+}
+.shell-card {
+  min-width:0 !important; width:auto !important; min-height:42px !important;
+  height:42px !important; padding:0 !important;
+  display:flex !important; align-items:center !important; justify-content:center !important;
+  border-radius:5px !important; font-size:10px !important; font-weight:bold !important;
+  color:#fff !important; cursor:pointer !important;
+}
+.shell-card.live { background:crimson !important; border:1px solid transparent !important; }
+.shell-card.blank { background:#555 !important; border:1px solid transparent !important; }
+.shell-card.current { border:0 !important; box-shadow:0 0 0 1px #fff inset !important; }
+.shell-card.current.live { background:#b10f2b !important; }
+.shell-card.current.blank { background:#444 !important; }
+.room-detail-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+.room-detail { display:flex; flex-direction:column; gap:4px; min-width:0; padding:9px; background:#242424; border:1px solid #414141; border-radius:5px; }
+.room-detail span { color:#777; font-size:10px; }
+.room-detail b { color:#fff; font-size:12px; overflow:hidden; text-overflow:ellipsis; }
+.room-empty { padding:12px; color:#666; background:#242424; border:1px solid #414141; border-radius:5px; text-align:center; }
+.item-modal .modal-card { max-width:360px; }
+.item-modal .form-select { height:44px; font-size:13px; }
+@media(max-width:600px){ .room-detail-grid{grid-template-columns:1fr 1fr;} .shell-card{height:38px !important;min-height:38px !important;font-size:9px !important;} }
+
+/* PLAYER / ITEM POPUP REFINEMENT */
+.status-list { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; }
+.status-check { justify-content:flex-start; min-width:0; padding:6px 6px; gap:4px; font-size:10px; white-space:nowrap; overflow:hidden; }
+.status-check input { width:13px; height:13px; margin:0; }
+.item-modal .modal-card { max-width:390px; }
+.item-popup-list { display:flex; flex-direction:column; gap:6px; }
+.item-popup-row { display:flex; align-items:center; gap:9px; min-height:44px; padding:7px 8px; background:#242424; border:1px solid #414141; border-radius:5px; }
+.item-popup-icon { width:32px; height:32px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#333; border-radius:4px; color:#ddd; }
+.item-popup-icon svg { width:18px; height:18px; }
+.item-popup-name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#ddd; font-size:12px; font-weight:bold; }
+.item-popup-replace { min-height:32px; padding:6px 9px; font-size:10px; }
+.item-popup-empty { color:#777; font-size:11px; padding:8px 2px; }
+.item-popup-clear { width:100%; margin-top:8px; }
+.inventory-number { display:none !important; }
+.enabled-items-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; }
+.enabled-item-row { display:flex; align-items:center; gap:5px; padding:5px 6px; min-width:0; } background:#242424; border:1px solid #414141; border-radius:5px; }
+.enabled-item-icon { width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#333; border-radius:4px; color:#bbb; }
+.enabled-item-icon svg { width:14px; height:14px; }
+.enabled-item-row .toggle-info { flex:1; min-width:0; }
+@media(max-width:700px){
+  .enabled-item-row .toggle-name { font-size:10px; }
+  .enabled-item-row .toggle-description { display:none; }
+  .enabled-item-row .switch { transform:scale(.82); transform-origin:right center; }
+  .form-grid { grid-template-columns:1fr 1fr; }
+  .form-group.full { grid-column:1 / -1; }
+  .enabled-items-grid { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:420px){
+  .status-check { padding:5px 4px; font-size:9px; }
+  .status-check input { width:12px; height:12px; }
+  .item-popup-row { min-height:42px; }
+}
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div class="admin-icon">
+      <i data-lucide="settings-2"></i>
+    </div>
+
+<div class="header-title">
+  <strong>Buckshot Roulette</strong>
+  <span>Game Data Editor</span>
+</div>
+
+  </div>
+
+  <div class="connection" id="connection">
+    <span class="connection-dot"></span>
+    <span id="connectionText">Menghubungkan...</span>
+  </div>
+</header>
+
+<main class="container">
+
+  <div class="page-top">
+    <div class="page-title">
+      <h1>Game Editor</h1>
+      <p>Edit data game secara visual melalui Firebase.</p>
+    </div>
+
+<button class="refresh-btn" id="refreshBtn">
+  <i data-lucide="refresh-cw"></i>
+  Refresh
+</button>
+
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="dashboard">
+      <i data-lucide="layout-dashboard"></i>
+      Dashboard
+    </button>
+
+<button class="tab" data-tab="settings">
+  <i data-lucide="sliders-horizontal"></i>
+  Settings
+</button>
+
+<button class="tab" data-tab="shells">
+  <i data-lucide="crosshair"></i>
+  Peluru
+</button>
+
+<button class="tab" data-tab="players">
+  <i data-lucide="users"></i>
+  Pemain
+</button>
+
+<button class="tab" data-tab="accounts">
+  <i data-lucide="contact"></i>
+  Akun
+</button>
+
+<button class="tab" data-tab="database">
+  <i data-lucide="database"></i>
+  Data
+</button>
+
+  </div>
+
+  <!-- =========================
+       DASHBOARD
+  ========================= -->
+
+  <section class="tab-content" id="tab-dashboard">
+
+<div class="panel">
+  <div class="panel-top">
+    <div class="panel-title">
+      <i data-lucide="activity"></i>
+      Status Game
+    </div>
+
+    <button class="btn btn-crimson" id="applySettingsGameBtn">
+      <i data-lucide="zap"></i>
+      Terapkan Settings ke Game
+    </button>
+  </div>
+
+  <div class="panel-body">
+
+    <div class="dashboard-grid">
+
+      <div class="stat">
+        <div class="stat-label">ROOM</div>
+        <div class="stat-value" id="statRoom">-</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">STATUS</div>
+        <div class="stat-value crimson" id="statStatus">-</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">PEMAIN</div>
+        <div class="stat-value" id="statPlayers">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">GILIRAN</div>
+        <div class="stat-value" id="statTurn">-</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">TOTAL SHELL</div>
+        <div class="stat-value" id="statShells">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">LIVE</div>
+        <div class="stat-value crimson" id="statLive">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">BLANK</div>
+        <div class="stat-value gray" id="statBlank">0</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">SHELL SAAT INI</div>
+        <div class="stat-value" id="statCurrentShell">-</div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-top">
+    <div class="panel-title">
+      <i data-lucide="info"></i>
+      Informasi Room
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <div class="room-detail-grid" id="dashboardRoomDetail"></div>
+
+
+
+    <div class="message" id="dashboardMessage">
+      Menunggu data Firebase...
+    </div>
+
+    <div class="action-row">
+
+      <button class="btn btn-green" id="reloadShellBtn">
+        <i data-lucide="rotate-cw"></i>
+        Buat Shell Baru
+      </button>
+
+      <button class="btn btn-dark" id="resetShellBtn">
+        <i data-lucide="history"></i>
+        Reset ke Original
+      </button>
+
+      <button class="btn btn-danger" id="deleteRoomBtn">
+        <i data-lucide="trash-2"></i>
+        Hapus Room
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+  </section>
+
+  <!-- =========================
+       SETTINGS
+  ========================= -->
+
+  <section class="tab-content hidden" id="tab-settings">
+
+<div class="panel">
+
+  <div class="panel-top">
+    <div class="panel-title">
+      <i data-lucide="sliders-horizontal"></i>
+      Game Settings
+    </div>
+  </div>
+
+  <div class="panel-body">
+
+    <div class="message" id="settingsMessage"></div>
+
+    <div class="settings-section">
+
+      <div class="section-heading">
+        Dasar Game
+      </div>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label class="form-label">
+            Maximum Health
+          </label>
+
+          <input
+            class="form-input"
+            id="settingMaxHealth"
+            type="number"
+            min="1"
+            max="20">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Minimum Shell
+          </label>
+
+          <input
+            class="form-input"
+            id="settingMinShell"
+            type="number"
+            min="1"
+            max="30">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Maximum Shell
+          </label>
+
+          <input
+            class="form-input"
+            id="settingMaxShell"
+            type="number"
+            min="1"
+            max="30">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Minimum Live / Blank
+          </label>
+
+          <input
+            class="form-input"
+            id="settingMinEach"
+            type="number"
+            min="1"
+            max="15">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Starting Item
+          </label>
+
+          <input
+            class="form-input"
+            id="settingStartingItems"
+            type="number"
+            min="0"
+            max="8">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Item per Reload
+          </label>
+
+          <input
+            class="form-input"
+            id="settingItemReward"
+            type="number"
+            min="0"
+            max="8">
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="settings-section">
+
+      <div class="section-heading">
+        Tampilan & Gameplay
+      </div>
+
+      <div class="toggle-list">
+
+        <div class="toggle-row">
+
+          <div class="toggle-info">
+            <div class="toggle-name">
+              Rarity
+            </div>
+
+            <div class="toggle-description">
+              Mengaktifkan sistem rarity item.
+            </div>
+          </div>
+
+          <label class="switch">
+            <input
+              type="checkbox"
+              id="settingRarity">
+
+            <span class="slider"></span>
+          </label>
+
+        </div>
+
+        <div class="toggle-row">
+
+          <div class="toggle-info">
+            <div class="toggle-name">
+              Realtime Shell Info
+            </div>
+
+            <div class="toggle-description">
+              Menampilkan jumlah Live dan Blank.
+            </div>
+          </div>
+
+          <label class="switch">
+            <input
+              type="checkbox"
+              id="settingRealtime">
+
+            <span class="slider"></span>
+          </label>
+
+        </div>
+
+        <div class="toggle-row">
+
+          <div class="toggle-info">
+            <div class="toggle-name">
+              Shell Number
+            </div>
+
+            <div class="toggle-description">
+              Menampilkan nomor shell saat ini.
+            </div>
+          </div>
+
+          <label class="switch">
+            <input
+              type="checkbox"
+              id="settingShellNumber">
+
+            <span class="slider"></span>
+          </label>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="settings-section">
+
+      <div class="section-heading">
+        Item Aktif
+      </div>
+
+      <div
+        class="enabled-items-grid"
+        id="enabledItemsGrid">
+      </div>
+
+    </div>
+
+    <div class="settings-section">
+
+      <div class="section-heading">
+        Rarity Item
+      </div>
+
+      <div
+        class="rarity-grid"
+        id="rarityGrid">
+      </div>
+
+    </div>
+
+    <div class="action-row">
+
+      <button class="btn btn-crimson" id="saveSettingsBtn">
+        <i data-lucide="save"></i>
+        Simpan Settings
+      </button>
+
+      <button class="btn btn-purple" id="saveSettingsAndGameBtn">
+        <i data-lucide="save"></i>
+        Simpan + Terapkan ke Game
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+  </section>
+
+  <!-- =========================
+       SHELLS
+  ========================= -->
+
+  <section class="tab-content hidden" id="tab-shells">
+
+<div class="panel">
+
+  <div class="panel-top">
+
+    <div class="panel-title">
+      <i data-lucide="crosshair"></i>
+      Urutan Peluru
+    </div>
+
+    <div class="action-row" style="margin-top:0">
+
+      <button class="btn btn-dark" id="shuffleShellBtn">
+        <i data-lucide="shuffle"></i>
+        Acak
+      </button>
+
+
+    </div>
+
+  </div>
+
+  <div class="panel-body">
+
+    <div class="message" id="shellMessage">
+      Klik peluru untuk membalik Live / Blank. Perubahan langsung tersimpan ke Firebase.
+    </div>
+
+    <div class="shell-summary">
+
+      <div class="summary-badge">
+        Total :
+        <span id="shellTotal">0</span>
+      </div>
+
+      <div class="summary-badge live">
+        Live :
+        <span id="shellLive">0</span>
+      </div>
+
+      <div class="summary-badge blank">
+        Blank :
+        <span id="shellBlank">0</span>
+      </div>
+
+      <div class="summary-badge">
+        Current :
+        <span id="shellCurrent">1</span>
+      </div>
+
+    </div>
+
+    <div
+      class="shell-grid"
+      id="shellGrid">
+    </div>
+
+
+
+  </div>
+</div>
+
+  </section>
+
+  <!-- =========================
+       PLAYERS
+  ========================= -->
+
+  <section class="tab-content hidden" id="tab-players">
+    <div class="panel">
+      <div class="panel-top">
+        <div class="panel-title">
+          <i data-lucide="users"></i>
+          Data Pemain
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="turn-control">
+          <div>
+            <div class="turn-control-title">Pemain Giliran Saat Ini</div>
+            <div class="turn-control-help">Perubahan langsung tersimpan ke Firebase.</div>
+          </div>
+          <select class="player-select" id="currentTurnSelect"></select>
+        </div>
+        <div class="message" id="playersMessage">Edit data pemain secara realtime.</div>
+        <div id="playersContainer"></div>
+        <div class="order-panel">
+          <div class="order-panel-title">
+            <i data-lucide="grip-vertical"></i>
+            Urutan Giliran
+          </div>
+          <div class="order-help">Tekan dan geser kartu pemain untuk mengubah urutan.</div>
+          <div id="playerOrderList" class="player-order-list"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       ACCOUNTS
+  ========================= -->
+
+  <section class="tab-content hidden" id="tab-accounts">
+    <div class="panel">
+      <div class="panel-top">
+        <div class="panel-title">
+          <i data-lucide="contact"></i>
+          Semua Akun
+        </div>
+        <div class="account-count" id="accountCount">0 akun</div>
+      </div>
+      <div class="panel-body">
+        <div class="message">Daftar seluruh akun yang tersimpan pada <b>players</b>.</div>
+        <div id="accountsContainer"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       DATABASE
+  ========================= -->
+
+  <section class="tab-content hidden" id="tab-database">
+
+<div class="panel">
+
+  <div class="panel-top">
+
+    <div class="panel-title">
+      <i data-lucide="database"></i>
+      Firebase Data
+    </div>
+
+    <button
+      class="btn btn-dark"
+      id="copyDataBtn">
+
+      <i data-lucide="copy"></i>
+      Copy JSON
+
+    </button>
+
+  </div>
+
+  <div class="panel-body">
+
+    <div class="message">
+      Tampilan read-only untuk melihat struktur data yang sedang digunakan.
+    </div>
+
+    <pre
+      class="data-preview"
+      id="dataPreview">
+
+{} </pre>
+
+  </div>
+
+</div>
+
+  </section>
+
+</main>
+
+<!-- =========================
+     CONFIRM MODAL
+========================= -->
+
+<div
+  class="modal hidden"
+  id="confirmModal">
+
+  <div class="modal-card">
+
+<div class="modal-top">
+
+  <div class="modal-title" id="confirmTitle">
+    Konfirmasi
+  </div>
+
+  <button
+    class="modal-close"
+    id="confirmClose">
+
+    <i data-lucide="x"></i>
+
+  </button>
+
+</div>
+
+<div class="modal-body">
+
+  <div
+    class="message"
+    id="confirmText">
+  </div>
+
+  <div class="action-row">
+
+    <button
+      class="btn btn-dark"
+      id="confirmCancel">
+
+      Batal
+
+    </button>
+
+    <button
+      class="btn btn-crimson"
+      id="confirmYes">
+
+      Ya, lanjutkan
+
+    </button>
+
+  </div>
+
+</div>
+
+  </div>
+
+</div>
+
+<div class="modal account-modal hidden" id="accountModal">
+  <div class="modal-card">
+    <div class="modal-top">
+      <div>
+        <div class="modal-title">Edit Akun</div>
+        <div id="accountId" style="margin-top:3px;color:#666;font-size:10px"></div>
+      </div>
+      <button class="modal-close" id="accountModalClose"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="account-form">
+        <div class="form-group"><label class="form-label">Nama</label><input class="form-input" id="accountName"></div>
+        <div class="form-group"><label class="form-label">Profile URL</label><input class="form-input" id="accountProfile" placeholder="https://..."></div>
+        <div class="form-group"><label class="form-label">Warna Profile</label><input class="form-input" id="accountColor" placeholder="coral"></div>
+        <div class="account-actions"><button class="btn btn-dark" id="accountDelete"><i data-lucide="trash-2"></i> Hapus</button><button class="btn btn-dark" id="accountCancel">Batal</button><button class="btn btn-crimson" id="accountSave"><i data-lucide="check"></i> Simpan</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal item-modal hidden" id="itemPopup">
+  <div class="modal-card">
+    <div class="modal-top">
+      <div>
+        <div class="modal-title" id="itemPopupTitle">Item pemain</div>
+        <div id="itemPopupPlayer" style="margin-top:3px;color:#666;font-size:10px"></div>
+      </div>
+      <button type="button" class="modal-close" id="itemPopupClose" aria-label="Tutup"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="item-popup-list" id="itemPopupList"></div>
+      <button type="button" class="btn btn-dark item-popup-clear" id="itemPopupClear">Kosongkan Item</button>
+    </div>
+  </div>
+</div>
+
+<div
+  class="toast"
+  id="toast">
+</div>
+
+<script type="module">
+
+/* =====================================================
+   FIREBASE
+===================================================== */
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  get,
+  set,
+  update,
+  remove,
+  onValue
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyBQYI-9ESAqE5AFy49hIyP0rhul9gIlkc",
+
+  authDomain:
+    "buckshotroulette-4c7a1.firebaseapp.com",
+
+  databaseURL:
+    "https://buckshotroulette-4c7a1-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+  projectId:
+    "buckshotroulette-4c7a1",
+
+  storageBucket:
+    "buckshotroulette-4c7a1.firebasestorage.app",
+
+  messagingSenderId:
+    "335951554199",
+
+  appId:
+    "1:335951554199:web:8d7475fc9dda0f76b32bd2",
+
+  measurementId:
+    "G-H5RLT7K97W"
+
+};
+
+
+const app =
+  initializeApp(firebaseConfig);
+
+const db =
+  getDatabase(app);
+
+
+/* =====================================================
+   ITEM DEFINITIONS
+   Mengikuti item pada game utama
+===================================================== */
+
+const ITEM_DEFINITIONS = {
+
+  magnifying_glass: {
+    name: "Magnifying Glass",
+    icon: "search"
+  },
+
+  hand_saw: {
+    name: "Hand Saw",
+    icon: "pocket-knife"
+  },
+
+  cigarette: {
+    name: "Cigarette Pack",
+    icon: "cigarette"
+  },
+
+  handcuff: {
+    name: "Handcuff",
+    icon: "lock-keyhole-open"
+  },
+
+  beer: {
+    name: "Beer",
+    icon: "can-soda"
+  },
+
+  inverter: {
+    name: "Inverter",
+    icon: "camera"
+  },
+
+  expired_medicine: {
+    name: "Expired Medicine",
+    icon: "pill"
+  },
+
+  adrenaline: {
+    name: "Adrenaline",
+    icon: "syringe"
+  },
+
+  burner_phone: {
+    name: "Burner Phone",
+    icon: "phone"
+  },
+
+  remote: {
+    name: "Remote",
+    icon: "smartphone"
+  },
+
+  jammer: {
+    name: "Jammer",
+    icon: "turntable"
+  },
+
+  reflector_mirror: {
+    name: "Mirror Reflector",
+    icon: "mirror-rectangular"
+  },
+
+  dynamite: {
+    name: "Dynamite",
+    icon: "bomb"
+  },
+
+  dice: {
+    name: "Dice",
+    icon: "dice-3"
+  },
+
+  rewind_film: {
+    name: "Rewind Film",
+    icon: "film"
+  },
+
+  coin_flip: {
+    name: "Coin Flip",
+    icon: "circle-euro"
+  },
+
+  life_steal: {
+    name: "Life Steal",
+    icon: "sword"
+  },
+
+  megazine: {
+    name: "Megazine",
+    icon: "package-2"
+  },
+
+  ace_card: {
+    name: "Ace Card",
+    icon: "playing-card"
+  },
+
+  magnet: {
+    name: "Magnet",
+    icon: "magnet"
+  }
+
+};
+
+
+const RARITIES = {
+
+  common: {
+    name: "Common",
+    weight: 60
+  },
+
+  uncommon: {
+    name: "Uncommon",
+    weight: 25
+  },
+
+  rare: {
+    name: "Rare",
+    weight: 10
+  },
+
+  legendary: {
+    name: "Legendary",
+    weight: 5
+  }
+
+};
+
+
+const DEFAULT_RARITIES = {
+
+  magnifying_glass: "common",
+  hand_saw: "uncommon",
+  cigarette: "common",
+  handcuff: "rare",
+  beer: "common",
+  inverter: "rare",
+  expired_medicine: "uncommon",
+  adrenaline: "rare",
+  burner_phone: "uncommon",
+  remote: "rare",
+  jammer: "rare",
+  reflector_mirror: "rare",
+  dynamite: "uncommon",
+  dice: "rare",
+  rewind_film: "legendary",
+  coin_flip: "uncommon",
+  life_steal: "rare",
+  megazine: "legendary",
+  ace_card: "legendary",
+  magnet: "uncommon"
+
+};
+
+
+/* =====================================================
+   DEFAULT SETTINGS
+===================================================== */
+
+const DEFAULT_SETTINGS = {
+
+  maxHealth: 4,
+
+  minShell: 5,
+
+  maxShell: 8,
+
+  minEach: 3,
+
+  startingItemCount: 2,
+
+  itemRewardCount: 2,
+
+  rarityEnabled: false,
+
+  realtimeShellInfo: true,
+
+  showShellNumber: true,
+
+  itemRarities: {
+    ...DEFAULT_RARITIES
+  },
+
+  enabledItems: {}
+
+};
+
+
+Object.keys(ITEM_DEFINITIONS)
+  .forEach(type => {
+
+    DEFAULT_SETTINGS.enabledItems[type] = true;
+
+  });
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let roomData = null;
+
+let playersData = {};
+
+let persistentSettings = {};
+
+let activeTab = "dashboard";
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const connection =
+  document.querySelector("#connection");
+
+const connectionText =
+  document.querySelector("#connectionText");
+
+const statRoom =
+  document.querySelector("#statRoom");
+
+const statStatus =
+  document.querySelector("#statStatus");
+
+const statPlayers =
+  document.querySelector("#statPlayers");
+
+const statTurn =
+  document.querySelector("#statTurn");
+
+const statShells =
+  document.querySelector("#statShells");
+
+const statLive =
+  document.querySelector("#statLive");
+
+const statBlank =
+  document.querySelector("#statBlank");
+
+const statCurrentShell =
+  document.querySelector("#statCurrentShell");
+
+const dashboardRoomDetail =
+  document.querySelector("#dashboardRoomDetail");
+
+const dataPreview =
+  document.querySelector("#dataPreview");
+
+const shellGrid =
+  document.querySelector("#shellGrid");
+
+const playersContainer =
+  document.querySelector("#playersContainer");
+
+const currentTurnSelect =
+  document.querySelector("#currentTurnSelect");
+
+const playerOrderList =
+  document.querySelector("#playerOrderList");
+
+const accountsContainer =
+  document.querySelector("#accountsContainer");
+
+const accountCount =
+  document.querySelector("#accountCount");
+
+const accountModal =
+  document.querySelector("#accountModal");
+
+const itemPopup = document.querySelector("#itemPopup");
+const itemPopupTitle = document.querySelector("#itemPopupTitle");
+const itemPopupPlayer = document.querySelector("#itemPopupPlayer");
+const itemPopupList = document.querySelector("#itemPopupList");
+const itemPopupClear = document.querySelector("#itemPopupClear");
+const itemPopupClose = document.querySelector("#itemPopupClose");
+const itemPopupCancel = document.querySelector("#itemPopupCancel");
+
+const accountName =
+  document.querySelector("#accountName");
+
+const accountProfile =
+  document.querySelector("#accountProfile");
+
+const accountColor =
+  document.querySelector("#accountColor");
+
+const accountId =
+  document.querySelector("#accountId");
+
+const enabledItemsGrid =
+  document.querySelector("#enabledItemsGrid");
+
+const rarityGrid =
+  document.querySelector("#rarityGrid");
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+
+function clone(value) {
+
+  return JSON.parse(
+    JSON.stringify(value)
+  );
+
+}
+
+
+function normalizeSettings(source) {
+
+  const settings = {
+    ...clone(DEFAULT_SETTINGS),
+    ...(source || {})
+  };
+
+
+  settings.itemRarities = {
+    ...DEFAULT_RARITIES,
+    ...(source?.itemRarities || {})
+  };
+
+
+  settings.enabledItems = {};
+
+
+  Object.keys(ITEM_DEFINITIONS)
+    .forEach(type => {
+
+      settings.enabledItems[type] =
+        source?.enabledItems?.[type] !== false;
+
+    });
+
+
+  settings.maxHealth =
+    Math.max(
+      1,
+      Number(settings.maxHealth || 4)
+    );
+
+
+  settings.minShell =
+    Math.max(
+      1,
+      Number(settings.minShell || 5)
+    );
+
+
+  settings.maxShell =
+    Math.max(
+      settings.minShell,
+      Number(settings.maxShell || 8)
+    );
+
+
+  settings.minEach =
+    Math.max(
+      1,
+      Number(settings.minEach || 3)
+    );
+
+
+  settings.startingItemCount =
+    Math.max(
+      0,
+      Math.min(
+        8,
+        Number(settings.startingItemCount || 0)
+      )
+    );
+
+
+  settings.itemRewardCount =
+    Math.max(
+      0,
+      Math.min(
+        8,
+        Number(settings.itemRewardCount || 0)
+      )
+    );
+
+
+  settings.rarityEnabled =
+    source?.rarityEnabled === true;
+
+
+  settings.realtimeShellInfo =
+    source?.realtimeShellInfo !== false;
+
+
+  settings.showShellNumber =
+    source?.showShellNumber !== false;
+
+
+  return settings;
+
+}
+
+
+function getGame() {
+
+  return roomData?.game || null;
+
+}
+
+
+function getShells() {
+
+  return getGame()?.shells || null;
+
+}
+
+
+function getGamePlayers() {
+
+  return getGame()?.players || {};
+
+}
+
+
+function getAllPlayerIds() {
+
+  const ids = new Set();
+
+  Object.keys(playersData || {})
+    .forEach(id => ids.add(id));
+
+  Object.keys(roomData?.players || {})
+    .forEach(id => ids.add(id));
+
+  Object.keys(getGamePlayers() || {})
+    .forEach(id => ids.add(id));
+
+  return [...ids];
+
+}
+
+
+function getPlayerName(id) {
+
+  return (
+    playersData?.[id]?.name ||
+    id
+  );
+
+}
+
+
+function getPlayerColor(id) {
+
+  return (
+    playersData?.[id]?.profileColor ||
+    "coral"
+  );
+
+}
+
+
+function showToast(text, type = "success") {
+
+  const toast =
+    document.querySelector("#toast");
+
+  toast.textContent = text;
+
+  toast.className =
+    "toast show " + type;
+
+  clearTimeout(
+    showToast.timer
+  );
+
+  showToast.timer =
+    setTimeout(() => {
+
+      toast.className = "toast";
+
+    }, 2500);
+
+}
+
+
+function setMessage(
+  element,
+  text,
+  type = ""
+) {
+
+  element.textContent = text;
+
+  element.className =
+    "message " + type;
+
+}
+
+
+/* =====================================================
+   TABS
+===================================================== */
+
+document.querySelectorAll(".tab")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        activeTab =
+          button.dataset.tab;
+
+        document.querySelectorAll(".tab")
+          .forEach(tab => {
+
+            tab.classList.toggle(
+              "active",
+              tab === button
+            );
+
+          });
+
+
+        document.querySelectorAll(".tab-content")
+          .forEach(section => {
+
+            section.classList.toggle(
+              "hidden",
+              section.id !==
+              "tab-" + activeTab
+            );
+
+          });
+
+
+        if (activeTab === "settings") {
+          renderSettings();
+        }
+
+        if (activeTab === "shells") {
+          renderShells();
+        }
+
+        if (activeTab === "players") {
+          renderPlayers();
+        }
+
+        if (activeTab === "accounts") {
+          renderAccounts();
+        }
+
+      }
+    );
+
+  });
+
+
+/* =====================================================
+   FIREBASE WATCH
+===================================================== */
+
+function startWatchers() {
+
+  onValue(
+    ref(db, "room"),
+    snapshot => {
+
+      roomData =
+        snapshot.exists()
+          ? snapshot.val()
+          : null;
+
+      connection.classList.add(
+        "online"
+      );
+
+      connection.classList.remove(
+        "error"
+      );
+
+      connectionText.textContent =
+        "Firebase Online";
+
+      renderEverything();
+
+    },
+    error => {
+
+      console.error(error);
+
+      connection.classList.remove(
+        "online"
+      );
+
+      connection.classList.add(
+        "error"
+      );
+
+      connectionText.textContent =
+        "Firebase Error";
+
+    }
+  );
+
+
+  onValue(
+    ref(db, "players"),
+    snapshot => {
+
+      playersData =
+        snapshot.exists()
+          ? snapshot.val()
+          : {};
+
+      renderEverything();
+
+    }
+  );
+
+
+  Promise.all([get(ref(db, "settings")), get(ref(db, "gameSettings"))])
+    .then(([mainSnapshot, gameSnapshot]) => {
+      const source = mainSnapshot.exists() ? mainSnapshot.val() : (gameSnapshot.exists() ? gameSnapshot.val() : {});
+      persistentSettings = normalizeSettings(source);
+      renderSettings();
+    })
+    .catch(error => console.error(error));
+
+}
+
+
+function renderEverything() {
+
+  renderDashboard();
+
+  if (activeTab === "shells") {
+    renderShells();
+  }
+
+  if (activeTab === "players") {
+    renderPlayers();
+  }
+
+  if (activeTab === "accounts") {
+    renderAccounts();
+  }
+
+  if (activeTab === "database") {
+    renderDatabase();
+  }
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function renderDashboard() {
+
+  const game =
+    getGame();
+
+  const shells =
+    game?.shells;
+
+  statRoom.textContent =
+    roomData
+      ? "Aktif"
+      : "Kosong";
+
+
+  statStatus.textContent =
+    roomData?.status ||
+    game?.phase ||
+    "Tidak ada";
+
+
+  const ids =
+    getOrderedPlayerIds();
+
+  statPlayers.textContent =
+    ids.length;
+
+
+  const currentId =
+    game?.turn?.current;
+
+
+  statTurn.textContent =
+    currentId
+      ? getPlayerName(currentId)
+      : "-";
+
+
+  statShells.textContent =
+    shells?.total ??
+    shells?.sequence?.length ??
+    0;
+
+
+  statLive.textContent =
+    shells?.alive ?? 0;
+
+
+  statBlank.textContent =
+    shells?.blank ?? 0;
+
+
+  statCurrentShell.textContent =
+    shells
+      ? "#" + (Number(shells.current || 0) + 1)
+      : "-";
+
+
+  const message =
+    document.querySelector(
+      "#dashboardMessage"
+    );
+
+
+  if (dashboardRoomDetail) {
+    if (!roomData) {
+      dashboardRoomDetail.innerHTML = `<div class="room-empty">Belum ada room game.</div>`;
+    } else {
+      const gamePlayers = getGamePlayers();
+      const playerNames = Object.keys(gamePlayers).map(id => getPlayerName(id));
+      const status = roomData.status || game?.phase || "-";
+      const started = roomData.startedAt || game?.startedAt || roomData.createdAt || null;
+      const winnerId = game?.winner || game?.winnerId || roomData.winner || null;
+      dashboardRoomDetail.innerHTML = [
+        ["Status Room", status],
+        ["Pemain Aktif", playerNames.length ? playerNames.join(", ") : "Belum ada"],
+        ["Giliran", currentId ? getPlayerName(currentId) : "-"],
+        ["Phase", game?.phase || "-"],
+        ["Shell", shells ? `#${Number(shells.current || 0) + 1} / ${shells.sequence?.length || 0}` : "-"],
+        ["Pemenang", winnerId ? getPlayerName(winnerId) : "-"],
+        ["Waktu", started ? new Date(started).toLocaleString("id-ID") : "-"]
+      ].map(([label,value]) => `<div class="room-detail"><span>${escapeHTML(label)}</span><b>${escapeHTML(String(value))}</b></div>`).join("");
+    }
+  }
+
+  if (!roomData) {
+
+    message.textContent =
+      "Tidak ada room.";
+
+    return;
+
+  }
+
+
+  if (!game) {
+
+    message.textContent =
+      "Room tersedia tetapi game belum dimulai.";
+
+    return;
+
+  }
+
+
+  message.textContent =
+    "Game aktif. Data yang ditampilkan berasal langsung dari room/game.";
+
+}
+
+
+/* =====================================================
+   SETTINGS UI
+===================================================== */
+
+function renderSettings() {
+
+  const settings =
+    normalizeSettings(
+      persistentSettings
+    );
+
+
+  document.querySelector(
+    "#settingMaxHealth"
+  ).value =
+    settings.maxHealth;
+
+
+  document.querySelector(
+    "#settingMinShell"
+  ).value =
+    settings.minShell;
+
+
+  document.querySelector(
+    "#settingMaxShell"
+  ).value =
+    settings.maxShell;
+
+
+  document.querySelector(
+    "#settingMinEach"
+  ).value =
+    settings.minEach;
+
+
+  document.querySelector(
+    "#settingStartingItems"
+  ).value =
+    settings.startingItemCount;
+
+
+  document.querySelector(
+    "#settingItemReward"
+  ).value =
+    settings.itemRewardCount;
+
+
+  document.querySelector(
+    "#settingRarity"
+  ).checked =
+    settings.rarityEnabled;
+
+
+  document.querySelector(
+    "#settingRealtime"
+  ).checked =
+    settings.realtimeShellInfo;
+
+
+  document.querySelector(
+    "#settingShellNumber"
+  ).checked =
+    settings.showShellNumber;
+
+
+  renderEnabledItems(
+    settings
+  );
+
+  renderRarities(
+    settings
+  );
+
+}
+
+
+function renderEnabledItems(settings) {
+
+  enabledItemsGrid.innerHTML = "";
+
+
+  Object.entries(
+    ITEM_DEFINITIONS
+  )
+  .forEach(([type, definition]) => {
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "toggle-row";
+
+
+    row.classList.add("enabled-item-row");
+    row.innerHTML = `
+      <div class="enabled-item-icon"><i data-lucide="${escapeHTML(definition.icon)}"></i></div>
+      <div class="toggle-info">
+        <div class="toggle-name">${escapeHTML(definition.name)}</div>
+        <div class="toggle-description">${escapeHTML(type)}</div>
+      </div>
+
+      <label class="switch">
+
+        <input
+          type="checkbox"
+          data-enabled-item="${type}"
+          ${settings.enabledItems[type] !== false ? "checked" : ""}>
+
+        <span class="slider"></span>
+
+      </label>
+
+    `;
+
+
+    enabledItemsGrid.appendChild(
+      row
+    );
+
+  });
+
+
+  lucide.createIcons();
+
+}
+
+
+function renderRarities(settings) {
+
+  rarityGrid.innerHTML = "";
+
+
+  Object.entries(
+    ITEM_DEFINITIONS
+  )
+  .forEach(([type, definition]) => {
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "rarity-row";
+
+
+    const options =
+      Object.entries(RARITIES)
+        .map(([key, rarity]) => {
+
+          return `
+            <option
+              value="${key}"
+              ${settings.itemRarities[type] === key ? "selected" : ""}>
+              ${rarity.name}
+            </option>
+          `;
+
+        })
+        .join("");
+
+
+    row.innerHTML = `
+
+      <div class="rarity-icon">
+        <i data-lucide="${definition.icon}"></i>
+      </div>
+
+      <div class="rarity-name">
+        ${escapeHTML(definition.name)}
+      </div>
+
+      <select
+        class="rarity-select"
+        data-rarity-item="${type}">
+
+        ${options}
+
+      </select>
+
+    `;
+
+
+    rarityGrid.appendChild(
+      row
+    );
+
+  });
+
+
+  lucide.createIcons();
+
+}
+
+
+function collectSettingsFromUI() {
+
+  const settings =
+    normalizeSettings(
+      persistentSettings
+    );
+
+
+  settings.maxHealth =
+    Number(
+      document.querySelector(
+        "#settingMaxHealth"
+      ).value
+    );
+
+
+  settings.minShell =
+    Number(
+      document.querySelector(
+        "#settingMinShell"
+      ).value
+    );
+
+
+  settings.maxShell =
+    Number(
+      document.querySelector(
+        "#settingMaxShell"
+      ).value
+    );
+
+
+  settings.minEach =
+    Number(
+      document.querySelector(
+        "#settingMinEach"
+      ).value
+    );
+
+
+  settings.startingItemCount =
+    Number(
+      document.querySelector(
+        "#settingStartingItems"
+      ).value
+    );
+
+
+  settings.itemRewardCount =
+    Number(
+      document.querySelector(
+        "#settingItemReward"
+      ).value
+    );
+
+
+  settings.rarityEnabled =
+    document.querySelector(
+      "#settingRarity"
+    ).checked;
+
+
+  settings.realtimeShellInfo =
+    document.querySelector(
+      "#settingRealtime"
+    ).checked;
+
+
+  settings.showShellNumber =
+    document.querySelector(
+      "#settingShellNumber"
+    ).checked;
+
+
+  settings.enabledItems = {};
+
+  document.querySelectorAll(
+    "[data-enabled-item]"
+  )
+  .forEach(input => {
+
+    settings.enabledItems[
+      input.dataset.enabledItem
+    ] =
+      input.checked;
+
+  });
+
+
+  settings.itemRarities = {};
+
+  document.querySelectorAll(
+    "[data-rarity-item]"
+  )
+  .forEach(select => {
+
+    settings.itemRarities[
+      select.dataset.rarityItem
+    ] =
+      select.value;
+
+  });
+
+
+  return settings;
+
+}
+
+
+/* =====================================================
+   SAVE SETTINGS
+===================================================== */
+
+async function saveSettings(
+  applyToCurrentGame = false
+) {
+
+  const settings =
+    collectSettingsFromUI();
+
+
+  if (
+    settings.maxShell <
+    settings.minShell
+  ) {
+
+    showToast(
+      "Maximum Shell tidak boleh lebih kecil dari Minimum Shell.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  if (
+    settings.maxShell <
+    settings.minEach * 2
+  ) {
+
+    showToast(
+      "Maximum Shell terlalu kecil untuk minimum Live/Blank.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    await Promise.all([
+      set(ref(db, "settings"), settings),
+      set(ref(db, "gameSettings"), settings)
+    ]);
+
+
+    persistentSettings =
+      clone(settings);
+
+
+    if (
+      applyToCurrentGame &&
+      roomData?.game
+    ) {
+
+      await update(
+        ref(db, "room/game"),
+        {
+          settings
+        }
+      );
+
+    }
+
+
+    setMessage(
+      document.querySelector(
+        "#settingsMessage"
+      ),
+      applyToCurrentGame
+        ? "Settings berhasil disimpan dan diterapkan ke game aktif."
+        : "Settings berhasil disimpan.",
+      "success"
+    );
+
+
+    showToast(
+      applyToCurrentGame
+        ? "Settings diterapkan ke game."
+        : "Settings tersimpan."
+    );
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    setMessage(
+      document.querySelector(
+        "#settingsMessage"
+      ),
+      "Gagal menyimpan settings.",
+      "error"
+    );
+
+  }
+
+}
+
+
+document.querySelector(
+  "#saveSettingsBtn"
+)
+.addEventListener(
+  "click",
+  () => saveSettings(false)
+);
+
+
+document.querySelector(
+  "#saveSettingsAndGameBtn"
+)
+.addEventListener(
+  "click",
+  () => saveSettings(true)
+);
+
+
+document.querySelector(
+  "#applySettingsGameBtn"
+)
+.addEventListener(
+  "click",
+  async () => {
+
+    if (!roomData?.game) {
+
+      showToast(
+        "Belum ada game aktif.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    await saveSettings(true);
+
+  }
+);
+
+
+let settingsRealtimeTimer = null;
+
+function scheduleSettingsRealtimeSave() {
+  clearTimeout(settingsRealtimeTimer);
+  settingsRealtimeTimer = setTimeout(() => saveSettings(false), 400);
+}
+
+document.addEventListener("change", event => {
+  if (event.target.matches("#settingMaxHealth,#settingMinShell,#settingMaxShell,#settingMinEach,#settingStartingItems,#settingItemReward,#settingRarity,#settingRealtime,#settingShellNumber,[data-enabled-item],[data-rarity-item]")) {
+    scheduleSettingsRealtimeSave();
+  }
+});
+
+document.addEventListener("input", event => {
+  if (event.target.matches("#settingMaxHealth,#settingMinShell,#settingMaxShell,#settingMinEach,#settingStartingItems,#settingItemReward")) {
+    scheduleSettingsRealtimeSave();
+  }
+});
+
+/* =====================================================
+   SHELL RENDER
+===================================================== */
+
+function renderShells() {
+  const shells = getShells();
+  if (!shells || !Array.isArray(shells.sequence)) {
+    shellGrid.innerHTML = `<div class="empty">Belum ada data shell.</div>`;
+    return;
+  }
+  const sequence = shells.sequence;
+  const current = Number(shells.current || 0);
+  const live = sequence.filter(x => x === "live").length;
+  const blank = sequence.length - live;
+  shellTotal.textContent = sequence.length;
+  shellLive.textContent = live;
+  shellBlank.textContent = blank;
+  shellCurrent.textContent = "#" + (current + 1);
+  shellGrid.innerHTML = sequence.map((type,index) => `<div class="shell-card ${type === "live" ? "live" : "blank"} ${index === current ? "current" : ""}" data-shell-index="${index}" title="Klik untuk invert">#${index + 1}</div>`).join("");
+}
+
+async function toggleShell(index) {
+  const shells = getShells();
+  if (!shells?.sequence?.[index]) return;
+  const sequence = [...shells.sequence];
+  sequence[index] = sequence[index] === "live" ? "blank" : "live";
+  const alive = sequence.filter(x => x === "live").length;
+  const blank = sequence.length - alive;
+  try {
+    await update(ref(db, "room/game/shells"), {sequence, alive, blank});
+    showToast(`Peluru #${index + 1} menjadi ${sequence[index] === "live" ? "LIVE" : "BLANK"}.`);
+  } catch (error) { console.error(error); showToast("Gagal mengubah peluru.", "error"); }
+}
+
+document.addEventListener("click", event => {
+  const shell = event.target.closest(".shell-card[data-shell-index]");
+  if (shell) toggleShell(Number(shell.dataset.shellIndex));
+});
+
+function collectShellSequence() {
+
+  return [
+    ...document.querySelectorAll(
+      "[data-shell-index]"
+    )
+  ]
+  .sort(
+    (a, b) =>
+      Number(a.dataset.shellIndex) -
+      Number(b.dataset.shellIndex)
+  )
+  .map(
+    select => select.value
+  );
+
+}
+
+
+/* =====================================================
+   SHUFFLE SHELL
+===================================================== */
+
+function shuffle(array) {
+
+  const result =
+    [...array];
+
+
+  for (
+    let i = result.length - 1;
+    i > 0;
+    i--
+  ) {
+
+    const j =
+      Math.floor(
+        Math.random() *
+        (i + 1)
+      );
+
+
+    [
+      result[i],
+      result[j]
+    ] =
+    [
+      result[j],
+      result[i]
+    ];
+
+  }
+
+
+  return result;
+
+}
+
+
+document.querySelector(
+  "#shuffleShellBtn"
+)
+.addEventListener(
+  "click",
+  async () => {
+
+    const shells =
+      getShells();
+
+
+    if (!shells?.sequence) {
+
+      showToast(
+        "Belum ada shell.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const sequence =
+      shuffle(
+        shells.sequence
+      );
+
+
+    await set(
+      ref(db, "room/game/shells/sequence"),
+      sequence
+    );
+
+
+    showToast(
+      "Urutan peluru diacak."
+    );
+
+  }
+);
+
+
+/* =====================================================
+   PLAYER RENDER
+===================================================== */
+
+function getOrderedPlayerIds() {
+  const gamePlayers = getGamePlayers();
+  if (!roomData?.game || !gamePlayers || !Object.keys(gamePlayers).length) return [];
+  const ids = Object.keys(gamePlayers);
+  return ids.sort((a,b) => {
+    const ao = Number(gamePlayers[a]?.turnOrder ?? 999);
+    const bo = Number(gamePlayers[b]?.turnOrder ?? 999);
+    if (ao !== bo) return ao - bo;
+    return getPlayerName(a).localeCompare(getPlayerName(b));
+  });
+}
+
+function profileImageSrc(url) {
+  const value = String(url || "").trim();
+  if (!value) return "";
+  // share.google merupakan short URL gambar dari Google dan tidak selalu
+  // dikembalikan sebagai file gambar langsung oleh browser. Gunakan image
+  // proxy agar tetap dapat dipakai sebagai src pada <img>.
+  if (/^https?:\/\/share\.google\//i.test(value)) {
+    return "https://images.weserv.nl/?url=" + encodeURIComponent(value);
+  }
+  return value;
+}
+
+function avatarImageHTML(profile, name) {
+  const src = profileImageSrc(profile?.profile);
+  if (!src) return escapeHTML(String(name || "").charAt(0).toUpperCase());
+  const fallback = escapeHTML(String(name || "").charAt(0).toUpperCase());
+  return `<img src="${escapeHTML(src)}" alt="Profile" referrerpolicy="no-referrer" onerror="this.outerHTML='${fallback}'">`;
+}
+
+function avatarHTML(id, sizeClass="") {
+  const profile = playersData?.[id] || {};
+  const name = getPlayerName(id);
+  const color = profile.profileColor || "coral";
+  return `<div class="avatar ${sizeClass}" style="background:${escapeHTML(color)}">${avatarImageHTML(profile, name)}</div>`;
+}
+
+function renderPlayers() {
+  const ids = getOrderedPlayerIds();
+  const gamePlayers = getGamePlayers();
+  const current = getGame()?.turn?.current || "";
+
+  currentTurnSelect.innerHTML = `<option value="">Tidak ada giliran</option>` + ids.map(id => `<option value="${escapeHTML(id)}" ${id === current ? "selected" : ""}>${escapeHTML(getPlayerName(id))}</option>`).join("");
+
+  if (!ids.length) {
+    playersContainer.innerHTML = `<div class="empty">Tidak ada pemain.</div>`;
+    playerOrderList.innerHTML = `<div class="empty">Tidak ada pemain.</div>`;
+    return;
+  }
+
+  playersContainer.innerHTML = ids.map(id => {
+    const profile = playersData?.[id] || {};
+    const player = gamePlayers?.[id] || {};
+    const name = profile.name || id;
+    const hp = Number(player.hp ?? profile.hp ?? 0);
+    const isCurrent = current === id;
+    const items = Array.isArray(player.items) ? player.items : [];
+    return `
+      <div class="player-card" data-player-id="${escapeHTML(id)}">
+        <div class="player-header">
+          <div class="player-main">
+            ${avatarHTML(id)}
+            <div class="player-title">
+              <div class="player-name-display">${escapeHTML(name)}</div>
+              <div class="player-meta">ID: ${escapeHTML(id)}${isCurrent ? " • CURRENT TURN" : ""}</div>
+            </div>
+          </div>
+          ${isCurrent ? `<div class="current-badge">CURRENT</div>` : ""}
+        </div>
+        <div class="player-body">
+          <div class="player-edit-grid">
+            <div class="player-field">
+              <label>HP</label>
+              <input class="player-input" data-player-hp type="number" min="0" max="20" value="${hp}">
+            </div>
+          </div>
+          <div class="status-list">
+            <label class="status-check"><input type="checkbox" data-status="handcuffed" ${player.handcuffed ? "checked" : ""}> Handcuff</label>
+            <label class="status-check"><input type="checkbox" data-status="shieldActive" ${player.shieldActive ? "checked" : ""}> Mirror</label>
+            <label class="status-check"><input type="checkbox" data-status="aceCardActive" ${player.aceCardActive ? "checked" : ""}> Ace</label>
+            <label class="status-check"><input type="checkbox" data-status="dynamiteTrapped" ${player.dynamiteTrapped ? "checked" : ""}> Dynamite</label>
+          </div>
+          <div class="inventory-title">ITEM — ${items.length}/8</div>
+          <div class="inventory-grid">${renderInventorySlots(id, items)}</div>
+        </div>
+      </div>`;
+  }).join("");
+
+  renderPlayerOrder(ids);
+  lucide.createIcons();
+}
+
+function renderInventorySlots(playerId, items) {
+  const inventory = Array.isArray(items) ? items : [];
+  return Array.from({length:8}, (_, index) => {
+    const item = inventory[index] || "";
+    const definition = ITEM_DEFINITIONS[item];
+    return `<div class="inventory-slot ${item ? "" : "empty"}" data-player-id="${escapeHTML(playerId)}" data-inventory-slot="${index}">
+      <div class="inventory-number">${index + 1}</div>
+      <div class="inventory-content">${definition ? `<i data-lucide="${escapeHTML(definition.icon)}"></i>` : `<i data-lucide="plus"></i>`}</div>
+    </div>`;
+  }).join("");
+}
+
+function renderPlayerOrder(ids) {
+  playerOrderList.innerHTML = ids.map((id,index) => {
+    const profile = playersData?.[id] || {};
+    const name = getPlayerName(id);
+    const color = profile.profileColor || "coral";
+    const avatar = avatarImageHTML(profile, name);
+    const current = getGame()?.turn?.current === id;
+    return `<div class="order-player ${current ? "current" : ""}" draggable="true" data-order-player="${escapeHTML(id)}">
+      <i class="order-grip" data-lucide="grip-vertical"></i><div class="order-number">${index + 1}</div>
+      <div class="order-avatar" style="background:${escapeHTML(color)}">${avatar}</div><div class="order-name">${escapeHTML(name)}</div>
+      ${current ? `<div class="current-badge">CURRENT</div>` : ""}
+    </div>`;
+  }).join("");
+  lucide.createIcons();
+}
+
+async function setPlayerGameValue(id, values) {
+  if (!getGamePlayers()?.[id]) return;
+  try {
+    await update(ref(db, "room/game/players/" + id), values);
+  } catch (error) {
+    console.error(error);
+    showToast("Gagal memperbarui pemain.", "error");
+  }
+}
+
+document.addEventListener("change", async event => {
+  const hp = event.target.closest("[data-player-hp]");
+  if (hp) {
+    const card = hp.closest(".player-card");
+    if (card) await setPlayerGameValue(card.dataset.playerId, {hp: Math.max(0, Math.min(20, Number(hp.value) || 0))});
+    return;
+  }
+  const status = event.target.closest("[data-status]");
+  if (status) {
+    const card = status.closest(".player-card");
+    if (card) await setPlayerGameValue(card.dataset.playerId, {[status.dataset.status]: status.checked});
+    return;
+  }
+});
+
+document.addEventListener("click", event => {
+  const slot = event.target.closest("[data-inventory-slot]");
+  if (!slot) return;
+
+  const id = slot.dataset.playerId;
+  const index = Number(slot.dataset.inventorySlot);
+  const currentItems = Array.isArray(getGamePlayers()?.[id]?.items) ? getGamePlayers()[id].items : [];
+
+  itemPopupTitle.textContent = `Item pemain #${index + 1}`;
+  itemPopupPlayer.textContent = getPlayerName(id);
+  itemPopupList.innerHTML = Object.entries(ITEM_DEFINITIONS).map(([type, def]) => `
+    <div class="item-popup-row">
+      <div class="item-popup-icon"><i data-lucide="${escapeHTML(def.icon)}"></i></div>
+      <div class="item-popup-name">${escapeHTML(def.name)}</div>
+      <button type="button" class="btn btn-crimson item-popup-replace" data-replace-item="${escapeHTML(type)}" data-player-id="${escapeHTML(id)}" data-inventory-slot="${index}">Replace</button>
+    </div>`).join("");
+
+  itemPopupClear.dataset.playerId = id;
+  itemPopupClear.dataset.inventorySlot = index;
+  itemPopup.classList.remove("hidden");
+  lucide.createIcons();
+});
+
+document.addEventListener("click", async event => {
+  const replace = event.target.closest("[data-replace-item]");
+  if (!replace) return;
+  const id = replace.dataset.playerId;
+  const index = Number(replace.dataset.inventorySlot);
+  const type = replace.dataset.replaceItem;
+  if (!id || Number.isNaN(index) || !type) return;
+  const items = Array.isArray(getGamePlayers()?.[id]?.items) ? [...getGamePlayers()[id].items] : [];
+  while (items.length < 8) items.push("");
+  items[index] = type;
+  while (items.length && !items[items.length - 1]) items.pop();
+  await setPlayerGameValue(id, {items});
+  closeItemPopup();
+});
+
+function closeItemPopup() {
+  itemPopup.classList.add("hidden");
+}
+
+itemPopupClose.addEventListener("click", closeItemPopup);
+itemPopupClear.addEventListener("click", async () => {
+  const id = itemPopupClear.dataset.playerId;
+  if (!id) return;
+  await setPlayerGameValue(id, {items: []});
+  closeItemPopup();
+});
+itemPopup.addEventListener("click", event => {
+  if (event.target === itemPopup) closeItemPopup();
+});
+
+currentTurnSelect.addEventListener("change", async () => {
+  try {
+    await update(ref(db, "room/game/turn"), {current: currentTurnSelect.value || null});
+    showToast("Pemain giliran diperbarui.");
+  } catch (error) {
+    console.error(error);
+    showToast("Gagal mengubah giliran.", "error");
+  }
+});
+
+let draggedOrderRow = null;
+let draggedOrderMoved = false;
+
+function moveOrderRow(clientY) {
+  if (!draggedOrderRow) return;
+  const list = playerOrderList;
+  const rows = [...list.querySelectorAll("[data-order-player]")].filter(row => row !== draggedOrderRow);
+  let placed = false;
+  for (const row of rows) {
+    const rect = row.getBoundingClientRect();
+    if (clientY < rect.top + rect.height / 2) {
+      list.insertBefore(draggedOrderRow, row);
+      placed = true;
+      break;
+    }
+  }
+  if (!placed) list.appendChild(draggedOrderRow);
+}
+
+async function finishOrderDrag() {
+  if (!draggedOrderRow) return;
+  draggedOrderRow.classList.remove("dragging");
+  const rows = [...playerOrderList.querySelectorAll("[data-order-player]")];
+  draggedOrderRow = null;
+  if (!draggedOrderMoved) return;
+  try {
+    const updates = {};
+    rows.forEach((row,index) => { updates["room/game/players/" + row.dataset.orderPlayer + "/turnOrder"] = index; });
+    await update(ref(db), updates);
+    showToast("Urutan pemain diperbarui.");
+  } catch (error) {
+    console.error(error);
+    showToast("Gagal mengubah urutan.", "error");
+  }
+}
+
+document.addEventListener("pointerdown", event => {
+  const row = event.target.closest("[data-order-player]");
+  if (!row || event.button !== 0) return;
+  draggedOrderRow = row;
+  draggedOrderMoved = false;
+  row.classList.add("dragging");
+  row.setPointerCapture?.(event.pointerId);
+});
+document.addEventListener("pointermove", event => {
+  if (!draggedOrderRow) return;
+  event.preventDefault();
+  draggedOrderMoved = true;
+  moveOrderRow(event.clientY);
+});
+document.addEventListener("pointerup", finishOrderDrag);
+document.addEventListener("pointercancel", finishOrderDrag);
+
+/* =====================================================
+   ACCOUNT PAGE
+===================================================== */
+let editingAccountId = null;
+function renderAccounts() {
+  const ids = Object.keys(playersData || {});
+  accountCount.textContent = ids.length + " akun";
+  if (!ids.length) {
+    accountsContainer.innerHTML = `<div class="empty">Belum ada akun.</div>`;
+    return;
+  }
+  accountsContainer.innerHTML = ids.map(id => {
+    const data = playersData[id] || {};
+    const name = data.name || id;
+    const color = data.profileColor || "coral";
+    const avatar = avatarImageHTML(data, name);
+    return `<div class="account-card">
+      <div class="account-avatar" style="background:${escapeHTML(color)}">${avatar}</div>
+      <div class="account-info"><div class="account-name">${escapeHTML(name)}</div><div class="account-id">ID: ${escapeHTML(id)}</div><div class="account-profile">${escapeHTML(data.profile || "Tidak ada profile URL")}</div></div>
+      <button class="btn btn-dark account-edit" data-edit-account="${escapeHTML(id)}"><i data-lucide="pencil"></i> Edit</button>
+    </div>`;
+  }).join("");
+  lucide.createIcons();
+}
+
+function openAccountEditor(id) {
+  const data = playersData?.[id];
+  if (!data) return;
+  editingAccountId = id;
+  accountModal.classList.remove("hidden");
+  accountName.value = data.name || "";
+  accountProfile.value = data.profile || "";
+  accountColor.value = data.profileColor || "coral";
+  accountId.textContent = "ID: " + id;
+}
+
+async function saveAccount() {
+  if (!editingAccountId) return;
+  const name = accountName.value;
+  if (!name.trim()) { showToast("Nama tidak boleh kosong.", "error"); return; }
+  try {
+    await update(ref(db, "players/" + editingAccountId), {name, profile: accountProfile.value.trim(), profileColor: accountColor.value.trim() || "coral"});
+    if (getGamePlayers()?.[editingAccountId]) await update(ref(db, "room/game/players/" + editingAccountId), {name});
+    closeAccountEditor();
+    showToast("Akun berhasil diperbarui.");
+  } catch (error) { console.error(error); showToast("Gagal memperbarui akun.", "error"); }
+}
+async function deleteAccount() {
+  if (!editingAccountId) return;
+  const id = editingAccountId;
+  const name = playersData?.[id]?.name || id;
+  if (!confirm(`Hapus akun "${name}"? Data akun akan dihapus dari database.`)) return;
+  try {
+    await remove(ref(db, "players/" + id));
+    if (getGamePlayers()?.[id]) {
+      await remove(ref(db, "room/game/players/" + id));
+      if (getGame()?.turn?.current === id) {
+        await update(ref(db, "room/game/turn"), {current: null});
+      }
+    }
+    closeAccountEditor();
+    showToast("Akun berhasil dihapus.");
+  } catch (error) {
+    console.error(error);
+    showToast("Gagal menghapus akun.", "error");
+  }
+}
+function closeAccountEditor() { editingAccountId = null; accountModal.classList.add("hidden"); }
+document.addEventListener("click", event => {
+  const edit = event.target.closest("[data-edit-account]");
+  if (edit) openAccountEditor(edit.dataset.editAccount);
+});
+
+/* =====================================================
+   DATABASE PREVIEW
+===================================================== */
+
+function renderDatabase() {
+
+  const preview = {
+
+    room: roomData,
+
+    players: playersData,
+
+    gameSettings:
+      persistentSettings
+
+  };
+
+
+  dataPreview.textContent =
+    JSON.stringify(
+      preview,
+      null,
+      2
+    );
+
+}
+
+
+document.querySelector(
+  "#copyDataBtn"
+)
+.addEventListener(
+  "click",
+  async () => {
+
+    try {
+
+      await navigator.clipboard.writeText(
+        dataPreview.textContent
+      );
+
+
+      showToast(
+        "JSON berhasil disalin."
+      );
+
+    } catch {
+
+      showToast(
+        "Gagal menyalin JSON.",
+        "error"
+      );
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   DELETE ROOM
+===================================================== */
+
+const deleteRoomBtn = document.querySelector("#deleteRoomBtn");
+
+async function deleteRoom() {
+  if (!roomData) {
+    showToast("Tidak ada room untuk dihapus.", "error");
+    return;
+  }
+
+  const confirmed = confirm(
+    "Hapus room sekarang? Semua data room dan game aktif akan dihapus. Data akun dan settings tetap aman."
+  );
+
+  if (!confirmed) return;
+
+  try {
+    await remove(ref(db, "room"));
+    showToast("Room berhasil dihapus.");
+  } catch (error) {
+    console.error(error);
+    showToast("Gagal menghapus room.", "error");
+  }
+}
+
+deleteRoomBtn.addEventListener("click", deleteRoom);
+
+/* =====================================================
+   CREATE NEW SHELL
+===================================================== */
+
+document.querySelector(
+  "#reloadShellBtn"
+)
+.addEventListener(
+  "click",
+  async () => {
+
+    if (!roomData?.game) {
+
+      showToast(
+        "Belum ada game aktif.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const settings =
+      normalizeSettings(
+        roomData.game.settings ||
+        persistentSettings
+      );
+
+
+    const minShell =
+      Math.max(
+        1,
+        Number(
+          settings.minShell
+        )
+      );
+
+
+    const maxShell =
+      Math.max(
+        minShell,
+        Number(
+          settings.maxShell
+        )
+      );
+
+
+    const minEach =
+      Math.max(
+        1,
+        Number(
+          settings.minEach
+        )
+      );
+
+
+    const minimumTotal =
+      Math.max(
+        minShell,
+        minEach * 2
+      );
+
+
+    const total =
+      minimumTotal +
+      Math.floor(
+        Math.random() *
+        (
+          maxShell -
+          minimumTotal +
+          1
+        )
+      );
+
+
+    const alive =
+      minEach +
+      Math.floor(
+        Math.random() *
+        (
+          total -
+          minEach * 2 +
+          1
+        )
+      );
+
+
+    const blank =
+      total - alive;
+
+
+    let sequence = [];
+
+
+    for (
+      let i = 0;
+      i < alive;
+      i++
+    ) {
+
+      sequence.push(
+        "live"
+      );
+
+    }
+
+
+    for (
+      let i = 0;
+      i < blank;
+      i++
+    ) {
+
+      sequence.push(
+        "blank"
+      );
+
+    }
+
+
+    sequence =
+      shuffle(sequence);
+
+
+    const shellData = {
+
+      setId:
+        Date.now().toString(36),
+
+      total,
+
+      alive,
+
+      blank,
+
+      initialAlive:
+        alive,
+
+      initialBlank:
+        blank,
+
+      current: 0,
+
+      sequence,
+
+      originalSequence:
+        [...sequence]
+
+    };
+
+
+    try {
+
+      await set(
+        ref(
+          db,
+          "room/game/shells"
+        ),
+        shellData
+      );
+
+
+      showToast(
+        "Shell baru berhasil dibuat."
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      showToast(
+        "Gagal membuat shell.",
+        "error"
+      );
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   REFRESH
+===================================================== */
+
+document.querySelector(
+  "#refreshBtn"
+)
+.addEventListener(
+  "click",
+  async () => {
+
+    try {
+
+      const [
+        roomSnapshot,
+        playersSnapshot,
+        settingsSnapshot
+      ] =
+      await Promise.all([
+
+        get(
+          ref(db, "room")
+        ),
+
+        get(
+          ref(db, "players")
+        ),
+
+        get(
+          ref(db, "gameSettings")
+        )
+
+      ]);
+
+
+      roomData =
+        roomSnapshot.exists()
+          ? roomSnapshot.val()
+          : null;
+
+
+      playersData =
+        playersSnapshot.exists()
+          ? playersSnapshot.val()
+          : {};
+
+
+      persistentSettings =
+        normalizeSettings(
+          settingsSnapshot.exists()
+            ? settingsSnapshot.val()
+            : {}
+        );
+
+
+      renderEverything();
+
+      renderSettings();
+
+      showToast(
+        "Data berhasil diperbarui."
+      );
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      showToast(
+        "Gagal refresh data.",
+        "error"
+      );
+
+    }
+
+  }
+);
+
+
+document.querySelector("#accountSave").addEventListener("click", saveAccount);
+document.querySelector("#accountDelete").addEventListener("click", deleteAccount);
+document.querySelector("#accountCancel").addEventListener("click", closeAccountEditor);
+document.querySelector("#accountModalClose").addEventListener("click", closeAccountEditor);
+accountModal.addEventListener("click", event => { if (event.target === accountModal) closeAccountEditor(); });
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+lucide.createIcons();
+
+startWatchers();
+
+</script>
+
+</body>
+</html>
