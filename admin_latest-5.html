@@ -1125,6 +1125,14 @@ button {
   }
 }
 
+
+.shell-current-badge select { background:#333; color:#fff; border:1px solid #555; border-radius:4px; padding:3px 5px; font-size:11px; }
+.shell-current-badge #shellCurrent { color:#777; font-size:9px; }
+.logs-container { display:flex; flex-direction:column; gap:6px; max-height:60vh; overflow:auto; }
+.log-row { display:flex; gap:9px; align-items:flex-start; padding:9px 10px; background:#242424; border:1px solid #414141; border-radius:5px; }
+.log-time { flex:0 0 auto; color:#777; font-size:10px; min-width:78px; }
+.log-text { color:#ddd; font-size:12px; line-height:1.4; white-space:pre-wrap; word-break:break-word; }
+
 /* FINAL ADMIN REFINEMENTS */
 .shell-grid {
   display:grid !important;
@@ -1255,6 +1263,11 @@ button {
 <button class="tab" data-tab="database">
   <i data-lucide="database"></i>
   Data
+</button>
+
+<button class="tab" data-tab="logs">
+  <i data-lucide="scroll-text"></i>
+  Log
 </button>
 
   </div>
@@ -1650,8 +1663,9 @@ button {
         <span id="shellBlank">0</span>
       </div>
 
-      <div class="summary-badge">
+      <div class="summary-badge shell-current-badge">
         Current :
+        <select id="shellCurrentSelect" aria-label="Current shell"></select>
         <span id="shellCurrent">1</span>
       </div>
 
@@ -1767,6 +1781,31 @@ button {
 
   </section>
 
+  <!-- =========================
+       LOG
+  ========================= -->
+
+  <section class="tab-content hidden" id="tab-logs">
+    <div class="panel">
+      <div class="panel-top">
+        <div class="panel-title">
+          <i data-lucide="scroll-text"></i>
+          Riwayat Game
+        </div>
+        <button class="btn btn-dark" id="refreshLogsBtn">
+          <i data-lucide="refresh-cw"></i>
+          Refresh
+        </button>
+      </div>
+      <div class="panel-body">
+        <div class="message">Semua informasi teks yang tersimpan pada <b>room/game/logs</b> akan ditampilkan realtime.</div>
+        <div id="logsContainer" class="logs-container">
+          <div class="empty">Belum ada log.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <!-- =========================
@@ -1859,7 +1898,7 @@ button {
     </div>
     <div class="modal-body">
       <div class="item-popup-list" id="itemPopupList"></div>
-      <button type="button" class="btn btn-dark item-popup-clear" id="itemPopupClear">Kosongkan Item</button>
+      <button type="button" class="btn btn-dark item-popup-clear" id="itemPopupClear">Hapus Item</button>
     </div>
   </div>
 </div>
@@ -2428,6 +2467,25 @@ function showToast(text, type = "success") {
 }
 
 
+function askConfirm(title, text) {
+  return new Promise(resolve => {
+    const modal = document.querySelector("#confirmModal");
+    const titleEl = document.querySelector("#confirmTitle");
+    const textEl = document.querySelector("#confirmText");
+    const yes = document.querySelector("#confirmYes");
+    const cancel = document.querySelector("#confirmCancel");
+    const close = document.querySelector("#confirmClose");
+    titleEl.textContent = title;
+    textEl.textContent = text;
+    textEl.style.color = "#111";
+    modal.classList.remove("hidden");
+    const done = value => { modal.classList.add("hidden"); yes.onclick = null; cancel.onclick = null; close.onclick = null; resolve(value); };
+    yes.onclick = () => done(true);
+    cancel.onclick = () => done(false);
+    close.onclick = () => done(false);
+  });
+}
+
 function setMessage(
   element,
   text,
@@ -2593,6 +2651,10 @@ function renderEverything() {
 
   if (activeTab === "database") {
     renderDatabase();
+  }
+
+  if (activeTab === "logs") {
+    renderLogs();
   }
 
 }
@@ -3191,13 +3253,17 @@ function renderShells() {
     return;
   }
   const sequence = shells.sequence;
-  const current = Number(shells.current || 0);
-  const live = sequence.filter(x => x === "live").length;
-  const blank = sequence.length - live;
+  const current = Math.max(0, Math.min(sequence.length - 1, Number(shells.current || 0)));
+  const remaining = sequence.slice(current);
+  const live = remaining.filter(x => x === "live").length;
+  const blank = remaining.filter(x => x === "blank").length;
   shellTotal.textContent = sequence.length;
   shellLive.textContent = live;
   shellBlank.textContent = blank;
   shellCurrent.textContent = "#" + (current + 1);
+  if (shellCurrentSelect) {
+    shellCurrentSelect.innerHTML = sequence.map((_, i) => `<option value="${i}" ${i === current ? "selected" : ""}>#${i + 1}</option>`).join("");
+  }
   shellGrid.innerHTML = sequence.map((type,index) => `<div class="shell-card ${type === "live" ? "live" : "blank"} ${index === current ? "current" : ""}" data-shell-index="${index}" title="Klik untuk invert">#${index + 1}</div>`).join("");
 }
 
@@ -3217,6 +3283,22 @@ async function toggleShell(index) {
 document.addEventListener("click", event => {
   const shell = event.target.closest(".shell-card[data-shell-index]");
   if (shell) toggleShell(Number(shell.dataset.shellIndex));
+});
+
+const shellCurrentSelect = document.querySelector("#shellCurrentSelect");
+shellCurrentSelect?.addEventListener("change", async () => {
+  const shells = getShells();
+  const index = Number(shellCurrentSelect.value);
+  if (!shells?.sequence?.length || Number.isNaN(index)) return;
+  try {
+    const remaining = shells.sequence.slice(index);
+    await update(ref(db, "room/game/shells"), {
+      current: index,
+      alive: remaining.filter(x => x === "live").length,
+      blank: remaining.filter(x => x === "blank").length
+    });
+    showToast(`Current shell diubah ke #${index + 1}.`);
+  } catch (error) { console.error(error); showToast("Gagal mengubah current shell.", "error"); }
 });
 
 function collectShellSequence() {
@@ -3479,7 +3561,7 @@ document.addEventListener("click", event => {
   const index = Number(slot.dataset.inventorySlot);
   const currentItems = Array.isArray(getGamePlayers()?.[id]?.items) ? getGamePlayers()[id].items : [];
 
-  itemPopupTitle.textContent = `Item pemain #${index + 1}`;
+  itemPopupTitle.textContent = `Item pemain`;
   itemPopupPlayer.textContent = getPlayerName(id);
   itemPopupList.innerHTML = Object.entries(ITEM_DEFINITIONS).map(([type, def]) => `
     <div class="item-popup-row">
@@ -3516,8 +3598,12 @@ function closeItemPopup() {
 itemPopupClose.addEventListener("click", closeItemPopup);
 itemPopupClear.addEventListener("click", async () => {
   const id = itemPopupClear.dataset.playerId;
-  if (!id) return;
-  await setPlayerGameValue(id, {items: []});
+  const index = Number(itemPopupClear.dataset.inventorySlot);
+  if (!id || Number.isNaN(index)) return;
+  const items = Array.isArray(getGamePlayers()?.[id]?.items) ? [...getGamePlayers()[id].items] : [];
+  items[index] = "";
+  while (items.length && !items[items.length - 1]) items.pop();
+  await setPlayerGameValue(id, {items});
   closeItemPopup();
 });
 itemPopup.addEventListener("click", event => {
@@ -3661,6 +3747,30 @@ document.addEventListener("click", event => {
 });
 
 /* =====================================================
+   LOG PAGE
+===================================================== */
+function normalizeLogs(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw.map((v,i) => ({key:String(i), ...(typeof v === "object" ? v : {text:String(v)})}));
+  return Object.entries(raw).map(([key,v]) => ({key, ...(typeof v === "object" && v ? v : {text:String(v)})}));
+}
+const logsContainer = document.querySelector("#logsContainer");
+function renderLogs() {
+  const game = getGame();
+  const raw = game?.logs ?? game?.log ?? game?.history;
+  const logs = normalizeLogs(raw);
+  if (!logs.length) { logsContainer.innerHTML = `<div class="empty">Belum ada riwayat log.</div>`; return; }
+  logs.sort((a,b) => Number(a.timestamp ?? a.time ?? a.createdAt ?? 0) - Number(b.timestamp ?? b.time ?? b.createdAt ?? 0));
+  logsContainer.innerHTML = logs.map(log => {
+    const timestamp = Number(log.timestamp ?? log.time ?? log.createdAt);
+    const time = Number.isFinite(timestamp) && timestamp > 0 ? new Date(timestamp).toLocaleString("id-ID") : (log.timeText || "");
+    const text = log.text ?? log.message ?? log.info ?? log.content ?? JSON.stringify(log);
+    return `<div class="log-row"><div class="log-time">${escapeHTML(String(time))}</div><div class="log-text">${escapeHTML(String(text))}</div></div>`;
+  }).join("");
+}
+document.querySelector("#refreshLogsBtn")?.addEventListener("click", renderLogs);
+
+/* =====================================================
    DATABASE PREVIEW
 ===================================================== */
 
@@ -3731,12 +3841,11 @@ async function deleteRoom() {
     return;
   }
 
-  const confirmed = confirm(
+  const confirmed = await askConfirm(
+    "Hapus Room",
     "Hapus room sekarang? Semua data room dan game aktif akan dihapus. Data akun dan settings tetap aman."
   );
-
   if (!confirmed) return;
-
   try {
     await remove(ref(db, "room"));
     showToast("Room berhasil dihapus.");
