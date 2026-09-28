@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tebak Paragraf Deduksi & Induksi</title>
+    <style>
+        /* Reset dan Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background dengan overlay untuk readability */
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%2387CEEB;stop-opacity:1" /><stop offset="100%" style="stop-color:%23E0F6FF;stop-opacity:1" /></linearGradient></defs><rect width="1200" height="800" fill="url(%23sky)"/><circle cx="1000" cy="150" r="80" fill="%23FFD700" opacity="0.8"/><polygon points="0,600 200,500 400,550 600,480 800,520 1000,450 1200,500 1200,800 0,800" fill="%23228B22"/><polygon points="100,650 300,580 500,620 700,560 900,600 1100,540 1200,580 1200,800 0,800" fill="%2332CD32" opacity="0.7"/></svg>') center/cover;
+            z-index: -2;
+        }
+
+        .background-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: -1;
+        }
+
+        /* Container utama */
+        .container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Halaman Interface */
+        .interface-page {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .game-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .input-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .input-section h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .player-input {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .player-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+        }
+
+        .btn-info {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Audio Control */
+        .audio-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .audio-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .audio-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        /* Game Page Styles */
+        .game-page {
+            display: none;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .game-header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .score, .question-counter {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 2rem;
+            text-align: justify;
+        }
+
+        .answer-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .answer-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .answer-btn.deduksi {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+
+        .answer-btn.induksi {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+
+        .answer-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .answer-btn.correct {
+            background: linear-gradient(45deg, #2ecc71, #27ae60) !important;
+            animation: pulse 0.6s ease-in-out;
+        }
+
+        .answer-btn.incorrect {
+            background: linear-gradient(45deg, #e74c3c, #c0392b) !important;
+            animation: shake 0.6s ease-in-out;
+        }
+
+        /* Result Page Styles */
+        .result-page {
+            display: none;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 2rem;
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        .result-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .player-name {
+            font-size: 1.5rem;
+            color: #667eea;
+            margin-bottom: 2rem;
+        }
+
+        .final-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #2ecc71;
+            margin-bottom: 1rem;
+        }
+
+        .score-details {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .correct { color: #2ecc71; }
+        .incorrect { color: #e74c3c; }
+
+        .motivation-text {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        /* Celebration Styles */
+        .celebration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3000;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        .confetti:nth-child(2n) { background: #4ecdc4; }
+        .confetti:nth-child(3n) { background: #45b7d1; }
+        .confetti:nth-child(4n) { background: #f9ca24; }
+        .confetti:nth-child(5n) { background: #6c5ce7; }
+        .confetti:nth-child(6n) { background: #a29bfe; }
+        .confetti:nth-child(7n) { background: #fd79a8; }
+        .confetti:nth-child(8n) { background: #00b894; }
+
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: firework 1.5s ease-out infinite;
+        }
+
+        .celebration-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 3001;
+            animation: celebration-bounce 2s ease-out;
+            pointer-events: none;
+        }
+
+        .trophy-animation {
+            animation: trophy-glow 2s ease-in-out infinite alternate;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes firework {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1) rotate(180deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes celebration-bounce {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes trophy-glow {
+            0% {
+                text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700, 0 0 15px #ffd700;
+                transform: scale(1);
+            }
+            100% {
+                text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700;
+                transform: scale(1.05);
+            }
+        }
+
+        /* Mobile-First Responsive Design */
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 2.2rem;
+                line-height: 1.2;
+                margin-bottom: 1.5rem;
+            }
+
+            .container {
+                padding: 15px;
+                min-height: 100vh;
+                justify-content: flex-start;
+                padding-top: 80px;
+            }
+
+            .input-section {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .player-input {
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: 15px 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                padding: 15px 24px;
+                font-size: 1.1rem;
+                min-height: 50px;
+                touch-action: manipulation; /* Improves touch response */
+            }
+
+            .game-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+
+            .game-header {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .question-card {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .question-text {
+                font-size: 1rem;
+                line-height: 1.5;
+                margin-bottom: 1.5rem;
+            }
+
+            .answer-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .answer-btn {
+                width: 100%;
+                max-width: 280px;
+                padding: 18px 30px;
+                font-size: 1.1rem;
+                min-height: 60px;
+                touch-action: manipulation;
+            }
+
+            .score-details {
+                flex-direction: row;
+                justify-content: space-around;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .result-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .final-score {
+                font-size: 2.5rem;
+            }
+
+            .result-title {
+                font-size: 2rem;
+            }
+
+            .audio-control {
+                top: 15px;
+                right: 15px;
+            }
+
+            .audio-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-title {
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+            }
+
+            .container {
+                padding: 10px;
+                padding-top: 70px;
+            }
+
+            .input-section {
+                padding: 1.2rem;
+            }
+
+            .player-input {
+                font-size: 16px;
+                padding: 12px 16px;
+            }
+
+            .btn {
+                max-width: 100%;
+                padding: 12px 20px;
+                font-size: 1rem;
+                min-height: 48px;
+            }
+
+            .modal-content {
+                margin: 5% auto;
+                padding: 1.2rem;
+                width: 95%;
+                max-height: 85vh;
+            }
+
+            .modal-content h2 {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+
+            .modal-content h3 {
+                font-size: 1.1rem;
+                margin: 1rem 0 0.5rem 0;
+            }
+
+            .modal-content p, .modal-content li {
+                font-size: 0.9rem;
+                line-height: 1.4;
+            }
+
+            .close {
+                font-size: 1.5rem;
+                right: 15px;
+                top: 10px;
+            }
+
+            .question-card {
+                padding: 1.2rem;
+            }
+
+            .question-text {
+                font-size: 0.95rem;
+                line-height: 1.4;
+            }
+
+            .answer-btn {
+                padding: 15px 25px;
+                font-size: 1rem;
+                min-height: 55px;
+            }
+
+            .result-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .result-title {
+                font-size: 1.8rem;
+            }
+
+            .player-name {
+                font-size: 1.3rem;
+            }
+
+            .final-score {
+                font-size: 2.2rem;
+            }
+
+            .motivation-text {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .score-item {
+                text-align: center;
+            }
+
+            .score-number {
+                font-size: 1.5rem;
+            }
+
+            .audio-control {
+                top: 10px;
+                right: 10px;
+            }
+
+            .audio-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 360px) {
+            .game-title {
+                font-size: 1.6rem;
+            }
+
+            .container {
+                padding: 8px;
+                padding-top: 60px;
+            }
+
+            .input-section {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                padding: 1rem;
+                margin: 2% auto;
+            }
+
+            .question-text {
+                font-size: 0.9rem;
+            }
+
+            .answer-btn {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+                min-height: 50px;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.95rem;
+                min-height: 44px;
+            }
+        }
+
+        /* Landscape orientation on mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .container {
+                padding-top: 20px;
+                justify-content: flex-start;
+            }
+
+            .game-title {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .input-section {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .question-card {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .result-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .modal-content {
+                margin: 2% auto;
+                max-height: 90vh;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .btn:hover {
+                transform: none;
+            }
+
+            .btn:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+
+            .answer-btn:hover {
+                transform: none;
+            }
+
+            .answer-btn:active {
+                transform: scale(0.98);
+                transition: transform 0.1s ease;
+            }
+
+            .audio-btn:hover {
+                transform: none;
+            }
+
+            .audio-btn:active {
+                transform: scale(0.95);
+                transition: transform 0.1s ease;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <!-- Audio Control -->
+    <div class="audio-control">
+        <button class="audio-btn" id="audioToggle" title="Toggle Music">🔊</button>
+    </div>
+
+    <!-- Celebration Overlay -->
+    <div class="celebration-overlay" id="celebrationOverlay"></div>
+
+    <div class="container">
+        <!-- Halaman Interface -->
+        <div class="interface-page" id="interfacePage">
+            <h1 class="game-title">Tebak Paragraf<br>Deduksi & Induksi</h1>
+            
+            <div class="input-section">
+                <h3>Masukkan Nama Pemain</h3>
+                <input type="text" class="player-input" id="playerName" placeholder="Ketik nama kamu di sini..." maxlength="20">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" id="startBtn" disabled>🎮 Mulai Game</button>
+                <button class="btn btn-secondary" id="instructionBtn">📖 Petunjuk</button>
+                <button class="btn btn-info" id="aboutBtn">ℹ️ Tentang</button>
+            </div>
+        </div>
+
+        <!-- Halaman Game -->
+        <div class="game-page" id="gamePage">
+            <div class="game-header">
+                <div class="game-info">
+                    <div class="score">Skor: <span id="currentScore">0</span></div>
+                    <div class="question-counter">
+                        Soal <span id="currentQuestion">1</span> dari <span id="totalQuestions">10</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-card" id="questionCard">
+                <div class="question-text" id="questionText"></div>
+                <div class="answer-buttons">
+                    <button class="answer-btn deduksi" id="deduksiBtn">📝 Deduksi</button>
+                    <button class="answer-btn induksi" id="induksiBtn">🔍 Induksi</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Halaman Hasil -->
+        <div class="result-page" id="resultPage">
+            <div class="result-card">
+                <h2 class="result-title">🎉 Hasil Permainan</h2>
+                <div class="player-name" id="resultPlayerName"></div>
+                <div class="final-score" id="finalScore">0</div>
+                
+                <div class="score-details">
+                    <div class="score-item">
+                        <span class="score-number correct" id="correctAnswers">0</span>
+                        <div>Benar</div>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-number incorrect" id="incorrectAnswers">0</span>
+                        <div>Salah</div>
+                    </div>
+                </div>
+
+                <div class="motivation-text" id="motivationText"></div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" id="playAgainBtn">🔄 Main Lagi</button>
+                    <button class="btn btn-secondary" id="backToMenuBtn">🏠 Menu Utama</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Petunjuk -->
+    <div id="instructionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeInstruction">&times;</span>
+            <h2>📖 Petunjuk Bermain</h2>
+            <h3>Cara Bermain:</h3>
+            <ol>
+                <li>Masukkan nama pemain dan klik "Mulai Game"</li>
+                <li>Baca paragraf yang ditampilkan dengan teliti</li>
+                <li>Pilih apakah paragraf tersebut menggunakan pola <strong>Deduksi</strong> atau <strong>Induksi</strong></li>
+                <li>Jawaban benar akan mendapat poin dan highlight hijau</li>
+                <li>Jawaban salah akan mendapat highlight merah</li>
+                <li>Selesaikan semua 10 soal untuk melihat hasil akhir</li>
+            </ol>
+            
+            <h3>Penjelasan:</h3>
+            <p><strong>Paragraf Deduksi:</strong> Dimulai dengan pernyataan umum, kemudian diikuti dengan penjelasan khusus atau contoh-contoh yang mendukung.</p>
+            <p><strong>Paragraf Induksi:</strong> Dimulai dengan fakta-fakta khusus atau contoh-contoh, kemudian diakhiri dengan kesimpulan umum.</p>
+        </div>
+    </div>
+
+    <!-- Modal Tentang -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeAbout">&times;</span>
+            <h2>ℹ️ Tentang Game</h2>
+            <h3>🎯 Tujuan Game:</h3>
+            <p>Membantu pemain memahami dan membedakan antara paragraf deduksi dan induksi melalui pembelajaran yang interaktif dan menyenangkan.</p>
+            
+            <h3>📚 Manfaat Pembelajaran:</h3>
+            <ul>
+                <li>Meningkatkan kemampuan analisis teks</li>
+                <li>Memahami pola penalaran dalam paragraf</li>
+                <li>Mengasah kemampuan berpikir logis</li>
+                <li>Melatih konsentrasi dan fokus</li>
+            </ul>
+            
+            <h3>👨‍💻 Informasi Pembuat:</h3>
+            <p>Game edukasi ini dibuat dengan HTML5, CSS3, dan JavaScript untuk mendukung pembelajaran Bahasa Indonesia yang lebih menarik dan interaktif.</p>
+            
+            <p><em>Selamat belajar dan bersenang-senang! 🌟</em></p>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="backgroundMusic" loop>
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+    </audio>
+
+    <script>
+        // Game Data - Soal paragraf deduksi dan induksi
+        const questions = [
+            {
+                text: "Olahraga sangat penting untuk kesehatan tubuh. Dengan berolahraga secara teratur, kita dapat menjaga kebugaran jantung, meningkatkan kekuatan otot, dan mengurangi risiko berbagai penyakit. Selain itu, olahraga juga dapat membantu mengurangi stres dan meningkatkan mood. Oleh karena itu, setiap orang sebaiknya menyempatkan waktu untuk berolahraga minimal 30 menit setiap hari.",
+                answer: "deduksi"
+            },
+            {
+                text: "Ani rajin belajar dan selalu mengerjakan tugas tepat waktu, sehingga nilai-nilainya selalu bagus. Budi juga rajin belajar dan disiplin mengerjakan tugas, hasilnya prestasi akademiknya sangat memuaskan. Citra yang tekun belajar dan tidak pernah menunda-nunda tugas juga mendapat ranking teratas di kelasnya. Dari ketiga contoh tersebut, dapat disimpulkan bahwa siswa yang rajin belajar dan disiplin akan meraih prestasi yang baik.",
+                answer: "induksi"
+            },
+            {
+                text: "Membaca buku adalah kegiatan yang sangat bermanfaat bagi perkembangan intelektual seseorang. Melalui membaca, kita dapat menambah wawasan, meningkatkan kemampuan berpikir kritis, dan memperkaya kosakata. Membaca juga dapat melatih konsentrasi dan daya ingat. Contohnya, siswa yang gemar membaca biasanya memiliki kemampuan menulis yang lebih baik dan prestasi akademik yang memuaskan.",
+                answer: "deduksi"
+            },
+            {
+                text: "Di Jakarta, polusi udara sangat tinggi karena banyaknya kendaraan bermotor dan pabrik. Surabaya juga mengalami masalah serupa dengan tingkat polusi yang mengkhawatirkan. Bandung sebagai kota besar juga tidak luput dari masalah pencemaran udara. Begitu pula dengan Medan yang polusi udaranya semakin meningkat setiap tahun. Berdasarkan kondisi kota-kota besar tersebut, dapat disimpulkan bahwa kota-kota besar di Indonesia menghadapi masalah polusi udara yang serius.",
+                answer: "induksi"
+            },
+            {
+                text: "Teknologi informasi berkembang sangat pesat di era modern ini. Perkembangan ini membawa dampak positif dalam berbagai bidang kehidupan. Dalam bidang pendidikan, teknologi memungkinkan pembelajaran jarak jauh dan akses informasi yang lebih mudah. Di bidang kesehatan, teknologi membantu diagnosis penyakit dan pengobatan yang lebih akurat. Dalam dunia bisnis, teknologi mempermudah transaksi dan komunikasi dengan pelanggan.",
+                answer: "deduksi"
+            },
+            {
+                text: "Taman Nasional Komodo memiliki keindahan alam yang luar biasa dengan pantai berpasir pink dan pemandangan savana yang menakjubkan. Taman Nasional Bromo Tengger Semeru menawarkan pesona gunung berapi yang spektakuler dan lautan pasir yang memukau. Taman Nasional Raja Ampat memiliki kekayaan bawah laut yang tak tertandingi dengan terumbu karang yang indah. Dari berbagai contoh tersebut, jelas bahwa Indonesia memiliki taman nasional dengan keindahan alam yang luar biasa.",
+                answer: "induksi"
+            },
+            {
+                text: "Pendidikan karakter sangat penting ditanamkan sejak dini kepada anak-anak. Pendidikan karakter akan membentuk kepribadian yang baik, mengajarkan nilai-nilai moral, dan membantu anak mengembangkan sikap positif. Dengan pendidikan karakter yang baik, anak akan tumbuh menjadi individu yang bertanggung jawab, jujur, dan peduli terhadap sesama. Misalnya, anak yang diajarkan untuk selalu berkata jujur akan tumbuh menjadi pribadi yang dapat dipercaya.",
+                answer: "deduksi"
+            },
+            {
+                text: "Pak Ahmad yang selalu ramah kepada tetangga dan suka membantu orang lain, sangat dihormati dan dicintai warga kampungnya. Bu Sari yang gemar berbagi makanan dan selalu siap membantu tetangga yang kesulitan, juga mendapat tempat istimewa di hati warga. Pak Budi yang sering mengorganisir kegiatan gotong royong dan peduli lingkungan, menjadi panutan bagi warga lainnya. Dari ketiga contoh tersebut, terlihat bahwa orang yang baik hati dan peduli sesama akan selalu dihargai oleh masyarakat.",
+                answer: "induksi"
+            },
+            {
+                text: "Makanan bergizi seimbang sangat diperlukan untuk menjaga kesehatan tubuh. Makanan bergizi mengandung karbohidrat, protein, lemak, vitamin, dan mineral yang dibutuhkan tubuh. Karbohidrat memberikan energi untuk aktivitas sehari-hari, protein membantu pertumbuhan dan perbaikan sel, sedangkan vitamin dan mineral menjaga sistem kekebalan tubuh. Contoh makanan bergizi seimbang adalah nasi dengan lauk pauk, sayuran, dan buah-buahan.",
+                answer: "deduksi"
+            },
+            {
+                text: "Siswa kelas A yang mengikuti les tambahan matematika, rata-rata nilai ujiannya meningkat 20 poin. Siswa kelas B yang juga mengikuti bimbingan belajar, prestasi matematikanya naik signifikan. Kelas C yang rutin mengadakan diskusi kelompok untuk membahas soal-soal sulit, juga menunjukkan peningkatan nilai yang menggembirakan. Berdasarkan data dari ketiga kelas tersebut, dapat disimpulkan bahwa belajar tambahan di luar jam sekolah efektif meningkatkan prestasi akademik siswa.",
+                answer: "induksi"
+            }
+        ];
+
+        // Game State
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let playerName = '';
+        let isAudioPlaying = false;
+
+        // DOM Elements
+        const interfacePage = document.getElementById('interfacePage');
+        const gamePage = document.getElementById('gamePage');
+        const resultPage = document.getElementById('resultPage');
+        const playerNameInput = document.getElementById('playerName');
+        const startBtn = document.getElementById('startBtn');
+        const instructionBtn = document.getElementById('instructionBtn');
+        const aboutBtn = document.getElementById('aboutBtn');
+        const audioToggle = document.getElementById('audioToggle');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+
+        // Game Elements
+        const currentScore = document.getElementById('currentScore');
+        const currentQuestion = document.getElementById('currentQuestion');
+        const totalQuestions = document.getElementById('totalQuestions');
+        const questionText = document.getElementById('questionText');
+        const deduksiBtn = document.getElementById('deduksiBtn');
+        const induksiBtn = document.getElementById('induksiBtn');
+
+        // Result Elements
+        const resultPlayerName = document.getElementById('resultPlayerName');
+        const finalScore = document.getElementById('finalScore');
+        const correctAnswersSpan = document.getElementById('correctAnswers');
+        const incorrectAnswersSpan = document.getElementById('incorrectAnswers');
+        const motivationText = document.getElementById('motivationText');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+        const backToMenuBtn = document.getElementById('backToMenuBtn');
+
+        // Modal Elements
+        const instructionModal = document.getElementById('instructionModal');
+        const aboutModal = document.getElementById('aboutModal');
+        const closeInstruction = document.getElementById('closeInstruction');
+        const closeAbout = document.getElementById('closeAbout');
+
+        // Initialize Game
+        function initGame() {
+            totalQuestions.textContent = questions.length;
+            
+            // Event Listeners
+            playerNameInput.addEventListener('input', validatePlayerName);
+            startBtn.addEventListener('click', startGame);
+            instructionBtn.addEventListener('click', showInstructions);
+            aboutBtn.addEventListener('click', showAbout);
+            audioToggle.addEventListener('click', toggleAudio);
+            
+            deduksiBtn.addEventListener('click', () => answerQuestion('deduksi'));
+            induksiBtn.addEventListener('click', () => answerQuestion('induksi'));
+            
+            playAgainBtn.addEventListener('click', resetGame);
+            backToMenuBtn.addEventListener('click', backToMenu);
+            
+            closeInstruction.addEventListener('click', () => instructionModal.style.display = 'none');
+            closeAbout.addEventListener('click', () => aboutModal.style.display = 'none');
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === instructionModal) instructionModal.style.display = 'none';
+                if (e.target === aboutModal) aboutModal.style.display = 'none';
+            });
+
+            // Initialize audio
+            backgroundMusic.volume = 0.3;
+        }
+
+        // Validate player name input
+        function validatePlayerName() {
+            const name = playerNameInput.value.trim();
+            startBtn.disabled = name.length === 0;
+        }
+
+        // Start the game
+        function startGame() {
+            playerName = playerNameInput.value.trim();
+            if (!playerName) return;
+
+            interfacePage.style.display = 'none';
+            gamePage.style.display = 'block';
+            
+            // Reset game state
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            
+            // Shuffle questions for variety
+            shuffleArray(questions);
+            
+            showQuestion();
+        }
+
+        // Show current question
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionText.textContent = question.text;
+            currentQuestion.textContent = currentQuestionIndex + 1;
+            currentScore.textContent = score;
+            
+            // Reset button states
+            deduksiBtn.classList.remove('correct', 'incorrect');
+            induksiBtn.classList.remove('correct', 'incorrect');
+            deduksiBtn.disabled = false;
+            induksiBtn.disabled = false;
+        }
+
+        // Handle answer selection
+        function answerQuestion(selectedAnswer) {
+            const question = questions[currentQuestionIndex];
+            const isCorrect = selectedAnswer === question.answer;
+            
+            // Disable buttons
+            deduksiBtn.disabled = true;
+            induksiBtn.disabled = true;
+            
+            if (isCorrect) {
+                score += 10;
+                correctAnswers++;
+                // Highlight correct answer
+                if (selectedAnswer === 'deduksi') {
+                    deduksiBtn.classList.add('correct');
+                } else {
+                    induksiBtn.classList.add('correct');
+                }
+                playSound('correct');
+            } else {
+                incorrectAnswers++;
+                // Highlight incorrect answer and show correct one
+                if (selectedAnswer === 'deduksi') {
+                    deduksiBtn.classList.add('incorrect');
+                    induksiBtn.classList.add('correct');
+                } else {
+                    induksiBtn.classList.add('incorrect');
+                    deduksiBtn.classList.add('correct');
+                }
+                playSound('incorrect');
+            }
+            
+            // Update score display
+            currentScore.textContent = score;
+            
+            // Move to next question after delay
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    showQuestion();
+                } else {
+                    showResults();
+                }
+            }, 2000);
+        }
+
+        // Show final results
+        function showResults() {
+            gamePage.style.display = 'none';
+            resultPage.style.display = 'block';
+            
+            resultPlayerName.textContent = playerName;
+            finalScore.textContent = score;
+            correctAnswersSpan.textContent = correctAnswers;
+            incorrectAnswersSpan.textContent = incorrectAnswers;
+            
+            // Generate motivation message
+            const percentage = (correctAnswers / questions.length) * 100;
+            let motivation = '';
+            
+            if (percentage >= 80) {
+                motivation = "🌟 Hebat! Pemahamanmu tentang deduksi dan induksi sangat baik. Kamu benar-benar menguasai materi ini!";
+                // Trigger celebration for high scores
+                triggerCelebration();
+                // Add trophy glow effect
+                finalScore.classList.add('trophy-animation');
+            } else if (percentage >= 60) {
+                motivation = "👍 Bagus! Kamu sudah cukup memahami perbedaan deduksi dan induksi. Terus berlatih untuk lebih sempurna!";
+            } else if (percentage >= 40) {
+                motivation = "💪 Lumayan! Masih ada ruang untuk berkembang. Coba pelajari lagi pola-pola paragraf deduksi dan induksi.";
+            } else {
+                motivation = "🌱 Jangan menyerah! Setiap orang punya cara belajar yang berbeda. Coba lagi dan pasti bisa lebih baik!";
+            }
+            
+            motivationText.textContent = motivation;
+        }
+
+        // Trigger celebration animation
+        function triggerCelebration() {
+            const celebrationOverlay = document.getElementById('celebrationOverlay');
+            
+            // Create celebration text
+            const celebrationText = document.createElement('div');
+            celebrationText.className = 'celebration-text';
+            celebrationText.textContent = '🎉 LUAR BIASA! 🎉';
+            celebrationOverlay.appendChild(celebrationText);
+            
+            // Create confetti
+            createConfetti();
+            
+            // Create fireworks
+            createFireworks();
+            
+            // Play celebration sound
+            playCelebrationSound();
+            
+            // Remove celebration after 4 seconds
+            setTimeout(() => {
+                celebrationOverlay.innerHTML = '';
+            }, 4000);
+        }
+
+        // Create confetti animation
+        function createConfetti() {
+            const celebrationOverlay = document.getElementById('celebrationOverlay');
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe', '#fd79a8', '#00b894'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                celebrationOverlay.appendChild(confetti);
+            }
+        }
+
+        // Create fireworks animation
+        function createFireworks() {
+            const celebrationOverlay = document.getElementById('celebrationOverlay');
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe', '#fd79a8', '#00b894'];
+            
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.left = Math.random() * 100 + '%';
+                    firework.style.top = Math.random() * 100 + '%';
+                    firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    celebrationOverlay.appendChild(firework);
+                    
+                    // Remove firework after animation
+                    setTimeout(() => {
+                        if (firework.parentNode) {
+                            firework.parentNode.removeChild(firework);
+                        }
+                    }, 1500);
+                }, i * 200);
+            }
+        }
+
+        // Play celebration sound
+        function playCelebrationSound() {
+            if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
+                const audioContext = new (AudioContext || webkitAudioContext)();
+                
+                // Create a more complex celebration melody
+                const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 659.25, 523.25]; // C-E-G-C-G-E-C
+                const durations = [0.2, 0.2, 0.2, 0.4, 0.2, 0.2, 0.4];
+                
+                let currentTime = audioContext.currentTime;
+                
+                notes.forEach((frequency, index) => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(frequency, currentTime);
+                    oscillator.type = 'triangle';
+                    
+                    gainNode.gain.setValueAtTime(0, currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.1, currentTime + 0.01);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + durations[index]);
+                    
+                    oscillator.start(currentTime);
+                    oscillator.stop(currentTime + durations[index]);
+                    
+                    currentTime += durations[index];
+                });
+            }
+        }
+
+        // Reset game for play again
+        function resetGame() {
+            resultPage.style.display = 'none';
+            gamePage.style.display = 'block';
+            
+            currentQuestionIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            
+            // Clear celebration effects
+            clearCelebrationEffects();
+            
+            shuffleArray(questions);
+            showQuestion();
+        }
+
+        // Back to main menu
+        function backToMenu() {
+            resultPage.style.display = 'none';
+            interfacePage.style.display = 'block';
+            
+            // Clear player name
+            playerNameInput.value = '';
+            startBtn.disabled = true;
+            
+            // Clear celebration effects
+            clearCelebrationEffects();
+        }
+
+        // Clear celebration effects
+        function clearCelebrationEffects() {
+            const celebrationOverlay = document.getElementById('celebrationOverlay');
+            celebrationOverlay.innerHTML = '';
+            finalScore.classList.remove('trophy-animation');
+        }
+
+        // Show instructions modal
+        function showInstructions() {
+            instructionModal.style.display = 'block';
+        }
+
+        // Show about modal
+        function showAbout() {
+            aboutModal.style.display = 'block';
+        }
+
+        // Toggle background music
+        function toggleAudio() {
+            if (isAudioPlaying) {
+                backgroundMusic.pause();
+                audioToggle.textContent = '🔇';
+                isAudioPlaying = false;
+            } else {
+                backgroundMusic.play().catch(e => console.log('Audio play failed:', e));
+                audioToggle.textContent = '🔊';
+                isAudioPlaying = true;
+            }
+        }
+
+        // Play sound effects (simplified version)
+        function playSound(type) {
+            // Create simple audio context for sound effects
+            if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
+                const audioContext = new (AudioContext || webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                if (type === 'correct') {
+                    // Happy sound - ascending notes
+                    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                    oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                    oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+                } else {
+                    // Error sound - descending notes
+                    oscillator.frequency.setValueAtTime(400, audioContext.currentTime); // G4
+                    oscillator.frequency.setValueAtTime(300, audioContext.currentTime + 0.1); // D4
+                    oscillator.frequency.setValueAtTime(200, audioContext.currentTime + 0.2); // G3
+                }
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            }
+        }
+
+        // Utility function to shuffle array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Initialize the game when page loads
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96ed16ab9538f936',t:'MTc1NTEzOTIzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
