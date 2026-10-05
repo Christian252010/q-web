@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="4; url=index.html" />
+  <title>Document</title>
+</head>
+<body>
+<style>
+  
+body {
+  background: #1f1f1f;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.bottom {
+  display: flex;
+  width: 100%;
+  justify-content: left;
+}
+
+.top {
+  display: flex;
+}
+
+.title {
+  width: 100%;
+}
+
+.crosshair {
+  display: flex;
+  align-items: top;
+  justify-content: flex-end;
+  width: 100%;
+  padding-bottom: 35%;
+  position: absolute;
+  background: ;
+}
+
+.shot2 {
+  position: absolute;
+  right: 27.5%;
+  padding-bottom: 35%;
+  width: 17%;
+}
+  
+.shot {
+  margin-right: 27.5%;
+  width: 17%;
+  animation: rotate 2s linear infinite;
+}
+
+.gun {
+  width: 18%;
+  margin-left: 5%;
+}
+
+.amo {
+  width: 8%;
+  height: 48%;
+  margin-top: 1.8%;
+  margin-left: -2px;
+  transform-origin: center;
+  transform: rotate(90deg);
+}
+
+.line {
+  height: 8%;
+  width: 0px;
+  margin-top: 5.4%;
+  background: firebrick;
+  transition: width 4s ease;
+}
+
+.line.active {
+  width: 65%;
+}
+
+.text {
+  position: absolute;
+  font-size: 5vw;
+  color: white;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;
+  margin-top: 50%;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+  
+</style>
+
+<div class="container">
+  <div class="crosshair">
+    <img src="shot2.png" class="shot">
+  </div>
+  <img src="crosshair.png" class="shot2">
+  <img src="title2.png" class="title">
+  <div class="bottom">
+    <img src="gun.png" class="gun">
+    <span class="line"></span>
+    <img src="amo.png" class="amo">
+    <span class="text">Loading...</span>
+  </div>
+</div>
+
+<script>
+  setTimeout(() => {
+    document.querySelector('.line').classList.add('active');
+  }, 100);
+
+const text = document.querySelector('.text');
+const duration = 4000;
+const start = performance.now();
+
+function loading(now) {
+  const progress = Math.min((now - start) / duration, 1);
+  const percent = Math.floor(progress * 100);
+
+  text.textContent = `Loading ${percent}%`;
+
+  if (progress < 1) {
+    requestAnimationFrame(loading);
+  }
+}
+
+requestAnimationFrame(loading);
+</script>
+  
+</body>
+</html>
