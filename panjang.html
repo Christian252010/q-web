@@ -488,6 +488,24 @@ const units = {
 
 };
 
+const units = {
+km: { name: "Kilometer", symbol: "km", factor: 1000, icon: "route" },
+hm: { name: "Hektometer", symbol: "hm", factor: 100, icon: "milestone" },
+dam: { name: "Dekameter", symbol: "dam", factor: 10, icon: "move-horizontal" },
+m: { name: "Meter", symbol: "m", factor: 1, icon: "ruler" },
+dm: { name: "Desimeter", symbol: "dm", factor: 0.1, icon: "between-horizontal-start" },
+cm: { name: "Centimeter", symbol: "cm", factor: 0.01, icon: "scan" },
+mm: { name: "Milimeter", symbol: "mm", factor: 0.001, icon: "grip" },
+in: { name: "Inch", symbol: "in", factor: 0.0254, icon: "ruler" },
+ft: { name: "Foot", symbol: "ft", factor: 0.3048, icon: "footprints" },
+yd: { name: "Yard", symbol: "yd", factor: 0.9144, icon: "move-horizontal" },
+mi: { name: "Mile", symbol: "mi", factor: 1609.344, icon: "map" },
+nmi: { name: "Nautical Mile", symbol: "nmi", factor: 1852, icon: "ship" },
+ftm: { name: "Fathom", symbol: "ftm", factor: 1.8288, icon: "waves" },
+ch: { name: "Chain", symbol: "ch", factor: 20.1168, icon: "link" },
+rd: { name: "Rod", symbol: "rd", factor: 5.0292, icon: "construction" }
+};
+
 
 /* =====================================================
    STATE
@@ -540,67 +558,46 @@ function updateSelectText(select, unit){
    BUAT OPTION
 ===================================================== */
 
-function buildOptions(
-    select,
-    selectedUnit,
-    onSelect
-){
+function buildOptions(select, selectedUnit, onSelect) {
+const menu = select.querySelector(".select-menu");
+menu.innerHTML = "";
 
-    const menu =
-        select.querySelector(
-            ".select-menu"
-        );
+Object.keys(units).forEach(unit => {
+    const data = units[unit];
+    const option = document.createElement("div");
 
-    menu.innerHTML = "";
+    option.className = "select-option";
 
+    if (unit === selectedUnit) {
+        option.classList.add("active");
+    }
 
-    Object.keys(units).forEach(unit => {
+    option.innerHTML = `
+        <span class="option-info">
+            <i data-lucide="${data.icon}"></i>
+            <b>${data.name}</b>
+        </span>
+        <span class="option-symbol">${data.symbol}</span>
+    `;
 
-        const data =
-            units[unit];
-
-
-        const option =
-            document.createElement("div");
-
-
-        option.className =
-            "select-option";
-
-
-        if(unit === selectedUnit){
-
-            option.classList.add(
-                "active"
-            );
-
-        }
-
-
-        option.innerHTML =
-            `<b>${data.name}</b> <span>${data.symbol}</span>`;
-
-
-        option.addEventListener(
-            "click",
-            () => {
-
-                onSelect(unit);
-
-                select.classList.remove(
-                    "open"
-                );
-
-            }
-        );
-
-
-        menu.appendChild(option);
-
+    option.addEventListener("click", () => {
+        onSelect(unit);
+        select.classList.remove("open");
     });
 
-}
+    menu.appendChild(option);
+});
 
+lucide.createIcons({
+    attrs: {
+        width: 18,
+        height: 18,
+        "stroke-width": 1.8
+    },
+    nodes: menu.querySelectorAll("[data-lucide]")
+});
+
+}
 
 /* =====================================================
    FROM DROPDOWN
