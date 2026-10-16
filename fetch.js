@@ -20,16 +20,9 @@ fetch('template.html')
 
     function updateUI() {
       const isDark = document.body.classList.contains("dark");
+    
+      const icon = document.getElementById("icon");
       const themeColor = document.getElementById("themeColor");
-    
-      if (icon) {
-        icon.innerHTML = "";
-    
-        icon.setAttribute(
-          "data-lucide",
-          isDark ? "moon" : "sun"
-        );
-      }
     
       if (themeColor) {
         themeColor.setAttribute(
@@ -43,8 +36,15 @@ fetch('template.html')
         isDark ? "dark" : "light"
       );
     
-      if (window.lucide) {
-        lucide.createIcons();
+      if (icon) {
+        icon.setAttribute(
+          "data-lucide",
+          isDark ? "moon" : "sun"
+        );
+    
+        if (window.lucide) {
+          lucide.createIcons();
+        }
       }
     }
 
