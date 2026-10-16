@@ -34,7 +34,7 @@ fetch('template.html')
       if (themeColor) {
         themeColor.setAttribute(
           "content",
-          isDark ? "#1a1a1a" : "#ffffff"
+          isDark ? "teal" : "mediumseagreen"
         );
       }
     
