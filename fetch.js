@@ -20,20 +20,32 @@ fetch('template.html')
 
     function updateUI() {
       const isDark = document.body.classList.contains("dark");
-
-      if (!icon) return;
-
-      icon.innerHTML = "";
-
-      if (isDark) {
-        icon.setAttribute("data-lucide", "moon");
-        localStorage.setItem("theme", "dark");
-      } else {
-        icon.setAttribute("data-lucide", "sun");
-        localStorage.setItem("theme", "light");
+      const themeColor = document.getElementById("themeColor");
+    
+      if (icon) {
+        icon.innerHTML = "";
+    
+        icon.setAttribute(
+          "data-lucide",
+          isDark ? "moon" : "sun"
+        );
       }
-
-      if (window.lucide) lucide.createIcons();
+    
+      if (themeColor) {
+        themeColor.setAttribute(
+          "content",
+          isDark ? "#1a1a1a" : "#ffffff"
+        );
+      }
+    
+      localStorage.setItem(
+        "theme",
+        isDark ? "dark" : "light"
+      );
+    
+      if (window.lucide) {
+        lucide.createIcons();
+      }
     }
 
     if (localStorage.getItem("theme") === "dark") {
